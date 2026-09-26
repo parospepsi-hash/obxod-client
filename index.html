@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Obxod Client Pro — Официальный сайт & Личный кабинет</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0b0d12;
+      color: #f1f5f9;
+    }
+    .font-mono-custom {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .bg-mc-wallpaper {
+      background: linear-gradient(180deg, rgba(11, 13, 18, 0.8) 0%, rgba(11, 13, 18, 0.96) 100%), 
+                  url('https://images.unsplash.com/photo-1579783902614-a3fb3927b675?q=80&w=1920&auto=format&fit=crop') center/cover no-repeat fixed;
+    }
+    .glass-nav {
+      background: rgba(18, 22, 31, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(0, 240, 255, 0.15);
+    }
+    .glass-panel {
+      background: rgba(22, 27, 38, 0.7);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 240, 255, 0.15);
+    }
+    .glass-input {
+      background: rgba(15, 19, 28, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .glass-input:focus {
+      border-color: #00f0ff;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+    }
+
+    .cyan-glow-btn {
+      background: #00f0ff;
+      color: #000000;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+    }
+    .cyan-glow-btn:hover {
+      background: #00c8d6;
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.6);
+    }
+  </style>
+</head>
+<body class="bg-[#0b0d12] text-slate-100 min-h-screen bg-mc-wallpaper flex flex-col justify-between antialiased selection:bg-[#00f0ff] selection:text-black">
+
+  <!-- Top Floating Pill Navigation Bar -->
+  <header class="fixed top-5 left-1/2 -translate-x-1/2 z-50 w-full max-w-4xl px-4">
+    <div class="glass-nav rounded-full px-5 py-2.5 flex items-center justify-between shadow-2xl">
+      <!-- Logo -->
+      <a href="#" onclick="showView('landing')" class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-[#042f3d] border border-[#00f0ff] flex items-center justify-center text-[#00f0ff] font-extrabold text-sm shadow-md">
+          ⚡
+        </div>
+        <span class="font-bold text-base tracking-tight text-white">Obxod<span class="text-[#00f0ff]">Client</span></span>
+      </a>
+
+      <!-- Center Links -->
+      <nav class="hidden sm:flex items-center gap-6 text-xs font-medium text-slate-300">
+        <a href="#advantages" onclick="showView('landing')" class="hover:text-[#00f0ff] transition-colors flex items-center gap-1.5">
+          <span>✨</span> Преимущества
+        </a>
+        <a href="#product" onclick="showView('landing')" class="hover:text-[#00f0ff] transition-colors flex items-center gap-1.5">
+          <span>📦</span> Продукт
+        </a>
+        <a href="#overview" onclick="showView('landing')" class="hover:text-[#00f0ff] transition-colors flex items-center gap-1.5">
+          <span>📊</span> Обзор
+        </a>
+        <a href="#policy" class="hover:text-[#00f0ff] transition-colors flex items-center gap-1.5">
+          <span>⚖️</span> Политика
+        </a>
+      </nav>
+
+      <!-- Right Profile Pill / Auth Button -->
+      <div class="flex items-center gap-3">
+        <button class="px-2.5 py-1 rounded-full bg-slate-800/80 text-[10px] font-mono-custom text-slate-300 border border-slate-700/60">
+          RU <span class="text-slate-500">EN</span>
+        </button>
+
+        <!-- Logged In Profile Pill (Hidden by default until registered) -->
+        <div id="nav-profile-btn" class="hidden">
+          <button onclick="showView('dashboard')" class="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-slate-800/90 border border-[#00f0ff]/40 hover:border-[#00f0ff] transition-all">
+            <div id="nav-avatar-icon" class="w-6 h-6 rounded-full bg-[#042f3d] border border-[#00f0ff] text-[#00f0ff] flex items-center justify-center font-bold text-[10px]">
+              👤
+            </div>
+            <span id="nav-username" class="text-xs font-bold text-white"></span>
+          </button>
+        </div>
+
+        <!-- Logged Out Auth Button -->
+        <div id="nav-auth-btn">
+          <button onclick="showView('auth')" class="px-4 py-1.5 rounded-full bg-[#00f0ff] hover:bg-[#00c8d6] text-black font-bold text-xs transition-all shadow-md">
+            Вход / Регистрация
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT VIEWS CONTAINER -->
+  <main class="flex-1 pt-28 pb-16 px-4 max-w-6xl mx-auto w-full">
+
+    <!-- VIEW 1: LANDING PAGE -->
+    <div id="view-landing" class="space-y-24">
+      
+      <!-- Hero Header & Laptop Mockup -->
+      <section class="text-center pt-8">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#042f3d] border border-[#00f0ff]/40 text-[#00f0ff] text-xs font-mono-custom mb-6">
+          <span>⚡</span> Obxod Client v5.6 Pro — Защита подключений
+        </div>
+
+        <h1 class="text-4xl sm:text-6xl font-extrabold text-white tracking-tight mb-6">
+          Полный контроль над<br/> AnyDesk подключением.
+        </h1>
+
+        <div class="flex items-center justify-center gap-4 mb-12">
+          <button onclick="handleDownloadClick()" class="px-8 py-3.5 rounded-xl cyan-glow-btn font-extrabold text-sm transition-all flex items-center gap-2">
+            <span>📥</span> Скачать лаунчер
+          </button>
+        </div>
+
+        <!-- Laptop Device Mockup -->
+        <div class="relative max-w-3xl mx-auto">
+          <div class="absolute -inset-2 bg-[#00f0ff]/20 rounded-3xl blur-2xl"></div>
+          
+          <div class="relative bg-slate-900 border-4 border-slate-700/80 rounded-2xl overflow-hidden shadow-2xl">
+            <!-- Screen Content Mockup -->
+            <div class="bg-slate-950 p-6 aspect-video flex flex-col justify-between text-left relative bg-mc-wallpaper">
+              <div class="flex justify-between items-center pb-3 border-b border-white/10">
+                <div class="flex items-center gap-2">
+                  <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                  <span class="text-xs text-slate-400 font-mono-custom ml-2">Obxod Client HUD v5.6</span>
+                </div>
+                <span class="text-xs font-bold text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded border border-emerald-500/40">🟢 СИСТЕМА АКТИВНА</span>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-900/80 border border-[#00f0ff]/30 max-w-sm my-auto">
+                <div class="text-sm font-bold text-white mb-1">Защита подключения AnyDesk</div>
+                <div class="text-xs text-[#00f0ff] font-mono-custom">Режим: Имитация таймаута (~60с)</div>
+                <div class="text-xs text-slate-400 mt-2">AnyDesk ID: <strong class="text-white font-mono-custom">1 849 201 934</strong></div>
+              </div>
+
+              <div class="text-xs text-slate-400 font-mono-custom flex justify-between">
+                <span>© 2026 Obxod Client Security Engine</span>
+                <span class="text-[#00f0ff]">Status: Protected</span>
+              </div>
+            </div>
+          </div>
+          <div class="h-3 w-48 bg-slate-700 rounded-b-xl mx-auto shadow-md"></div>
+        </div>
+      </section>
+
+      <!-- Advantages Section -->
+      <section id="advantages" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="glass-panel p-6 rounded-2xl">
+          <div class="w-10 h-10 rounded-xl bg-[#042f3d] border border-[#00f0ff] text-[#00f0ff] flex items-center justify-center text-xl mb-4">⚡</div>
+          <h3 class="text-lg font-bold text-white mb-2">3 Режима блокировки</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">Имитация таймаута соединения (~60с), мгновенный сброс или принудительное завершение через Kill-Switch.</p>
+        </div>
+
+        <div class="glass-panel p-6 rounded-2xl">
+          <div class="w-10 h-10 rounded-xl bg-[#063726] border border-[#10b981] text-[#10b981] flex items-center justify-center text-xl mb-4">🎨</div>
+          <h3 class="text-lg font-bold text-white mb-2">10 Монохромных тем</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">Автоматическое перекрашивание всех бордеров, кнопок и карточек под выбранный акцентный цвет.</p>
+        </div>
+
+        <div class="glass-panel p-6 rounded-2xl">
+          <div class="w-10 h-10 rounded-xl bg-[#31104d] border border-[#a855f7] text-[#a855f7] flex items-center justify-center text-xl mb-4">🧹</div>
+          <h3 class="text-lg font-bold text-white mb-2">Чистка кэша Minecraft</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">Мгновенное удаление логов, краш-репортов и кэша для освобождения оперативной памяти.</p>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- VIEW 2: AUTHENTICATION (LOGIN / REGISTER MODAL SPLIT VIEW) -->
+    <div id="view-auth" class="hidden">
+      <div class="max-w-4xl mx-auto glass-panel rounded-3xl overflow-hidden shadow-2xl grid grid-cols-1 md:grid-cols-2 min-h-[520px]">
+        
+        <!-- Left Side: Wallpaper & Branding -->
+        <div class="p-8 bg-mc-wallpaper flex flex-col justify-between border-r border-white/5 relative">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-[#042f3d] border border-[#00f0ff] flex items-center justify-center text-[#00f0ff] font-extrabold text-sm">⚡</div>
+            <span class="font-bold text-white">Obxod Client Pro</span>
+          </div>
+
+          <div class="my-auto py-12">
+            <h2 class="text-3xl font-extrabold text-white mb-3">Ваша игра,<br/>ваша победа.</h2>
+            <p class="text-xs text-slate-300">Создайте аккаунт, чтобы запустить Obxod Client и взять защиту под полный контроль.</p>
+          </div>
+
+          <div class="text-[10px] text-slate-400 font-mono-custom">
+            © 2026 Obxod Client Team. All rights reserved.
+          </div>
+        </div>
+
+        <!-- Right Side: Login & Register Form Panel -->
+        <div class="p-8 flex flex-col justify-center bg-[#10141e]/90">
+          <div class="text-center mb-6">
+            <div class="w-10 h-10 rounded-full bg-[#042f3d] border border-[#00f0ff] text-[#00f0ff] flex items-center justify-center text-lg mx-auto mb-3">⚡</div>
+            <h3 id="auth-title" class="text-xl font-bold text-white">Регистрация аккаунта</h3>
+            <p id="auth-subtitle" class="text-xs text-slate-400 mt-1">Зарегистрируйтесь для доступа к личному кабинету и скачиванию.</p>
+          </div>
+
+          <!-- Login / Register Tab Switcher -->
+          <div class="grid grid-cols-2 p-1 rounded-xl bg-slate-900/80 border border-white/5 mb-6 text-xs font-semibold">
+            <button id="tab-register" onclick="switchAuthTab('register')" class="py-2 rounded-lg bg-[#00f0ff] text-black font-bold transition-all">Регистрация</button>
+            <button id="tab-login" onclick="switchAuthTab('login')" class="py-2 rounded-lg text-slate-400 hover:text-white transition-all">Вход</button>
+          </div>
+
+          <!-- Auth Form (Clean Inputs without hardcoded nicknames) -->
+          <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
+            <div>
+              <input type="text" id="auth-username" required placeholder="Введите ваше имя пользователя" value=""
+                     class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none transition-all">
+            </div>
+
+            <div>
+              <input type="email" id="auth-email" placeholder="Введите ваш Email" value=""
+                     class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none transition-all">
+            </div>
+
+            <div>
+              <input type="password" id="auth-password" required placeholder="Придумайте пароль" value=""
+                     class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none transition-all">
+            </div>
+
+            <!-- Cloudflare Turnstile Captcha Mockup -->
+            <div class="p-3 rounded-xl bg-white text-slate-900 flex items-center justify-between text-xs shadow-sm">
+              <div class="flex items-center gap-2 font-medium">
+                <span class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px]">✓</span>
+                <span>Успешно.</span>
+              </div>
+              <div class="text-[10px] text-slate-400 font-mono-custom flex items-center gap-1">
+                <span>Cloudflare</span>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 rounded-xl cyan-glow-btn font-extrabold text-xs transition-all flex items-center justify-center gap-2">
+              <span>➔</span> <span id="auth-btn-label">Зарегистрироваться</span>
+            </button>
+          </form>
+
+          <div id="auth-switch-prompt" class="text-center mt-6 text-xs text-slate-400">
+            Уже есть аккаунт? <button onclick="switchAuthTab('login')" class="text-[#00f0ff] font-semibold hover:underline">Войти</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- VIEW 3: PERSONAL CABINET / USER DASHBOARD -->
+    <div id="view-dashboard" class="hidden space-y-6">
+      
+      <!-- Top Banner Header -->
+      <div class="glass-panel rounded-3xl p-6 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-cyan-900/30 to-blue-900/20 blur-xl"></div>
+        
+        <div class="relative flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-2xl bg-[#042f3d] border-2 border-[#00f0ff] text-[#00f0ff] flex items-center justify-center text-2xl font-bold shadow-lg">
+              👤
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 id="dash-username-title" class="text-2xl font-extrabold text-white"></h2>
+                <span id="dash-role-badge" class="px-2 py-0.5 rounded bg-[#00f0ff]/20 border border-[#00f0ff]/40 text-[#00f0ff] text-[10px] font-bold font-mono-custom">BETA USER</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1">С возвращением в личный кабинет Obxod Client.</p>
+            </div>
+          </div>
+
+          <button onclick="alert('Выбор кастомного аватара профиля')" class="px-4 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 transition-all flex items-center gap-2">
+            <span>🖼️</span> Изменить профиль
+          </button>
+        </div>
+      </div>
+
+      <!-- Dashboard Main Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left Column: Account Details & Key Activation -->
+        <div class="lg:col-span-2 space-y-6">
+          
+          <!-- Account Info Card -->
+          <div class="glass-panel rounded-3xl p-6">
+            <div class="flex items-center gap-2 text-sm font-bold text-white mb-6 border-b border-white/5 pb-4">
+              <span>👤</span> Данные аккаунта
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              <div class="p-3.5 rounded-xl bg-slate-900/60 border border-white/5 flex items-center gap-3">
+                <span class="text-slate-400 text-base">👤</span>
+                <div>
+                  <div class="text-[10px] text-slate-500 font-mono-custom uppercase">ИМЯ ПОЛЬЗОВАТЕЛЯ</div>
+                  <div id="dash-user-val" class="font-bold text-white mt-0.5"></div>
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-slate-900/60 border border-white/5 flex items-center gap-3">
+                <span class="text-slate-400 text-base">✉️</span>
+                <div>
+                  <div class="text-[10px] text-slate-500 font-mono-custom uppercase">EMAIL</div>
+                  <div id="dash-email-val" class="font-bold text-white mt-0.5">user@obxodclient.pro</div>
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-slate-900/60 border border-white/5 flex items-center gap-3">
+                <span class="text-slate-400 text-base">🆔</span>
+                <div>
+                  <div class="text-[10px] text-slate-500 font-mono-custom uppercase">UID</div>
+                  <div id="dash-uid-val" class="font-bold text-[#00f0ff] font-mono-custom mt-0.5">#5012</div>
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-slate-900/60 border border-white/5 flex items-center gap-3">
+                <span class="text-slate-400 text-base">💎</span>
+                <div>
+                  <div class="text-[10px] text-slate-500 font-mono-custom uppercase">РОЛЬ</div>
+                  <div id="dash-role-val" class="font-bold text-emerald-400 mt-0.5">BETA USER</div>
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-slate-900/60 border border-white/5 flex items-center gap-3">
+                <span class="text-slate-400 text-base">⏰</span>
+                <div>
+                  <div class="text-[10px] text-slate-500 font-mono-custom uppercase">ПОДПИСКА ДО</div>
+                  <div id="dash-sub-val" class="font-bold text-white font-mono-custom mt-0.5">Бессрочно</div>
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-slate-900/60 border border-white/5 flex items-center gap-3">
+                <span class="text-slate-400 text-base">📅</span>
+                <div>
+                  <div class="text-[10px] text-slate-500 font-mono-custom uppercase">РЕГИСТРАЦИЯ</div>
+                  <div id="dash-reg-val" class="font-bold text-white font-mono-custom mt-0.5">26.09.2026</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- HWID Display -->
+            <div class="mt-4 p-3.5 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between text-xs">
+              <div class="flex items-center gap-3">
+                <span class="text-slate-400 text-base">💻</span>
+                <div>
+                  <div class="text-[10px] text-slate-500 font-mono-custom uppercase">HWID ХЭШ</div>
+                  <div id="dash-hwid-val" class="font-mono-custom text-slate-300 text-[11px] mt-0.5">a9f8124c3cf3b45c1143b8816b0e0460</div>
+                </div>
+              </div>
+              <button onclick="alert('HWID скопирован')" class="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px]">Копировать</button>
+            </div>
+          </div>
+
+          <!-- Key Activation Card -->
+          <div class="glass-panel rounded-3xl p-6">
+            <div class="flex items-center gap-2 text-sm font-bold text-white mb-2">
+              <span>🗝️</span> Активировать ключ
+            </div>
+            <p class="text-xs text-slate-400 mb-4">Активируйте лицензионный ключ для подписки.</p>
+
+            <form onsubmit="activateKey(event)" class="flex flex-col sm:flex-row items-center gap-3">
+              <input type="text" id="key-input" placeholder="XXXX-XXXX-XXXX-XXXX" required
+                     class="w-full px-4 py-3 rounded-xl glass-input text-xs font-mono-custom text-white placeholder:text-slate-600 outline-none">
+              <button type="submit" class="w-full sm:w-auto px-6 py-3 rounded-xl cyan-glow-btn font-extrabold text-xs transition-all whitespace-nowrap">
+                Активировать
+              </button>
+            </form>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Quick Actions -->
+        <div class="space-y-6">
+          <div class="glass-panel rounded-3xl p-6">
+            <div class="flex items-center gap-2 text-sm font-bold text-white mb-6 border-b border-white/5 pb-4">
+              <span>⚡</span> Быстрые действия
+            </div>
+
+            <div class="space-y-3 text-xs">
+              <a href="obxod_client.exe" download
+                 class="w-full p-3.5 rounded-xl cyan-glow-btn font-extrabold flex items-center justify-center gap-2 transition-all">
+                <span>📥</span> Скачать obxod_client.exe
+              </a>
+
+              <button onclick="alert('Каталог товаров')"
+                      class="w-full p-3.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 font-semibold flex items-center gap-3 transition-all border border-slate-700">
+                <span>🧰</span> Товары и Подписки
+              </button>
+
+              <button onclick="logout()"
+                      class="w-full p-3.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-semibold flex items-center gap-3 transition-all border border-red-500/20">
+                <span>🚪</span> Выйти из аккаунта
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-white/5 py-6 px-4 text-center text-xs text-slate-500 font-mono-custom">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>© 2026 Obxod Client Security Engine. All rights reserved.</div>
+      <div class="flex gap-6 text-slate-400">
+        <a href="#" onclick="showView('landing')" class="hover:text-[#00f0ff]">Главная</a>
+        <a href="#" onclick="showView('dashboard')" class="hover:text-[#00f0ff]">Личный кабинет</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- CLIENT-SIDE JS STATE MACHINE -->
+  <script>
+    let activeAuthMode = 'register';
+    let currentUser = JSON.parse(localStorage.getItem('obxod_registered_user')) || null;
+
+    function initApp() {
+      updateNavState();
+      if (currentUser) {
+        showView('dashboard');
+      } else {
+        showView('landing');
+      }
+    }
+
+    function showView(viewName) {
+      if (viewName === 'dashboard' && !currentUser) {
+        switchAuthTab('register');
+        viewName = 'auth';
+      }
+
+      document.getElementById('view-landing').classList.add('hidden');
+      document.getElementById('view-auth').classList.add('hidden');
+      document.getElementById('view-dashboard').classList.add('hidden');
+
+      const target = document.getElementById('view-' + viewName);
+      if (target) {
+        target.classList.remove('hidden');
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function handleDownloadClick() {
+      if (currentUser) {
+        window.location.href = "obxod_client.exe";
+      } else {
+        alert('ℹ️ Пожалуйста, зарегистрируйтесь или войдите в аккаунт для скачивания.');
+        showView('auth');
+      }
+    }
+
+    function switchAuthTab(mode) {
+      activeAuthMode = mode;
+      const btnRegister = document.getElementById('tab-register');
+      const btnLogin = document.getElementById('tab-login');
+      const btnLabel = document.getElementById('auth-btn-label');
+      const title = document.getElementById('auth-title');
+      const subtitle = document.getElementById('auth-subtitle');
+      const switchPrompt = document.getElementById('auth-switch-prompt');
+
+      if (mode === 'register') {
+        btnRegister.className = "py-2 rounded-lg bg-[#00f0ff] text-black font-bold transition-all";
+        btnLogin.className = "py-2 rounded-lg text-slate-400 hover:text-white transition-all";
+        btnLabel.innerText = "Зарегистрироваться";
+        title.innerText = "Регистрация аккаунта";
+        subtitle.innerText = "Зарегистрируйтесь для доступа к личному кабинету и скачиванию.";
+        switchPrompt.innerHTML = 'Уже есть аккаунт? <button type="button" onclick="switchAuthTab(\'login\')" class="text-[#00f0ff] font-semibold hover:underline">Войти</button>';
+      } else {
+        btnLogin.className = "py-2 rounded-lg bg-[#00f0ff] text-black font-bold transition-all";
+        btnRegister.className = "py-2 rounded-lg text-slate-400 hover:text-white transition-all";
+        btnLabel.innerText = "Войти";
+        title.innerText = "Вход в аккаунт";
+        subtitle.innerText = "Введите имя пользователя и пароль для входа.";
+        switchPrompt.innerHTML = 'Нет аккаунта? <button type="button" onclick="switchAuthTab(\'register\')" class="text-[#00f0ff] font-semibold hover:underline">Регистрация</button>';
+      }
+    }
+
+    function handleAuthSubmit(e) {
+      e.preventDefault();
+      const inputUsername = document.getElementById('auth-username').value.trim();
+      const inputEmail = document.getElementById('auth-email').value.trim();
+
+      if (!inputUsername) {
+        alert('Пожалуйста, введите ваше имя пользователя');
+        return;
+      }
+
+      const today = new Date();
+      const regDateStr = String(today.getDate()).padStart(2, '0') + '.' + String(today.getMonth() + 1).padStart(2, '0') + '.' + today.getFullYear();
+      const randomUid = '#' + Math.floor(1000 + Math.random() * 9000);
+
+      currentUser = {
+        username: inputUsername,
+        email: inputEmail || (inputUsername.toLowerCase() + '@obxodclient.pro'),
+        uid: randomUid,
+        subUntil: "Бессрочно",
+        role: "BETA USER",
+        regDate: regDateStr,
+        hwid: "c837124c" + Math.random().toString(16).substring(2, 10) + "1143b8816b0e0460"
+      };
+
+      localStorage.setItem('obxod_registered_user', JSON.stringify(currentUser));
+      updateNavState();
+      showView('dashboard');
+    }
+
+    function updateNavState() {
+      const authBtn = document.getElementById('nav-auth-btn');
+      const profileBtn = document.getElementById('nav-profile-btn');
+
+      if (currentUser) {
+        authBtn.classList.add('hidden');
+        profileBtn.classList.remove('hidden');
+        document.getElementById('nav-username').innerText = currentUser.username;
+        document.getElementById('dash-username-title').innerText = currentUser.username;
+        document.getElementById('dash-user-val').innerText = currentUser.username;
+        document.getElementById('dash-email-val').innerText = currentUser.email;
+        document.getElementById('dash-uid-val').innerText = currentUser.uid;
+        document.getElementById('dash-sub-val').innerText = currentUser.subUntil;
+        document.getElementById('dash-reg-val').innerText = currentUser.regDate;
+        document.getElementById('dash-hwid-val').innerText = currentUser.hwid;
+      } else {
+        authBtn.classList.remove('hidden');
+        profileBtn.classList.add('hidden');
+      }
+    }
+
+    function activateKey(e) {
+      e.preventDefault();
+      const key = document.getElementById('key-input').value.trim();
+      if (key) {
+        alert('✅ Лицензионный ключ "' + key + '" успешно активирован!');
+        document.getElementById('key-input').value = '';
+      }
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('obxod_registered_user');
+      document.getElementById('auth-username').value = '';
+      document.getElementById('auth-email').value = '';
+      document.getElementById('auth-password').value = '';
+      updateNavState();
+      showView('landing');
+    }
+
+    document.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
