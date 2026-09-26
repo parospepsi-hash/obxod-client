@@ -1902,6 +1902,20 @@
         return;
       }
 
+      // Prevent key reuse by another user
+      for (let uKey in usersDB) {
+        const existingUser = usersDB[uKey];
+        if (existingUser && existingUser.username.toLowerCase() !== currentUser.username.toLowerCase()) {
+          if (existingUser.activeKey && existingUser.activeKey.toUpperCase() === rawKey) {
+            const errKeyUsed = currentLang === 'ru'
+              ? '❌ Этот лицензионный ключ уже активирован другим пользователем (' + existingUser.username + ')!'
+              : '❌ This license key is already activated by another user!';
+            showInlineKeyMsg(errKeyUsed, false);
+            return;
+          }
+        }
+      }
+
       let daysToAdd = 30;
       if (rawKey.includes("YEAR") || rawKey.includes("365") || rawKey.includes("GOD") || rawKey.includes("ANNUAL") || rawKey.includes("LIFETIME")) {
         daysToAdd = 365;
