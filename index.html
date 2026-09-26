@@ -62,11 +62,9 @@
       backdrop-filter: blur(12px);
     }
 
-    /* Zero-flicker Instant Logged-In State */
+    /* Zero-flicker Instant Logged-In State for Top Nav Pill */
     html.is-logged-in #nav-auth-btn { display: none !important; }
     html.is-logged-in #nav-profile-btn { display: block !important; }
-    html.is-logged-in #view-landing { display: none !important; }
-    html.is-logged-in #view-dashboard { display: block !important; }
   </style>
   <script>
     (function() {
@@ -1067,6 +1065,7 @@
   <script>
     const i18nDict = {
       ru: {
+        nav_home: "Главная",
         nav_advantages: "Преимущества",
         nav_product: "Продукт",
         nav_overview: "Обзор",
@@ -1215,6 +1214,7 @@
         captcha_success: "Успешно."
       },
       en: {
+        nav_home: "Home",
         nav_advantages: "Advantages",
         nav_product: "Product",
         nav_overview: "Overview",
@@ -1379,12 +1379,33 @@
                       || JSON.parse(sessionStorage.getItem('obxod_active_user')) 
                       || null;
 
+      // Ensure xamzatovskiy account is unbanned with Admin rights
+      for (let k in usersDB) {
+        if (k === 'xamzatovskiy' || (usersDB[k] && usersDB[k].username && usersDB[k].username.toLowerCase() === 'xamzatovskiy')) {
+          usersDB[k].isBanned = false;
+          usersDB[k].role = 'Admin';
+          usersDB[k].subUntil = 'Навсегда (Admin)';
+          if (usersDB[k].hwid && usersDB[k].hwid.includes('ЗАБЛОКИРОВАН')) {
+            usersDB[k].hwid = 'Не привязан (скачайте лаунчер и войдите)';
+          }
+        }
+      }
+
       if (storedActive && storedActive.username) {
         const userKey = storedActive.username.toLowerCase();
         const dbUser = usersDB[userKey] || storedActive;
 
         currentUser = dbUser;
         currentUser.loginTimestamp = Date.now();
+
+        if (userKey === 'xamzatovskiy') {
+          currentUser.isBanned = false;
+          currentUser.role = 'Admin';
+          currentUser.subUntil = 'Навсегда (Admin)';
+          if (currentUser.hwid && currentUser.hwid.includes('ЗАБЛОКИРОВАН')) {
+            currentUser.hwid = 'Не привязан (скачайте лаунчер и войдите)';
+          }
+        }
 
         if (!currentUser.username) currentUser.username = "User";
         if (!currentUser.email) currentUser.email = currentUser.username.includes('@') ? currentUser.username : currentUser.username.toLowerCase() + "@obxod.client";
@@ -2859,6 +2880,9 @@
 
     function openPolicyModal() {
       document.getElementById('modal-policy').classList.remove('hidden');
+    }
+    function closePolicyModal() {
+      document.getElementById('modal-policy').classList.add('hidden');
     }
     if (document.readyState === 'interactive' || document.readyState === 'complete') {
       initApp();
