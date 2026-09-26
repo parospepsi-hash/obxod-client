@@ -1207,7 +1207,7 @@
     let userCounter = parseInt(localStorage.getItem('obxod_user_counter')) || 0;
     let currentUser = JSON.parse(localStorage.getItem('obxod_active_user')) || null;
 
-    const SESSION_EXPIRY_MS = 2 * 60 * 60 * 1000; // 2 hours session expiry
+    const SESSION_EXPIRY_MS = 30 * 24 * 60 * 60 * 1000; // 30 days active session persistence
 
     function initApp() {
       usersDB = JSON.parse(localStorage.getItem('obxod_users_db')) || {};
@@ -1219,21 +1219,13 @@
         const userKey = storedActive.username.toLowerCase();
         const dbUser = usersDB[userKey] || storedActive;
 
-        if (!dbUser.loginTimestamp) {
-          dbUser.loginTimestamp = storedActive.loginTimestamp || Date.now();
-        }
-
-        const elapsed = Date.now() - dbUser.loginTimestamp;
-
-        if (elapsed > SESSION_EXPIRY_MS) {
-          currentUser = null;
-          localStorage.removeItem('obxod_active_user');
-          sessionStorage.removeItem('obxod_active_user');
-        } else {
-          currentUser = dbUser;
-          localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
-          sessionStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
-        }
+        currentUser = dbUser;
+        currentUser.loginTimestamp = Date.now();
+        
+        usersDB[userKey] = currentUser;
+        localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+        localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+        sessionStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
       } else {
         currentUser = null;
         localStorage.removeItem('obxod_active_user');
@@ -1244,8 +1236,8 @@
       updateNavState();
       
       const savedView = sessionStorage.getItem('obxod_active_view');
-      if (currentUser && savedView === 'dashboard') {
-        showView('dashboard');
+      if (currentUser) {
+        showView(savedView && savedView !== 'auth' ? savedView : 'dashboard');
       } else {
         showView('landing');
       }
@@ -1805,13 +1797,41 @@
 
       try {
         let syncData = null;
-        try {
-          const resp = await fetch('hwid_sync.json?t=' + Date.now());
-          if (resp.ok) {
-            syncData = await resp.json();
-          }
-        } catch (e) {}
 
+        // 1. Check local launcher HTTP API ports first (18888, 18889, 18890)
+        const ports = [18888, 18889, 18890];
+        for (let p of ports) {
+          try {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 600);
+            const resp = await fetch(`http://127.0.0.1:${p}/hwid`, { signal: controller.signal });
+            clearTimeout(timer);
+            if (resp.ok) {
+              const apiRes = await resp.json();
+              if (apiRes && apiRes.hwid) {
+                syncData = { [apiRes.key || 'LATEST']: apiRes, LATEST: apiRes };
+                break;
+              }
+            }
+          } catch (e) {}
+        }
+
+        // 2. Check window.__OBXOD_HWID_SYNC global object
+        if (!syncData && window.__OBXOD_HWID_SYNC) {
+          syncData = window.__OBXOD_HWID_SYNC;
+        }
+
+        // 3. Fallback to fetch hwid_sync.json
+        if (!syncData) {
+          try {
+            const resp = await fetch('hwid_sync.json?t=' + Date.now());
+            if (resp.ok) {
+              syncData = await resp.json();
+            }
+          } catch (e) {}
+        }
+
+        // 4. Fallback to localStorage store
         if (!syncData) {
           try {
             syncData = JSON.parse(localStorage.getItem('obxod_hwid_sync_store')) || null;
@@ -1820,35 +1840,48 @@
 
         if (syncData) {
           let foundHWID = null;
+          let matchedKey = null;
           const userKey = (currentUser.activeKey || '').toUpperCase();
           
-          if (userKey && syncData[userKey]) {
+          if (userKey && syncData[userKey] && syncData[userKey].hwid) {
             foundHWID = syncData[userKey].hwid;
+            matchedKey = userKey;
+          } else if (syncData["LATEST"] && syncData["LATEST"].hwid) {
+            foundHWID = syncData["LATEST"].hwid;
+            matchedKey = syncData["LATEST"].key;
           } else if (typeof syncData === 'object') {
             const keys = Object.keys(syncData);
             if (keys.length > 0) {
-              const matchedKey = keys.find(k => k.toUpperCase() === userKey);
-              if (matchedKey && syncData[matchedKey]) {
-                foundHWID = syncData[matchedKey].hwid;
-              } else {
-                foundHWID = syncData[keys[keys.length - 1]]?.hwid || syncData.hwid;
-              }
+              const matched = keys.find(k => k.toUpperCase() === userKey) || keys[keys.length - 1];
+              foundHWID = syncData[matched]?.hwid || syncData.hwid;
+              matchedKey = matched;
             }
           }
 
-          if (foundHWID && currentUser.hwid !== foundHWID) {
-            currentUser.hwid = foundHWID;
-            if (!currentUser.loginTimestamp) currentUser.loginTimestamp = Date.now();
-            usersDB[currentUser.username.toLowerCase()] = currentUser;
-            localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
-            localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
-            sessionStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+          if (foundHWID) {
+            let stateUpdated = false;
+            if (currentUser.hwid !== foundHWID) {
+              currentUser.hwid = foundHWID;
+              stateUpdated = true;
+            }
+            if (matchedKey && !currentUser.activeKey) {
+              currentUser.activeKey = matchedKey;
+              stateUpdated = true;
+            }
 
-            // Instant DOM update on site
-            const hwidVal = document.getElementById('dash-hwid-val');
-            if (hwidVal) {
-              hwidVal.innerText = "🟢 " + currentUser.hwid + (currentLang === 'ru' ? " (Привязан к ПК)" : " (Bound to PC)");
-              hwidVal.className = "font-extrabold text-emerald-400 font-mono-custom mt-0.5 text-xs tracking-wide";
+            if (stateUpdated) {
+              if (!currentUser.loginTimestamp) currentUser.loginTimestamp = Date.now();
+              usersDB[currentUser.username.toLowerCase()] = currentUser;
+              localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+              localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+              sessionStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+
+              // Instant DOM update on site
+              const hwidVal = document.getElementById('dash-hwid-val');
+              if (hwidVal) {
+                hwidVal.innerText = "🟢 " + currentUser.hwid + (currentLang === 'ru' ? " (Привязан к ПК)" : " (Bound to PC)");
+                hwidVal.className = "font-extrabold text-emerald-400 font-mono-custom mt-0.5 text-xs tracking-wide";
+              }
             }
           }
         }
