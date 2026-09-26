@@ -1,0 +1,2550 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Obxod Client — Официальный сайт</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0b0d12;
+      color: #f1f5f9;
+      scroll-behavior: smooth;
+    }
+    .font-mono-custom {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Background Blur & Glassmorphism - Genuine Minecraft Shader Wallpaper */
+    .bg-mc-wallpaper {
+      background: linear-gradient(180deg, rgba(9, 12, 18, 0.60) 0%, rgba(11, 13, 18, 0.90) 100%), 
+                  url('https://wallpapers.com/images/featured/minecraft-s2kxfahyg30sob8q.jpg') center/cover no-repeat fixed;
+    }
+    .bg-blue-theme {
+      background: linear-gradient(180deg, rgba(4, 24, 44, 0.65) 0%, rgba(6, 18, 34, 0.92) 100%), 
+                  url('https://wallpapers.com/images/featured/minecraft-s2kxfahyg30sob8q.jpg') center/cover no-repeat fixed !important;
+    }
+    .glass-nav {
+      background: rgba(18, 22, 31, 0.25);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .glass-panel {
+      background: rgba(18, 22, 31, 0.35);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .glass-input {
+      background: rgba(15, 19, 28, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .glass-input:focus, .glass-input:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
+    }
+
+    /* Glow Effects */
+    .cyan-glow-btn {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .cyan-glow-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .modal-backdrop {
+      background: rgba(5, 8, 14, 0.85);
+      backdrop-filter: blur(12px);
+    }
+
+    /* Zero-flicker Instant Logged-In State */
+    html.is-logged-in #nav-auth-btn { display: none !important; }
+    html.is-logged-in #nav-profile-btn { display: block !important; }
+    html.is-logged-in #view-landing { display: none !important; }
+    html.is-logged-in #view-dashboard { display: block !important; }
+  </style>
+  <script>
+    (function() {
+      try {
+        var u = JSON.parse(localStorage.getItem('obxod_active_user')) || JSON.parse(sessionStorage.getItem('obxod_active_user'));
+        if (u && u.username) {
+          document.documentElement.classList.add('is-logged-in');
+        }
+      } catch(e) {}
+    })();
+  </script>
+</head>
+<body class="bg-[#0b0d12] text-slate-100 min-h-screen bg-mc-wallpaper flex flex-col justify-between antialiased selection:bg-slate-700 selection:text-white">
+
+  <!-- Top Floating Pill Navigation Bar (Transparent Glass with Border) -->
+  <header class="fixed top-5 left-1/2 -translate-x-1/2 z-50 w-full max-w-5xl px-4">
+    <div class="glass-nav rounded-full px-6 py-3 flex items-center justify-between shadow-lg">
+      <!-- Logo -->
+      <a href="#" onclick="showView('landing')" class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-slate-900 border border-white/20 flex items-center justify-center text-white font-extrabold text-sm shadow-md">
+          ⚡
+        </div>
+        <span class="font-bold text-base tracking-tight text-white">ObxodClient</span>
+      </a>
+
+      <!-- Center Links -->
+      <nav class="hidden md:flex items-center gap-6 text-xs font-medium text-slate-300">
+        <a href="#advantages" onclick="scrollToSection('advantages', event)" class="hover:text-white transition-colors flex items-center gap-1.5">
+          <span>✨</span> <span data-i18n="nav_advantages">Преимущества</span>
+        </a>
+        <a href="#product" onclick="scrollToSection('product', event)" class="hover:text-white transition-colors flex items-center gap-1.5">
+          <span>📦</span> <span data-i18n="nav_product">Продукт</span>
+        </a>
+        <a href="#overview" onclick="scrollToSection('overview', event)" class="hover:text-white transition-colors flex items-center gap-1.5">
+          <span>📊</span> <span data-i18n="nav_overview">Обзор</span>
+        </a>
+        <a href="#policy" onclick="openPolicyModal()" class="hover:text-white transition-colors flex items-center gap-1.5">
+          <span>⚖️</span> <span data-i18n="nav_policy">Политика</span>
+        </a>
+      </nav>
+
+      <!-- Right Profile Pill / Auth Button & Language Switcher -->
+      <div class="flex items-center gap-3">
+        <!-- Language Switcher -->
+        <button type="button" onclick="toggleLanguage()" class="px-3 py-1 rounded-full bg-white/5 hover:bg-white/15 text-xs font-mono-custom text-slate-200 border border-white/10 transition-all flex items-center gap-1">
+          <span id="lang-current">RU</span>
+        </button>
+
+        <!-- Logged In Profile Pill -->
+        <div id="nav-profile-btn" class="hidden">
+          <button onclick="showView('dashboard')" class="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/30 transition-all">
+            <div id="nav-avatar-icon" class="w-6 h-6 rounded-full bg-white/10 border border-white/20 text-slate-200 flex items-center justify-center font-bold text-[10px] overflow-hidden shrink-0">
+              👤
+            </div>
+            <span id="nav-username" class="text-xs font-bold text-white"></span>
+          </button>
+        </div>
+
+        <!-- Logged Out Auth Button -->
+        <div id="nav-auth-btn">
+          <button onclick="showView('auth')" class="px-4 py-1.5 rounded-full bg-white/5 hover:bg-white/15 text-white font-bold text-xs transition-all border border-white/10" data-i18n="btn_login_nav">
+            Вход / Регистрация
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT VIEWS CONTAINER -->
+  <main class="flex-1 pt-32 pb-24 px-4 max-w-6xl mx-auto w-full">
+
+    <!-- VIEW 1: LANDING PAGE -->
+    <div id="view-landing" class="space-y-36 sm:space-y-48">
+      
+      <!-- Hero Header & Laptop Mockup -->
+      <section class="text-center pt-8">
+
+        <h1 class="text-4xl sm:text-6xl font-extrabold text-white tracking-tight mb-8 leading-tight">
+          <span data-i18n="hero_title_1">Полный контроль над</span><br/>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 via-blue-400 to-indigo-400" data-i18n="hero_title_2">AnyDesk подключением</span>
+        </h1>
+
+        <div class="flex flex-col items-center justify-center gap-3 mb-32 sm:mb-40">
+          <div class="flex items-center justify-center gap-4">
+            <a href="#product" onclick="scrollToSection('product')" class="px-8 py-3.5 rounded-xl cyan-glow-btn font-extrabold text-sm transition-all flex items-center gap-2">
+              <span>💳</span> <span data-i18n="btn_buy_hero">Купить подписку</span>
+            </a>
+          </div>
+          <!-- Hero Inline Notification Message -->
+          <div id="hero-msg" class="hidden text-xs font-semibold px-4 py-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300"></div>
+        </div>
+
+        <!-- Laptop Device Mockup - REAL OBXOD CLIENT APP UI (Matches Screenshot 2) -->
+        <div id="overview" class="relative max-w-4xl mx-auto pt-4 pb-12">
+          <div class="absolute -inset-2 bg-red-600/20 rounded-3xl blur-2xl"></div>
+          
+          <!-- Outer App Window Frame -->
+          <div class="relative bg-[#090c10] border-2 border-slate-700/80 rounded-2xl overflow-hidden shadow-2xl text-left text-xs font-sans">
+            
+            <!-- Window Title Bar -->
+            <div class="bg-[#0e121a] px-4 py-2 flex items-center justify-between border-b border-slate-800">
+              <div class="flex items-center gap-2">
+                <div class="w-3.5 h-3.5 rounded bg-blue-500 flex items-center justify-center text-white font-bold text-[9px]">◆</div>
+                <span class="text-xs text-slate-300 font-medium">Obxod Client version 5.6</span>
+              </div>
+              <div class="flex items-center gap-3 text-slate-400 text-xs font-mono-custom">
+                <span>—</span>
+                <span>□</span>
+                <span class="hover:text-red-400 cursor-pointer">✕</span>
+              </div>
+            </div>
+
+            <!-- Main App Screen (Split Sidebar + Content) -->
+            <div class="grid grid-cols-1 md:grid-cols-4 min-h-[420px]">
+              
+              <!-- Left Sidebar -->
+              <div class="bg-[#0d1117] p-4 border-r border-slate-800/80 flex flex-col justify-between space-y-4">
+                <div class="space-y-4">
+                  <!-- Header -->
+                  <div>
+                    <div class="flex items-center gap-2 font-black text-white text-sm tracking-wider">
+                      <span class="text-red-500">♦</span> OBXOD CLIENT
+                    </div>
+                    <div class="text-[10px] text-slate-500 font-mono-custom mt-0.5">version 5.6 HUD</div>
+                  </div>
+
+                  <!-- Protection Status Pill -->
+                  <div class="p-2 rounded-xl bg-red-950/60 border border-red-600/60 text-red-400 font-bold text-[11px] flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+                    <span data-i18n="mock_prot_off">ЗАЩИТА ВЫКЛЮЧЕНА</span>
+                  </div>
+
+                  <!-- Navigation Links -->
+                  <nav class="space-y-1.5 pt-2">
+                    <div class="px-3 py-2 rounded-xl bg-slate-800/90 text-white font-bold flex items-center gap-2 border border-slate-700">
+                      <span>⚡</span> <span data-i18n="mock_nav_main">Главная</span>
+                    </div>
+                    <div class="px-3 py-2 rounded-xl text-slate-400 hover:text-white font-medium flex items-center gap-2 transition-all cursor-pointer">
+                      <span>🧹</span> <span data-i18n="mock_nav_clean">Чистка</span>
+                    </div>
+                    <div class="px-3 py-2 rounded-xl text-slate-400 hover:text-white font-medium flex items-center gap-2 transition-all cursor-pointer">
+                      <span>📜</span> <span data-i18n="mock_nav_history">История</span>
+                    </div>
+                    <div class="px-3 py-2 rounded-xl text-slate-400 hover:text-white font-medium flex items-center gap-2 transition-all cursor-pointer">
+                      <span>⚙️</span> <span data-i18n="mock_nav_settings">Настройки</span>
+                    </div>
+                  </nav>
+                </div>
+
+                <!-- Bottom AnyDesk ID Box -->
+                <div class="p-3 rounded-xl bg-[#131924] border border-slate-800 space-y-1.5">
+                  <div class="text-[10px] text-slate-400" data-i18n="mock_your_id">🔑 Ваш AnyDesk ID:</div>
+                  <div class="text-xs font-extrabold text-white font-mono-custom">1 777 777 777</div>
+                  <button class="w-full py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-bold border border-slate-700" data-i18n="mock_copy_id">
+                    📋 Скопировать ID
+                  </button>
+                </div>
+              </div>
+
+              <!-- Main Dashboard Area -->
+              <div class="md:col-span-3 p-5 bg-[#090c10] space-y-4 flex flex-col justify-between">
+                
+                <div class="space-y-4">
+                  <!-- Main Status Control Banner (Red Border) -->
+                  <div class="p-4 rounded-2xl bg-red-950/20 border-2 border-red-600/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-xl bg-red-600/20 border border-red-500/40 text-red-500 flex items-center justify-center text-xl font-bold">
+                        🛡️
+                      </div>
+                      <div>
+                        <h4 class="text-sm font-extrabold text-white" data-i18n="mock_banner_title">Obxod Access Control — Защита подключения</h4>
+                        <div class="text-xs font-bold text-red-400 mt-0.5" data-i18n="mock_banner_status">СТАТУС: БЕЗ ЗАЩИТЫ</div>
+                        <div class="text-[11px] text-slate-400 mt-0.5" data-i18n="mock_banner_warn">ВНИМАНИЕ: Входящие подключения сейчас РАЗРЕШЕНЫ.</div>
+                      </div>
+                    </div>
+
+                    <div class="flex flex-col items-end gap-2 w-full sm:w-auto">
+                      <div class="text-[10px] text-slate-400 flex items-center gap-1.5 whitespace-nowrap"><span data-i18n="mock_mode_label">Режим блокировки:</span> <span class="bg-slate-900 text-white px-2 py-0.5 rounded border border-slate-700 font-mono-custom whitespace-nowrap" data-i18n="mock_mode_val">Мгновенный сброс ▼</span></div>
+                      <div class="text-[10px] text-slate-400 font-mono-custom" data-i18n="mock_time_label">⏱ Время защиты: 00:00:00</div>
+                      <button class="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-extrabold text-xs transition-all shadow-md flex items-center gap-1.5 whitespace-nowrap" data-i18n="mock_btn_enable">
+                        🔴 ВКЛЮЧИТЬ ЗАЩИТУ
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Quick Actions Toolbar -->
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+                    <button class="p-2.5 rounded-xl bg-red-600/90 text-white font-bold text-center border border-red-500 shadow" data-i18n="mock_act_emergency">
+                      🔴 Экстренный сброс
+                    </button>
+                    <button class="p-2.5 rounded-xl bg-slate-900 text-slate-200 font-semibold text-center border border-slate-800 hover:border-slate-700" data-i18n="mock_act_restart">
+                      🔄 Перезапуск AnyDesk
+                    </button>
+                    <button class="p-2.5 rounded-xl bg-slate-900 text-slate-200 font-semibold text-center border border-slate-800 hover:border-slate-700" data-i18n="mock_act_folder">
+                      📁 Папка AnyDesk
+                    </button>
+                    <button class="p-2.5 rounded-xl bg-slate-900 text-slate-200 font-semibold text-center border border-slate-800 hover:border-slate-700" data-i18n="mock_act_kill">
+                      ☣️ Завершить AnyDesk
+                    </button>
+                  </div>
+
+                  <!-- Blocked Connections Table -->
+                  <div class="rounded-xl bg-slate-950/90 border border-slate-800 overflow-hidden">
+                    <div class="p-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between text-xs font-bold text-white">
+                      <div class="flex items-center gap-2">
+                        <span>⚡</span> <span data-i18n="mock_tbl_title">Заблокированные подключения</span> <span class="text-slate-500 font-mono-custom font-normal text-[11px]" data-i18n="mock_tbl_count">(0 перехвачено)</span>
+                      </div>
+                      <div class="flex gap-2 text-[10px]">
+                        <span class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300" data-i18n="mock_btn_export">📊 Экспорт</span>
+                        <span class="px-2.5 py-1 rounded bg-slate-800 border border-slate-700 text-slate-300" data-i18n="mock_btn_clear">🗑️ Очистить</span>
+                      </div>
+                    </div>
+
+                    <div class="grid grid-cols-4 p-2.5 text-[10px] font-mono-custom text-slate-400 bg-slate-900/40 border-b border-slate-800">
+                      <div data-i18n="mock_th_datetime">Дата / Время</div>
+                      <div data-i18n="mock_th_remoteid">Удалённый ID</div>
+                      <div data-i18n="mock_th_action">Действие</div>
+                      <div data-i18n="mock_th_details">Сетевой узел / Детали</div>
+                    </div>
+
+                    <div class="p-8 text-center text-xs text-slate-500 font-mono-custom" data-i18n="mock_tbl_empty">
+                      🌓 Входящих сессий пока не зафиксировано. Любая попытка звонка будет заблокирована и записана сюда.
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+          <div class="h-3 w-48 bg-slate-700 rounded-b-xl mx-auto shadow-md"></div>
+        </div>
+      </section>
+
+      <!-- SECTION 1: PRODUCT / PRICING CARDS (Matches media_1790425610062.png without Additions button) -->
+      <section id="product" class="glass-panel rounded-3xl p-10 sm:p-14 border border-white/5 shadow-2xl space-y-12">
+        
+        <div class="text-center max-w-2xl mx-auto space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/90 border border-slate-700 text-slate-300 text-xs font-mono-custom">
+            <span>🛡️</span> <span data-i18n="product_badge">Официальные тарифы</span>
+          </div>
+          <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight" data-i18n="product_title">Выберите план подписки</h2>
+          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-lg mx-auto" data-i18n="product_subtitle">
+            Выберите удобный период доступа для полной защиты от нежелательных подключений AnyDesk и очистки ПК.
+          </p>
+
+          <!-- Subscriptions Pill Badge -->
+          <div class="inline-flex items-center p-1 rounded-xl bg-slate-900/90 border border-slate-800 text-xs font-semibold mt-4">
+            <span class="px-6 py-2.5 rounded-lg bg-[#3b82f6] text-white shadow-md" data-i18n="btn_sub_pill">Доступные подписки</span>
+          </div>
+        </div>
+
+        <!-- 4 Plan Cards: 30d, 90d, 365d & 50 Rubles HWID Reset -->
+        <div id="pricing" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-6">
+          
+          <!-- Card 1: 30 days -->
+          <div class="rounded-2xl bg-slate-900/90 border border-slate-800 overflow-hidden flex flex-col justify-between hover:border-[#3b82f6] transition-all shadow-lg group">
+            <div>
+              <div class="h-32 overflow-hidden relative">
+                <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=800&auto=format&fit=crop" alt="Cat Banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90"/>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+              </div>
+              <div class="p-5">
+                <h3 class="text-lg font-bold text-white mb-1" data-i18n="plan_30_title">30 дней</h3>
+                <p class="text-xs text-slate-400 mb-4" data-i18n="plan_30_desc">Базовый период защиты.</p>
+                <div class="text-2xl font-extrabold text-white mb-5 font-mono-custom">100 ₽ <span class="text-xs font-normal text-slate-400" data-i18n="lbl_per_30">/ 30 дней</span></div>
+                
+                <ul class="space-y-2.5 text-xs text-slate-300">
+                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_30_f1">Защита AnyDesk 24/7</span></li>
+                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_30_f2">Все 3 режима сброса</span></li>
+                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_30_f3">Чистка кэша Minecraft</span></li>
+                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_30_f4">Быстрая настройка</span></li>
+                </ul>
+              </div>
+            </div>
+            <div class="p-5 pt-0">
+              <a href="https://t.me/" target="_blank" class="w-full py-2.5 rounded-xl bg-[#3b82f6] hover:bg-[#2563eb] text-white text-center text-xs font-extrabold transition-all flex items-center justify-center gap-1 shadow-md" data-i18n="btn_buy_card">
+                Купить ↗
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 2: 90 days -->
+          <div class="rounded-2xl bg-slate-900/90 border border-slate-800 overflow-hidden flex flex-col justify-between hover:border-[#3b82f6] transition-all shadow-lg group">
+            <div>
+              <div class="h-32 overflow-hidden relative">
+                <img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?q=80&w=800&auto=format&fit=crop" alt="Cat Banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90"/>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+              </div>
+              <div class="p-5">
+                <h3 class="text-lg font-bold text-white mb-1" data-i18n="plan_90_title">90 дней</h3>
+                <p class="text-xs text-slate-400 mb-4" data-i18n="plan_90_desc">Оптимальный выбор с экономией.</p>
+                <div class="text-2xl font-extrabold text-white mb-5 font-mono-custom">200 ₽ <span class="text-xs font-normal text-slate-400" data-i18n="lbl_per_90">/ 90 дней</span></div>
+                
+                <ul class="space-y-2.5 text-xs text-slate-300">
+                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_90_f1">Всё из тарифа 30 дней</span></li>
+                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_90_f2">Экономия > 30% стоимости</span></li>
+                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_90_f3">Обновления v5.6+</span></li>
+                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_90_f4">Приоритет поддержка</span></li>
+                </ul>
+              </div>
+            </div>
+            <div class="p-5 pt-0">
+              <a href="https://t.me/" target="_blank" class="w-full py-2.5 rounded-xl bg-[#3b82f6] hover:bg-[#2563eb] text-white text-center text-xs font-extrabold transition-all flex items-center justify-center gap-1 shadow-md" data-i18n="btn_buy_card">
+                Купить ↗
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 3: 365 days -->
+          <div class="rounded-2xl bg-slate-900/90 border border-slate-800 overflow-hidden flex flex-col justify-between hover:border-[#3b82f6] transition-all shadow-lg group">
+            <div>
+              <div class="h-32 overflow-hidden relative">
+                <img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=800&auto=format&fit=crop" alt="Cat Banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90"/>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+              </div>
+              <div class="p-5">
+                <h3 class="text-lg font-bold text-white mb-1" data-i18n="plan_365_title">365 дней</h3>
+                <p class="text-xs text-slate-400 mb-4" data-i18n="plan_365_desc">Максимальный период на 1 год.</p>
+                <div class="text-2xl font-extrabold text-white mb-5 font-mono-custom">350 ₽ <span class="text-xs font-normal text-slate-400" data-i18n="lbl_per_365">/ 365 дней</span></div>
+                
+                <ul class="space-y-2.5 text-xs text-slate-300">
+                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_365_f1">Подписка на 1 год (365д)</span></li>
+                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_365_f2">Все релизы и апдейты</span></li>
+                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_365_f3">Поддержка 24/7</span></li>
+                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_365_f4">Максимальный приоритет</span></li>
+                </ul>
+              </div>
+            </div>
+            <div class="p-5 pt-0">
+              <a href="https://t.me/" target="_blank" class="w-full py-2.5 rounded-xl bg-[#3b82f6] hover:bg-[#2563eb] text-white text-center text-xs font-extrabold transition-all flex items-center justify-center gap-1 shadow-md" data-i18n="btn_buy_card">
+                Купить ↗
+              </a>
+            </div>
+          </div>
+
+          <!-- Card 4: HWID Reset (50 Rubles) -->
+          <div class="rounded-2xl bg-slate-900/90 border border-emerald-500/40 overflow-hidden flex flex-col justify-between hover:border-emerald-400 transition-all shadow-lg group">
+            <div>
+              <div class="h-32 overflow-hidden relative">
+                <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop" alt="HWID Banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90"/>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+              </div>
+              <div class="p-5">
+                <h3 class="text-lg font-bold text-emerald-400 mb-1" data-i18n="plan_hwid_title">Сброс HWID</h3>
+                <p class="text-xs text-slate-400 mb-4" data-i18n="plan_hwid_desc">Перепривязка на новый ПК.</p>
+                <div class="text-2xl font-extrabold text-white mb-5 font-mono-custom">50 ₽</div>
+                
+                <ul class="space-y-2.5 text-xs text-slate-300">
+                  <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> <span data-i18n="plan_hwid_f1">Отвязка от старого железа</span></li>
+                  <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> <span data-i18n="plan_hwid_f2">Привязка к новому ПК</span></li>
+                  <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> <span data-i18n="plan_hwid_f3">Сохранение подписки</span></li>
+                  <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> <span data-i18n="plan_hwid_f4">Выполнение за 5 минут</span></li>
+                </ul>
+              </div>
+            </div>
+            <div class="p-5 pt-0">
+              <a href="https://t.me/" target="_blank" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-center text-xs font-extrabold transition-all flex items-center justify-center gap-1 shadow-md" data-i18n="btn_buy_hwid">
+                Купить сброс ↗
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- FunPay & Telegram Payment Seller Note Box -->
+        <div class="p-5 rounded-2xl bg-slate-950/80 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/40 flex items-center justify-center text-lg font-bold">🛒</div>
+            <div>
+              <div class="text-xs font-bold text-white" data-i18n="seller_title">Оплата через FunPay (KarenMakaren)</div>
+              <div class="text-[11px] text-slate-400" data-i18n="seller_desc">Быстрая выдача лицензионного ключа.</div>
+            </div>
+          </div>
+          <a href="https://funpay.com/users/8203586/" target="_blank" 
+             class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-all shadow-md whitespace-nowrap" data-i18n="btn_open_funpay">
+            Открыть FunPay ➔
+          </a>
+        </div>
+      </section>
+
+      <!-- SECTION 2: OVERVIEW / WHY PLAYERS CHOOSE OBXOD CLIENT (Unique Obxod Client Pro Texts) -->
+      <section id="advantages" class="space-y-24 py-16">
+        
+        <div class="text-center max-w-2xl mx-auto space-y-5">
+          <div class="text-xs font-semibold text-slate-400">
+            🛡️ <span data-i18n="why_badge">Безопасность & Контроль</span>
+          </div>
+          <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight" data-i18n="why_title">Почему выбирают Obxod Client</h2>
+          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed" data-i18n="why_subtitle">
+            Мощная автономная система блокировки нежелательных подключений AnyDesk и очистки ресурсов компьютера.
+          </p>
+        </div>
+
+        <!-- 6-Grid Features Section with Vertical Divider & Unique Obxod Client Features -->
+        <div id="advantages" class="relative max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-14">
+          
+          <!-- Center Vertical Dashed Line on Desktop -->
+          <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-px border-r border-dashed border-slate-700/60 -translate-x-1/2"></div>
+
+          <!-- Column 1 -->
+          <div class="space-y-12">
+            <div class="flex items-start gap-4">
+              <div class="text-blue-400 text-xl mt-1">⚡</div>
+              <div>
+                <h3 class="text-base font-bold text-white mb-1" data-i18n="adv_1_title">Имитация Таймаута (~60с)</h3>
+                <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_1_desc">
+                  Естественное сбрасывание подключения AnyDesk. Соперник или проверяющий увидит только стандартное сообщение о сетевом таймауте.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="text-blue-400 text-xl mt-1">⚙️</div>
+              <div>
+                <h3 class="text-base font-bold text-white mb-1" data-i18n="adv_2_title">Автономный Portable.exe</h3>
+                <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_2_desc">
+                  Не требует установки тяжелых библиотек. Работает в фоновом режиме из любой папки без нагрузки на процессор.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="text-blue-400 text-xl mt-1">📥</div>
+              <div>
+                <h3 class="text-base font-bold text-white mb-1" data-i18n="adv_3_title">Мгновенный Kill-Switch</h3>
+                <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_3_desc">
+                  Принудительное экстренное завершение всех процессов AnyDesk в 1 клик при зафиксированной внешней активности.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2 -->
+          <div class="space-y-12">
+            <div class="flex items-start gap-4">
+              <div class="text-blue-400 text-xl mt-1">🎨</div>
+              <div>
+                <h3 class="text-base font-bold text-white mb-1" data-i18n="adv_4_title">10 Монохромных Тим</h3>
+                <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_4_desc">
+                  Элегантный интерфейс с мгновенной сменой акцентного цвета под любое оформление вашей системы.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="text-blue-400 text-xl mt-1">🧹</div>
+              <div>
+                <h3 class="text-base font-bold text-white mb-1" data-i18n="adv_5_title">Очистка кэша Minecraft</h3>
+                <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_5_desc">
+                  Безопасное удаление временных файлов логов, кэша и краш-дампов для освобождения оперативной памяти перед игрой.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="text-blue-400 text-xl mt-1">🔄</div>
+              <div>
+                <h3 class="text-base font-bold text-white mb-1" data-i18n="adv_6_title">Защита KeyAuth & HWID</h3>
+                <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_6_desc">
+                  Надежная привязка лицензии к ПК и онлайн-валидация гарантируют стабильность и защиту ваших данных.
+                </p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Bottom CTA Box -->
+        <div class="text-center max-w-2xl mx-auto space-y-6 pt-16">
+          <div class="text-xs font-semibold text-slate-400" data-i18n="cta_badge">🚀 Обходите проверки прямо сейчас</div>
+          <h3 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight" data-i18n="cta_title">Готовы обезопасить свои проверки?</h3>
+          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed" data-i18n="cta_subtitle">
+            Приобретение лицензионного ключа занимает меньше 2 минут. Начните играть уверенно вместе с Obxod Client.
+          </p>
+          <div class="pt-4">
+            <a href="#product" onclick="scrollToSection('product')" class="inline-flex items-center justify-center px-8 py-3.5 rounded-xl bg-[#3b82f6] hover:bg-[#2563eb] text-white font-extrabold text-sm transition-all shadow-lg" data-i18n="btn_buy_card">
+              Купить ↗
+            </a>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- VIEW 2: AUTHENTICATION (LOGIN / REGISTER MODAL SPLIT VIEW) -->
+    <div id="view-auth" class="hidden">
+      <div class="max-w-4xl mx-auto glass-panel rounded-3xl overflow-hidden shadow-2xl grid grid-cols-1 md:grid-cols-2 min-h-[520px]">
+        
+        <div class="p-8 bg-mc-wallpaper flex flex-col justify-between border-r border-white/5 relative">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-slate-900 border border-white/20 flex items-center justify-center text-white font-extrabold text-sm">⚡</div>
+            <span class="font-bold text-white">Obxod Client</span>
+          </div>
+
+          <div class="my-auto py-12">
+            <h2 class="text-3xl font-extrabold text-white mb-3" data-i18n="auth_left_title">Ваша игра,<br/>ваша победа.</h2>
+            <p class="text-xs text-slate-300" data-i18n="auth_left_desc">Зарегистрируйте личный аккаунт для доступа к клиенту и защите.</p>
+          </div>
+
+          <div class="text-[10px] text-slate-400 font-mono-custom">
+            © 2026 Obxod Client Team. All rights reserved.
+          </div>
+        </div>
+
+        <div class="p-8 flex flex-col justify-center bg-[#10141e]/90">
+          <div class="text-center mb-6">
+            <div class="w-10 h-10 rounded-full bg-slate-900 border border-white/20 text-white flex items-center justify-center text-lg mx-auto mb-3">⚡</div>
+            <h3 id="auth-title" class="text-xl font-bold text-white">Регистрация аккаунта</h3>
+            <p id="auth-subtitle" class="text-xs text-slate-400 mt-1">Создайте новый аккаунт пользователя.</p>
+          </div>
+
+          <div class="grid grid-cols-2 p-1 rounded-xl bg-slate-900/80 border border-white/10 mb-6 text-xs font-semibold">
+            <button id="tab-register" onclick="switchAuthTab('register')" class="py-2 rounded-lg bg-slate-700 text-white font-bold border border-slate-600 transition-all shadow-md" data-i18n="tab_register">Регистрация</button>
+            <button id="tab-login" onclick="switchAuthTab('login')" class="py-2 rounded-lg text-slate-400 hover:text-white border border-transparent hover:border-white/15 transition-all" data-i18n="tab_login">Вход</button>
+          </div>
+
+          <!-- Auth Form with Inline Error Messages (NO POPUPS) -->
+          <form onsubmit="handleAuthSubmit(event); return false;" novalidate class="space-y-4">
+            <div>
+              <input type="text" id="auth-username" name="username" autocomplete="username email" placeholder="Имя пользователя" data-i18n-ph="ph_username" value=""
+                     class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none transition-all">
+            </div>
+
+            <div id="email-field-container">
+              <input type="email" id="auth-email" name="email" autocomplete="email" placeholder="Ваш Email (обязательно)" data-i18n-ph="ph_email" value=""
+                     class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none transition-all">
+            </div>
+
+            <div>
+              <input type="password" id="auth-password" name="password" autocomplete="current-password" placeholder="Пароль" data-i18n-ph="ph_password" value=""
+                     class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none transition-all">
+            </div>
+
+            <!-- INLINE STATUS MESSAGE BOX (REPLACES POPUP ALERTS) -->
+            <div id="auth-status-msg" class="hidden text-xs font-semibold p-3 rounded-xl transition-all"></div>
+
+            <div class="flex items-center justify-between text-[11px] text-slate-400">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="auth-remember" checked class="rounded bg-slate-800 border-slate-700 text-slate-300">
+                <span data-i18n="remember_me">Запомнить меня</span>
+              </label>
+              <button type="button" id="auth-reset-btn" onclick="openResetPasswordModal()" class="text-slate-300 hover:text-white hover:underline transition-colors" data-i18n="forgot_pass">Сбросить пароль?</button>
+            </div>
+
+            <div class="p-3 rounded-xl bg-white text-slate-900 flex items-center justify-between text-xs shadow-sm">
+              <div class="flex items-center gap-2 font-medium">
+                <span class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px]">✓</span>
+                <span data-i18n="captcha_success">Успешно.</span>
+              </div>
+              <div class="text-[10px] text-slate-400 font-mono-custom flex items-center gap-1">
+                <span>Cloudflare</span>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-extrabold text-xs transition-all flex items-center justify-center gap-2 border border-slate-600 shadow-md">
+              <span>➔</span> <span id="auth-btn-label">Зарегистрироваться</span>
+            </button>
+          </form>
+
+          <div id="auth-switch-prompt" class="text-center mt-6 text-xs text-slate-400">
+            Уже есть аккаунт? <button type="button" onclick="switchAuthTab('login')" class="text-slate-200 font-bold hover:underline hover:text-white">Войти</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- VIEW 3: PERSONAL CABINET / USER DASHBOARD -->
+    <div id="view-dashboard" class="hidden space-y-6">
+      
+      <div id="dash-banner-container" class="glass-panel rounded-3xl p-6 sm:p-8 relative overflow-hidden bg-cover bg-center border border-white/10 shadow-2xl transition-all" style="background-image: linear-gradient(180deg, rgba(13, 17, 23, 0.70) 0%, rgba(13, 17, 23, 0.95) 100%), url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop');">
+        
+        <!-- Change Banner Button in top right of banner -->
+        <button onclick="triggerBannerUpload()" title="Сменить баннер" class="absolute top-4 right-4 px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-200 text-xs font-semibold border border-white/15 backdrop-blur-md transition-all flex items-center gap-1.5 shadow-md cursor-pointer z-10">
+          <span>🖼️</span> <span>Сменить баннер</span>
+        </button>
+        <input type="file" id="banner-input" accept="image/*" class="hidden" onchange="handleBannerUpload(event)">
+
+        <div class="relative flex flex-col sm:flex-row items-center justify-between gap-6 pt-2">
+          <div class="flex items-center gap-5">
+            <!-- Circular Avatar with Upload SVG Icon Overlay (matching screenshot media_1790434443353.png) -->
+            <div onclick="triggerAvatarUpload()" title="Нажмите для смены аватарки" class="w-20 h-20 rounded-full bg-slate-900 border-2 border-white/20 text-slate-200 flex items-center justify-center text-3xl font-bold shadow-xl cursor-pointer hover:border-white relative overflow-hidden group transition-all shrink-0">
+              <div id="dash-avatar-container" class="w-full h-full flex items-center justify-center rounded-full overflow-hidden">
+                👤
+              </div>
+              <div class="absolute inset-0 bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
+                <svg class="w-7 h-7 stroke-current" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+              </div>
+            </div>
+            <input type="file" id="avatar-input" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)">
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 id="dash-username-title" class="text-2xl font-extrabold text-white"></h2>
+                <span id="dash-role-badge" class="px-2.5 py-0.5 rounded bg-white/5 border border-white/15 text-slate-300 text-[10px] font-bold font-mono-custom">User</span>
+              </div>
+              <p class="text-xs text-slate-400 mt-1" data-i18n="welcome_back">С возвращением в личный кабинет Obxod Client.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Status Toast Container -->
+      <div id="dashboard-status-msg" class="hidden text-xs font-semibold p-4 rounded-xl border transition-all"></div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <div class="lg:col-span-2 space-y-6">
+          
+          <div class="glass-panel rounded-3xl p-6">
+            <div class="flex items-center gap-2 text-sm font-bold text-white mb-6 border-b border-white/5 pb-4">
+              <span>👤</span> <span data-i18n="account_details">Данные аккаунта</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3">
+                <span class="text-slate-400 text-base">👤</span>
+                <div>
+                  <div class="text-[10px] text-slate-500 font-mono-custom uppercase" data-i18n="lbl_username">ИМЯ ПОЛЬЗОВАТЕЛЯ</div>
+                  <div id="dash-user-val" class="font-bold text-white mt-0.5"></div>
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3">
+                <span class="text-slate-400 text-base">✉️</span>
+                <div>
+                  <div class="text-[10px] text-slate-500 font-mono-custom uppercase">EMAIL</div>
+                  <div id="dash-email-val" class="font-bold text-white mt-0.5"></div>
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3">
+                <span class="text-slate-400 text-base">🆔</span>
+                <div>
+                  <div class="text-[10px] text-slate-500 font-mono-custom uppercase">UID</div>
+                  <div id="dash-uid-val" class="font-bold text-white font-mono-custom mt-0.5">#1</div>
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3">
+                <span class="text-slate-400 text-base">💎</span>
+                <div>
+                  <div class="text-[10px] text-slate-500 font-mono-custom uppercase" data-i18n="lbl_role">РОЛЬ</div>
+                  <div id="dash-role-val" class="font-bold text-slate-300 mt-0.5">User</div>
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3">
+                <span class="text-slate-400 text-base">⏰</span>
+                <div>
+                  <div class="text-[10px] text-slate-500 font-mono-custom uppercase" data-i18n="lbl_sub">ПОДПИСКА ДО</div>
+                  <div id="dash-sub-val" class="font-bold text-red-400 font-mono-custom mt-0.5">Нет активной подписки</div>
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3">
+                <span class="text-slate-400 text-base">📅</span>
+                <div>
+                  <div class="text-[10px] text-slate-500 font-mono-custom uppercase" data-i18n="lbl_reg">РЕГИСТРАЦИЯ</div>
+                  <div id="dash-reg-val" class="font-bold text-white font-mono-custom mt-0.5"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- HWID Display -->
+            <div class="mt-4 p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center justify-between text-xs">
+              <div class="flex items-center gap-3">
+                <span class="text-slate-400 text-base">💻</span>
+                <div>
+                  <div class="text-[10px] text-slate-500 font-mono-custom uppercase">HWID</div>
+                  <div id="dash-hwid-val" class="font-mono-custom text-slate-300 text-[11px] mt-0.5">Не привязан (скачайте лаунчер и войдите)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Key Activation Card with INLINE Status Messages -->
+          <div class="glass-panel rounded-3xl p-6">
+            <div class="flex items-center gap-2 text-sm font-bold text-white mb-2">
+              <span>🗝️</span> <span data-i18n="key_title">Активировать ключ KeyAuth</span>
+            </div>
+            <p class="text-xs text-slate-400 mb-4" data-i18n="key_desc">Введите ваш лицензионный ключ KeyAuth для активации подписки.</p>
+
+            <form onsubmit="activateKey(event)" novalidate class="flex flex-col sm:flex-row items-center gap-3">
+              <input type="text" id="key-input" placeholder="KEYAUTH-XXXX-XXXX-XXXX"
+                     class="w-full px-4 py-3 rounded-xl glass-input text-xs font-mono-custom text-white placeholder:text-slate-600 outline-none">
+              <button type="submit" id="btn-key-activate" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-extrabold text-xs transition-all whitespace-nowrap shadow-md" data-i18n="btn_activate">
+                Активировать
+              </button>
+            </form>
+
+            <!-- INLINE KEY ACTIVATION STATUS MESSAGE -->
+            <div id="key-status-msg" class="hidden text-xs font-semibold p-3.5 rounded-xl mt-4 border transition-all"></div>
+          </div>
+
+        </div>
+
+        <div class="space-y-6">
+          <div class="glass-panel rounded-3xl p-6">
+            <div class="flex items-center gap-2 text-sm font-bold text-white mb-6 border-b border-white/5 pb-4">
+              <span>⚡</span> <span data-i18n="quick_actions">Быстрые действия</span>
+            </div>
+
+            <div class="space-y-3 text-xs">
+              <button onclick="handleDownloadClick()"
+                 class="w-full p-3.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-200 font-semibold flex items-center gap-3 transition-all border border-white/10 shadow-sm backdrop-blur-sm">
+                <span>📥</span> <span data-i18n="btn_download_exe">Скачать Лаунчер</span>
+              </button>
+
+              <button id="btn-dash-buy-sub" onclick="scrollToSection('product', event)"
+                      class="w-full p-3.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-200 font-semibold flex items-center gap-3 transition-all border border-white/10 shadow-sm backdrop-blur-sm">
+                <span>💳</span> <span id="dash-buy-sub-text" data-i18n="btn_buy_sub">Купить подписку</span>
+              </button>
+
+              <button onclick="openChangePasswordModal()"
+                      class="w-full p-3.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-200 font-semibold flex items-center gap-3 transition-all border border-white/10 shadow-sm backdrop-blur-sm">
+                <span>🔑</span> <span data-i18n="btn_change_pass">Сменить пароль</span>
+              </button>
+
+              <button onclick="logout()"
+                      class="w-full p-3.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-semibold flex items-center gap-3 transition-all border border-red-500/20">
+                <span>🚪</span> <span data-i18n="btn_logout">Выйти из аккаунта</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      <!-- ADMIN PANEL SECTION (Visible only for Admin users) -->
+      <div id="admin-panel-container" class="hidden mt-8 glass-panel rounded-3xl p-6 border border-purple-500/30 shadow-2xl">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-4 mb-6">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-2xl bg-purple-500/20 border border-purple-500/40 text-purple-300 flex items-center justify-center text-xl font-bold">
+              👑
+            </div>
+            <div>
+              <h3 class="text-base font-extrabold text-white flex items-center gap-2">
+                <span>Панель Администратора</span>
+                <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 text-[10px] font-mono-custom border border-purple-500/40">MASTER CONTROL</span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">Управление пользователями, выдача подписок, сброс/блокировка HWID и баны.</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <button type="button" onclick="renderAdminPanel()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all border border-white/15 flex items-center gap-1.5 shrink-0">
+              🔄 <span>Обновить список</span>
+            </button>
+            <button type="button" onclick="adminPurgeAllUsers()" class="px-3.5 py-2 rounded-xl bg-red-600/80 hover:bg-red-500 text-white text-xs font-bold transition-all border border-red-500/50 flex items-center gap-1.5 shrink-0 shadow-md">
+              💥 <span>Очистить всю базу пользователей</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Admin Search Bar -->
+        <div class="mb-4 flex flex-col sm:flex-row items-center gap-3">
+          <input type="text" id="admin-search-input" onkeyup="renderAdminPanel()" placeholder="🔍 Поиск по имени пользователя, Email, роли или HWID..."
+                 class="w-full px-4 py-2.5 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none">
+        </div>
+
+        <!-- Users Management Table -->
+        <div class="overflow-x-auto rounded-2xl border border-white/10 bg-black/40">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-white/5 text-[10px] font-mono-custom uppercase text-slate-400 border-b border-white/10">
+              <tr>
+                <th class="p-3">Пользователь</th>
+                <th class="p-3">Email</th>
+                <th class="p-3">Роль</th>
+                <th class="p-3">Подписка</th>
+                <th class="p-3">HWID</th>
+                <th class="p-3 text-right">Управление</th>
+              </tr>
+            </thead>
+            <tbody id="admin-users-table-body" class="divide-y divide-white/5">
+              <!-- Dynamically populated via renderAdminPanel() -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- PASSWORD RESET MODAL WITH INLINE MESSAGE -->
+  <div id="modal-reset-pass" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
+    <div class="glass-panel rounded-3xl p-8 max-w-md w-full relative border border-white/10 shadow-2xl">
+      <button onclick="closeResetPasswordModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
+      
+      <div class="text-center mb-6">
+        <div class="w-10 h-10 rounded-full bg-slate-900 border border-white/20 text-slate-200 flex items-center justify-center text-lg mx-auto mb-3">🔑</div>
+        <h3 class="text-xl font-bold text-white" data-i18n="reset_pass_title">Сброс пароля</h3>
+        <p class="text-xs text-slate-400 mt-1" data-i18n="reset_pass_subtitle">Введите Email вашего аккаунта для получения нового пароля.</p>
+      </div>
+
+      <form onsubmit="handlePasswordReset(event)" class="space-y-4">
+        <div>
+          <input type="email" id="reset-email" required placeholder="Введите ваш Email" data-i18n-ph="ph_enter_email"
+                 class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none">
+        </div>
+        <div id="reset-status-msg" class="hidden text-xs font-semibold p-3 rounded-xl"></div>
+        <button type="submit" class="w-full py-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-extrabold text-xs transition-all border border-slate-600 shadow-md" data-i18n="btn_send_new_pass">
+          Отправить новый пароль
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- CHANGE PASSWORD MODAL WITH INLINE MESSAGE -->
+  <div id="modal-change-pass" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
+    <div class="glass-panel rounded-3xl p-8 max-w-md w-full relative border border-white/10 shadow-2xl">
+      <button onclick="closeChangePasswordModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
+      
+      <div class="text-center mb-6">
+        <div class="w-10 h-10 rounded-full bg-slate-900 border border-white/20 text-slate-200 flex items-center justify-center text-lg mx-auto mb-3">🔑</div>
+        <h3 class="text-xl font-bold text-white" data-i18n="change_pass_title">Смена пароля</h3>
+        <p class="text-xs text-slate-400 mt-1" data-i18n="change_pass_subtitle">Введите старый и новый пароль для вашей учетной записи.</p>
+      </div>
+
+      <form onsubmit="handleChangePassword(event)" class="space-y-4">
+        <div>
+          <input type="password" id="old-password" required placeholder="Текущий пароль" data-i18n-ph="ph_old_pass"
+                 class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none">
+        </div>
+        <div>
+          <input type="password" id="new-password" required placeholder="Новый пароль" data-i18n-ph="ph_new_pass"
+                 class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none">
+        </div>
+        <div>
+          <input type="password" id="confirm-password" required placeholder="Повторите новый пароль" data-i18n-ph="ph_confirm_pass"
+                 class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none">
+        </div>
+        <div id="change-pass-status-msg" class="hidden text-xs font-semibold p-3 rounded-xl"></div>
+        <button type="submit" class="w-full py-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-extrabold text-xs transition-all border border-slate-600 shadow-md" data-i18n="btn_save_pass">
+          Сохранить новый пароль
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-policy" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
+    <div class="glass-panel rounded-3xl p-8 max-w-3xl w-full relative border border-white/10 shadow-2xl max-h-[85vh] overflow-y-auto">
+      <button onclick="closePolicyModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
+      <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+        <span>⚖️</span> <span data-i18n="policy_title">Политика конфиденциальности & Условия использования</span>
+      </h3>
+      <div class="text-xs text-slate-300 space-y-4 leading-relaxed">
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-1">
+          <h4 class="font-bold text-white text-sm" data-i18n="pol_sec1_title">1. Назначение утилиты и правовой статус</h4>
+          <p data-i18n="pol_sec1_desc">Программное обеспечение Obxod Client Pro v5.6 представляет собой инструмент контроля входящих подключений AnyDesk и администрирования параметров безопасности операционной системы Windows.</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-1">
+          <h4 class="font-bold text-white text-sm" data-i18n="pol_sec2_title">2. Конфиденциальность и защита HWID</h4>
+          <p data-i18n="pol_sec2_desc">Все персональные данные, ключи KeyAuth и идентификаторы оборудования (HWID) обрабатываются исключительно на локальном ПК пользователя. Мы не собираем и не передаем ваши приватные файлы третьим лицам.</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-1">
+          <h4 class="font-bold text-white text-sm" data-i18n="pol_sec3_title">3. Условия подписки и защиты от перезаписи</h4>
+          <p data-i18n="pol_sec3_desc">Каждая лицензия имеет свой период действия (30 дней, 90 дней или Lifetime). Активация нового ключа поверх уже действующей активной подписки заблокирована во избежание потери оставшихся дней.</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-1">
+          <h4 class="font-bold text-white text-sm" data-i18n="pol_sec4_title">4. Безопасность функции чистки Minecraft</h4>
+          <p data-i18n="pol_sec4_desc">Модуль очистки производит безопасное удаление только временных логов (.log), кэш-файлов и краш-дампов. Игровые миры, сборки и файлы настроек клиента остаются нетронутыми.</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-1">
+          <h4 class="font-bold text-white text-sm" data-i18n="pol_sec5_title">5. Правила покупки и мгновенная выдача</h4>
+          <p data-i18n="pol_sec5_desc">Официальное приобретение ключей производится напрямую через магазин FunPay (KarenMakaren). Выдача ключа и инструкция по активации выполняются сразу после оплаты.</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-1">
+          <h4 class="font-bold text-white text-sm" data-i18n="pol_sec6_title">6. Перенос подписки и Сброс HWID (50 ₽)</h4>
+          <p data-i18n="pol_sec6_desc">Смена привязки HWID на новый компьютер или при замене комплектующих является отдельной платной услугой стоимостью 50 ₽. Для заказа обратитесь через магазин FunPay (KarenMakaren).</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-1">
+          <h4 class="font-bold text-white text-sm" data-i18n="pol_sec7_title">7. Отказ от ответственности</h4>
+          <p data-i18n="pol_sec7_desc">Разработчики Obxod Client не несут ответственности за использование утилиты вопреки правилам сторонних игровых серверов. Пользователь берет на себя полную ответственность за запуск программы.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="border-t border-white/5 py-6 px-4 text-center text-xs text-slate-500 font-mono-custom">
+    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>© 2026 Obxod Client Security Engine. All rights reserved.</div>
+      <div class="flex gap-6 text-slate-400">
+        <a href="#" onclick="showView('landing')" class="hover:text-white transition-colors" data-i18n="footer_home">Главная</a>
+        <a href="#product" onclick="scrollToSection('product')" class="hover:text-white transition-colors" data-i18n="footer_product">Продукт</a>
+        <a href="#policy" onclick="openPolicyModal()" class="hover:text-white transition-colors" data-i18n="footer_policy">Политика</a>
+        <a href="https://discord.gg/zZuPXRUy9U" target="_blank" class="hover:text-white transition-colors" data-i18n="footer_support">Поддержка</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const i18nDict = {
+      ru: {
+        nav_advantages: "Преимущества",
+        nav_product: "Продукт",
+        nav_overview: "Обзор",
+        nav_policy: "Политика",
+        btn_login_nav: "Вход / Регистрация",
+        hero_badge: "Обходите проверки прямо сейчас",
+        hero_title_1: "Полный контроль над",
+        hero_title_2: "AnyDesk подключением",
+        btn_download_hero: "Скачать лаунчер",
+        btn_buy_hero: "Купить подписку",
+        product_badge: "Официальные тарифы",
+        product_title: "Выберите план подписки",
+        product_subtitle: "Выберите удобный период доступа для полной защиты от нежелательных подключений AnyDesk и очистки ПК.",
+        btn_sub_pill: "Доступные подписки",
+        plan_30_title: "30 дней",
+        plan_30_desc: "Базовый период защиты.",
+        lbl_per_30: "/ 30 дней",
+        plan_30_f1: "Полная защита AnyDesk 24/7",
+        plan_30_f2: "Все 3 режима сброса сессий",
+        plan_30_f3: "Быстрая чистка кэша Minecraft",
+        plan_30_f4: "Быстрая настройка за 1 минуту",
+        plan_90_title: "90 дней",
+        plan_90_desc: "Оптимальный выбор с экономией.",
+        lbl_per_90: "/ 90 дней",
+        plan_90_f1: "Всё из тарифа на 30 дней",
+        plan_90_f2: "Экономия свыше 30% стоимости",
+        plan_90_f3: "Приоритетные обновления v5.6+",
+        plan_90_f4: "Приоритетная поддержка",
+        plan_365_title: "365 дней",
+        plan_365_desc: "Максимальный период на 1 год.",
+        lbl_per_365: "/ 365 дней",
+        plan_365_f1: "Подписка на 1 год (365д)",
+        plan_365_f2: "Все релизы и апдейты",
+        plan_365_f3: "Поддержка 24/7",
+        plan_365_f4: "Максимальный приоритет",
+        plan_hwid_title: "Сброс HWID",
+        plan_hwid_desc: "Перепривязка на новый ПК.",
+        lbl_once: "разово",
+        plan_hwid_f1: "Отвязка от старого железа",
+        plan_hwid_f2: "Привязка к новому ПК",
+        plan_hwid_f3: "Сохранение подписки",
+        plan_hwid_f4: "Выполнение за 5 минут",
+        btn_buy_hwid: "Купить сброс ↗",
+        btn_buy_card: "Купить ↗",
+        seller_title: "Оплата через FunPay (KarenMakaren)",
+        seller_desc: "Быстрая выдача лицензионного ключа.",
+        btn_open_funpay: "Открыть FunPay ➔",
+        why_badge: "Безопасность & Контроль",
+        why_title: "Почему выбирают Obxod Client",
+        why_subtitle: "Мощная автономная система блокировки нежелательных подключений AnyDesk и очистки ресурсов компьютера.",
+        adv_1_title: "Имитация Таймаута (~60с)",
+        adv_1_desc: "Естественное сбрасывание подключения AnyDesk. Соперник или проверяющий увидит только стандартное сообщение о сетевом таймауте.",
+        adv_2_title: "Автономный Portable.exe",
+        adv_2_desc: "Не требует установки тяжелых библиотек. Работает в фоновом режиме из любой папки без нагрузки на процессор.",
+        adv_3_title: "Мгновенный Kill-Switch",
+        adv_3_desc: "Принудительное экстренное завершение всех процессов AnyDesk в 1 клик при зафиксированной внешней активности.",
+        adv_4_title: "10 Монохромных Тим",
+        adv_4_desc: "Элегантный интерфейс с мгновенной сменой акцентного цвета под любое оформление вашей системы.",
+        adv_5_title: "Очистка кэша Minecraft",
+        adv_5_desc: "Безопасное удаление временных файлов логов, кэша и краш-дампов для освобождения оперативной памяти перед игрой.",
+        adv_6_title: "Защита KeyAuth & HWID",
+        adv_6_desc: "Надежная привязка лицензии к ПК и онлайн-валидация гарантируют стабильность и защиту ваших данных.",
+        cta_badge: "🚀 Обходите проверки прямо сейчас",
+        cta_title: "Готовы обезопасить свои проверки?",
+        cta_subtitle: "Приобретение лицензионного ключа занимает меньше 2 минут. Начните играть уверенно вместе с Obxod Client.",
+        auth_left_title: "Ваша игра,<br/>ваша победа.",
+        auth_left_desc: "Зарегистрируйте личный аккаунт для доступа к клиенту и защите.",
+        tab_register: "Регистрация",
+        tab_login: "Вход",
+        remember_me: "Запомнить меня",
+        forgot_pass: "Сбросить пароль?",
+        welcome_back: "С возвращением в личный кабинет Obxod Client.",
+        btn_edit_profile: "Изменить профиль",
+        account_details: "Данные аккаунта",
+        lbl_username: "ИМЯ ПОЛЬЗОВАТЕЛЯ",
+        lbl_role: "РОЛЬ",
+        lbl_sub: "ПОДПИСКА ДО",
+        lbl_reg: "РЕГИСТРАЦИЯ",
+        key_title: "Активировать ключ KeyAuth",
+        key_desc: "Введите ваш лицензионный ключ KeyAuth для активации подписки.",
+        btn_activate: "Активировать",
+        quick_actions: "Быстрые действия",
+        btn_download_exe: "Скачать Лаунчер",
+        btn_buy_sub: "Купить подписку",
+        btn_change_pass: "Сменить пароль",
+        btn_logout: "Выйти из аккаунта",
+        reset_pass_title: "Сброс пароля",
+        reset_pass_subtitle: "Введите Email вашего аккаунта для получения нового пароля.",
+        ph_enter_email: "Введите ваш Email",
+        btn_send_new_pass: "Отправить новый пароль",
+        change_pass_title: "Смена пароля",
+        change_pass_subtitle: "Введите старый и новый пароль для вашей учетной записи.",
+        ph_old_pass: "Текущий пароль",
+        ph_new_pass: "Новый пароль",
+        ph_confirm_pass: "Повторите новый пароль",
+        btn_save_pass: "Сохранить новый пароль",
+        policy_title: "Политика конфиденциальности & Условия использования",
+        pol_sec1_title: "1. Назначение утилиты и правовой статус",
+        pol_sec1_desc: "Программное обеспечение Obxod Client v5.6 представляет собой инструмент контроля входящих подключений AnyDesk и администрирования параметров безопасности операционной системы Windows.",
+        pol_sec2_title: "2. Конфиденциальность и защита HWID",
+        pol_sec2_desc: "Все персональные данные, ключи KeyAuth и идентификаторы оборудования (HWID) обрабатываются исключительно на локальном ПК пользователя. Мы не собираем и не передаем ваши приватные файлы третьим лицам.",
+        pol_sec3_title: "3. Условия подписки и защиты от перезаписи",
+        pol_sec3_desc: "Каждая лицензия имеет свой период действия (30 дней, 90 дней или 365 дней). Активация нового ключа поверх уже действующей активной подписки заблокирована во избежание потери оставшихся дней.",
+        pol_sec4_title: "4. Безопасность функции чистки Minecraft",
+        pol_sec4_desc: "Модуль очистки производит безопасное удаление только временных логов (.log), кэш-файлов и краш-дампов. Игровые миры, сборки и файлы настроек клиента остаются нетронутыми.",
+        pol_sec5_title: "5. Правила покупки и мгновенная выдача",
+        pol_sec5_desc: "Официальное приобретение ключей производится напрямую через магазин FunPay (KarenMakaren). Выдача ключа и инструкция по активации выполняются сразу после оплаты.",
+        pol_sec6_title: "6. Перенос подписки на другой компьютер",
+        pol_sec6_desc: "Смена привязки HWID при замене комплектующих или покупки нового ПК является платной услугой и составляет 50 ₽ через обращение в техническую поддержку.",
+        pol_sec7_title: "7. Отказ от ответственности",
+        pol_sec7_desc: "Разработчики Obxod Client не несут ответственности за использование утилиты вопреки правилам сторонних игровых серверов. Пользователь берет на себя полную ответственность за запуск программы.",
+        footer_home: "Главная",
+        footer_product: "Продукт",
+        footer_policy: "Политика",
+        footer_support: "Поддержка",
+        mock_prot_off: "ЗАЩИТА ВЫКЛЮЧЕНА",
+        mock_nav_main: "Главная",
+        mock_nav_clean: "Чистка",
+        mock_nav_history: "История",
+        mock_nav_settings: "Настройки",
+        mock_your_id: "🔑 Ваш AnyDesk ID:",
+        mock_copy_id: "📋 Скопировать ID",
+        mock_banner_title: "Obxod Access Control — Защита подключения",
+        mock_banner_status: "СТАТУС: БЕЗ ЗАЩИТЫ",
+        mock_banner_warn: "ВНИМАНИЕ: Входящие подключения сейчас РАЗРЕШЕНЫ.",
+        mock_mode_label: "Режим блокировки:",
+        mock_mode_val: "Мгновенный сброс ▼",
+        mock_time_label: "⏱ Время защиты: 00:00:00",
+        mock_btn_enable: "🔴 ВКЛЮЧИТЬ ЗАЩИТУ",
+        mock_act_emergency: "🔴 Экстренный сброс",
+        mock_act_restart: "🔄 Перезапуск AnyDesk",
+        mock_act_folder: "📁 Папка AnyDesk",
+        mock_act_kill: "☣️ Завершить AnyDesk",
+        mock_tbl_title: "Заблокированные подключения",
+        mock_tbl_count: "(0 перехвачено)",
+        mock_btn_export: "📊 Экспорт",
+        mock_btn_clear: "🗑️ Очистить",
+        mock_th_datetime: "Дата / Время",
+        mock_th_remoteid: "Удалённый ID",
+        mock_th_action: "Действие",
+        mock_th_details: "Сетевой узел / Детали",
+        mock_tbl_empty: "🌓 Входящих сессий пока не зафиксировано. Любая попытка звонка будет заблокирована и записана сюда.",
+        ph_username: "Имя пользователя",
+        ph_email: "Ваш Email (обязательно)",
+        ph_password: "Пароль",
+        captcha_success: "Успешно."
+      },
+      en: {
+        nav_advantages: "Advantages",
+        nav_product: "Product",
+        nav_overview: "Overview",
+        nav_policy: "Policy",
+        btn_login_nav: "Login / Register",
+        hero_badge: "Bypass checks right now",
+        hero_title_1: "Complete Control Over",
+        hero_title_2: "AnyDesk Connection",
+        btn_download_hero: "Download Launcher",
+        btn_buy_hero: "Buy Subscription",
+        product_badge: "Official Rates",
+        product_title: "Select Subscription Plan",
+        product_subtitle: "Choose convenient access duration for full protection against unwanted AnyDesk connections & PC cleanup.",
+        btn_sub_pill: "Available Subscriptions",
+        plan_30_title: "30 Days",
+        plan_30_desc: "Basic protection plan.",
+        lbl_per_30: "/ 30 days",
+        plan_30_f1: "Full AnyDesk protection 24/7",
+        plan_30_f2: "All 3 session reject modes",
+        plan_30_f3: "Fast Minecraft cache cleaner",
+        plan_30_f4: "Quick 1-minute setup",
+        plan_90_title: "90 Days",
+        plan_90_desc: "Optimal value plan.",
+        lbl_per_90: "/ 90 days",
+        plan_90_f1: "All features from 30 days plan",
+        plan_90_f2: "Save over 30% on cost",
+        plan_90_f3: "Priority v5.6+ updates",
+        plan_90_f4: "Priority support team",
+        plan_365_title: "365 Days",
+        plan_365_desc: "Maximum 1 year plan.",
+        lbl_per_365: "/ 365 days",
+        plan_365_f1: "1 Year subscription (365d)",
+        plan_365_f2: "All releases & updates",
+        plan_365_f3: "24/7 Support",
+        plan_365_f4: "Maximum priority",
+        plan_hwid_title: "HWID Reset",
+        plan_hwid_desc: "Re-binding to a new PC.",
+        lbl_once: "one-time",
+        plan_hwid_f1: "Unbind old hardware",
+        plan_hwid_f2: "Bind to new PC",
+        plan_hwid_f3: "Preserve subscription",
+        plan_hwid_f4: "Completed in 5 mins",
+        btn_buy_hwid: "Buy Reset ↗",
+        btn_buy_card: "Buy ↗",
+        seller_title: "Payment via FunPay (KarenMakaren)",
+        seller_desc: "Instant license key dispatch.",
+        btn_open_funpay: "Open FunPay ➔",
+        why_badge: "Security & Control",
+        why_title: "Why Choose Obxod Client",
+        why_subtitle: "Powerful autonomous system to block unwanted AnyDesk connections and clean PC resources.",
+        adv_1_title: "Timeout Simulation (~60s)",
+        adv_1_desc: "Natural AnyDesk session drop. Opponent will only see a standard network timeout error.",
+        adv_2_title: "Standalone Portable.exe",
+        adv_2_desc: "No heavy runtime dependencies. Operates silently from any directory without CPU load.",
+        adv_3_title: "Instant Kill-Switch",
+        adv_3_desc: "Forced emergency termination of all AnyDesk processes in 1 click.",
+        adv_4_title: "10 Monochromatic Themes",
+        adv_4_desc: "Sleek dark interface with instant accent color switching.",
+        adv_5_title: "Minecraft Cache Cleaner",
+        adv_5_desc: "Safe wipe of log files, crash dumps and temp cache before launching game.",
+        adv_6_title: "KeyAuth & HWID Shield",
+        adv_6_desc: "Secure HWID hardware binding and encrypted online validation.",
+        cta_badge: "🚀 Bypass checks right now",
+        cta_title: "Ready to secure your connection?",
+        cta_subtitle: "Buying a license key takes under 2 minutes. Play with total confidence using Obxod Client.",
+        auth_left_title: "Your game,<br/>your victory.",
+        auth_left_desc: "Register a personal account for access to client and protection.",
+        tab_register: "Register",
+        tab_login: "Login",
+        remember_me: "Remember me",
+        forgot_pass: "Reset password?",
+        welcome_back: "Welcome back to Obxod Client Dashboard.",
+        btn_edit_profile: "Edit Profile",
+        account_details: "Account Details",
+        lbl_username: "USERNAME",
+        lbl_role: "ROLE",
+        lbl_sub: "SUBSCRIPTION UNTIL",
+        lbl_reg: "REGISTRATION",
+        key_title: "Activate KeyAuth License Key",
+        key_desc: "Enter valid KeyAuth license key to extend your subscription.",
+        btn_activate: "Activate",
+        quick_actions: "Quick Actions",
+        btn_download_exe: "Download Launcher",
+        btn_buy_sub: "Buy Subscription",
+        btn_change_pass: "Change Password",
+        btn_logout: "Sign Out",
+        reset_pass_title: "Password Reset",
+        reset_pass_subtitle: "Enter your account Email to receive a new password.",
+        ph_enter_email: "Enter your Email",
+        btn_send_new_pass: "Send New Password",
+        change_pass_title: "Change Password",
+        change_pass_subtitle: "Enter current and new password for your account.",
+        ph_old_pass: "Current password",
+        ph_new_pass: "New password",
+        ph_confirm_pass: "Confirm new password",
+        btn_save_pass: "Save New Password",
+        policy_title: "Privacy Policy & Terms of Use",
+        pol_sec1_title: "1. Software Purpose & Legal Status",
+        pol_sec1_desc: "Obxod Client Pro v5.6 is a local security tool designed to control incoming AnyDesk connections and administer Windows OS security settings.",
+        pol_sec2_title: "2. Privacy & HWID Hardware Shield",
+        pol_sec2_desc: "All personal credentials, KeyAuth keys, and hardware identifiers (HWID) are processed exclusively on your physical PC. We never transmit private files to third parties.",
+        pol_sec3_title: "3. Subscription Terms & Overwrite Shield",
+        pol_sec3_desc: "Licenses feature distinct validity durations (30 days, 90 days, or 365 days). Activating a new key over an existing valid subscription is blocked to protect your active days.",
+        pol_sec4_title: "4. Minecraft Cleaner Integrity",
+        pol_sec4_desc: "The cleanup module safely wipes temporary log files (.log), app caches, and crash dumps. Game saves, mods, and configuration files remain untouched.",
+        pol_sec5_title: "5. Purchasing Rules & Instant Dispatch",
+        pol_sec5_desc: "Official key purchases are handled directly via @Khamzat vendor or FunPay (KarenMakaren). Key delivery and instructions are dispatched immediately upon payment.",
+        pol_sec6_title: "6. PC Migration Policy",
+        pol_sec6_desc: "Re-binding HWID licenses for new computer builds or hardware changes is a paid service costing 50 ₽ via support.",
+        pol_sec7_title: "7. Disclaimer of Liability",
+        pol_sec7_desc: "Obxod Client Security Engine developers hold no liability for software usage contrary to third-party game server Terms of Service.",
+        footer_home: "Home",
+        footer_product: "Product",
+        footer_policy: "Policy",
+        footer_support: "Support",
+        mock_prot_off: "PROTECTION DISABLED",
+        mock_nav_main: "Home",
+        mock_nav_clean: "Cleaner",
+        mock_nav_history: "History",
+        mock_nav_settings: "Settings",
+        mock_your_id: "🔑 Your AnyDesk ID:",
+        mock_copy_id: "📋 Copy ID",
+        mock_banner_title: "Obxod Access Control — Connection Shield",
+        mock_banner_status: "STATUS: UNPROTECTED",
+        mock_banner_warn: "WARNING: Incoming connections are currently ALLOWED.",
+        mock_mode_label: "Reject Mode:",
+        mock_mode_val: "Instant Drop ▼",
+        mock_time_label: "⏱ Uptime: 00:00:00",
+        mock_btn_enable: "🔴 ENABLE PROTECTION",
+        mock_act_emergency: "🔴 Emergency Drop",
+        mock_act_restart: "🔄 Restart AnyDesk",
+        mock_act_folder: "📁 AnyDesk Folder",
+        mock_act_kill: "☣️ Kill AnyDesk",
+        mock_tbl_title: "Blocked Connections",
+        mock_tbl_count: "(0 intercepted)",
+        mock_btn_export: "📊 Export",
+        mock_btn_clear: "🗑️ Clear",
+        mock_th_datetime: "Date / Time",
+        mock_th_remoteid: "Remote ID",
+        mock_th_action: "Action",
+        mock_th_details: "Network Node / Details",
+        mock_tbl_empty: "🌓 No incoming sessions recorded yet. Any connection attempt will be blocked and logged here.",
+        ph_username: "Username",
+        ph_email: "Your Email (required)",
+        ph_password: "Password",
+        captcha_success: "Success."
+      }
+    };
+
+    let currentLang = localStorage.getItem('obxod_lang') || 'ru';
+    let activeAuthMode = 'register';
+
+    let usersDB = JSON.parse(localStorage.getItem('obxod_users_db')) || {};
+    let userCounter = parseInt(localStorage.getItem('obxod_user_counter')) || 0;
+    let currentUser = JSON.parse(localStorage.getItem('obxod_active_user')) || null;
+
+    const SESSION_EXPIRY_MS = 30 * 24 * 60 * 60 * 1000; // 30 days active session persistence
+
+    function initApp() {
+      usersDB = JSON.parse(localStorage.getItem('obxod_users_db')) || {};
+      let storedActive = JSON.parse(localStorage.getItem('obxod_active_user')) 
+                      || JSON.parse(sessionStorage.getItem('obxod_active_user')) 
+                      || null;
+
+      if (storedActive && storedActive.username) {
+        const userKey = storedActive.username.toLowerCase();
+        const dbUser = usersDB[userKey] || storedActive;
+
+        currentUser = dbUser;
+        currentUser.loginTimestamp = Date.now();
+        
+        document.documentElement.classList.add('is-logged-in');
+
+        usersDB[userKey] = currentUser;
+        localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+        localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+        sessionStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+      } else {
+        currentUser = null;
+        document.documentElement.classList.remove('is-logged-in');
+        localStorage.removeItem('obxod_active_user');
+        sessionStorage.removeItem('obxod_active_user');
+      }
+
+      currentLang = localStorage.getItem('obxod_lang') || 'ru';
+      const langCurrent = document.getElementById('lang-current');
+      if (langCurrent) langCurrent.innerText = currentLang.toUpperCase();
+
+      updateLanguageUI();
+      updateNavState();
+      
+      const savedView = sessionStorage.getItem('obxod_active_view');
+      if (currentUser) {
+        showView(savedView && savedView !== 'auth' ? savedView : 'dashboard');
+      } else {
+        showView('landing');
+      }
+    }
+
+    function toggleLanguage() {
+      currentLang = (currentLang === 'ru') ? 'en' : 'ru';
+      localStorage.setItem('obxod_lang', currentLang);
+      const langCurrent = document.getElementById('lang-current');
+      if (langCurrent) langCurrent.innerText = currentLang.toUpperCase();
+      updateLanguageUI();
+      updateNavState();
+    }
+
+    function updateLanguageUI() {
+      const dict = i18nDict[currentLang];
+      if (!dict) return;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key] !== undefined) {
+          el.innerHTML = dict[key];
+        }
+      });
+      document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+        const key = el.getAttribute('data-i18n-ph');
+        if (dict[key] !== undefined) {
+          el.placeholder = dict[key];
+        }
+      });
+      switchAuthTab(activeAuthMode);
+    }
+
+    function showView(viewName) {
+      if (viewName === 'dashboard' && !currentUser) {
+        switchAuthTab('register');
+        viewName = 'auth';
+      }
+
+      if (viewName === 'auth' && currentUser) {
+        viewName = 'dashboard';
+      }
+
+      document.getElementById('view-landing').classList.add('hidden');
+      document.getElementById('view-auth').classList.add('hidden');
+      document.getElementById('view-dashboard').classList.add('hidden');
+
+      const target = document.getElementById('view-' + viewName);
+      if (target) {
+        target.classList.remove('hidden');
+      }
+
+      if (viewName === 'auth') {
+        switchAuthTab(activeAuthMode || 'register');
+      } else {
+        sessionStorage.setItem('obxod_active_view', viewName);
+      }
+
+      updateNavState();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function scrollToSection(id, event) {
+      if (event && event.preventDefault) event.preventDefault();
+      showView('landing');
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          const navOffset = 110;
+          const rect = el.getBoundingClientRect();
+          const absoluteTop = rect.top + window.pageYOffset;
+          let offsetPosition;
+
+          if (id === 'overview') {
+            const viewportHeight = window.innerHeight;
+            const elementHeight = rect.height;
+            if (viewportHeight > elementHeight + 100) {
+              const targetTop = (viewportHeight - elementHeight) / 2;
+              offsetPosition = absoluteTop - Math.max(targetTop, navOffset);
+            } else {
+              offsetPosition = absoluteTop - navOffset;
+            }
+          } else {
+            offsetPosition = absoluteTop - navOffset;
+          }
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 50);
+    }
+
+    function showInlineAuthMsg(msg, isSuccess = false) {
+      const box = document.getElementById('auth-status-msg');
+      box.classList.remove('hidden', 'bg-red-500/20', 'border-red-500/40', 'text-red-300', 'bg-emerald-500/20', 'border-emerald-500/40', 'text-emerald-300');
+      if (isSuccess) {
+        box.classList.add('bg-emerald-500/20', 'border-emerald-500/40', 'text-emerald-300');
+      } else {
+        box.classList.add('bg-red-500/20', 'border-red-500/40', 'text-red-300');
+      }
+      box.innerHTML = msg;
+    }
+
+    function showInlineKeyMsg(msg, isSuccess = false) {
+      const box = document.getElementById('key-status-msg');
+      box.classList.remove('hidden', 'bg-red-500/20', 'border-red-500/40', 'text-red-300', 'bg-emerald-500/20', 'border-emerald-500/40', 'text-emerald-300');
+      if (isSuccess) {
+        box.classList.add('bg-emerald-500/20', 'border-emerald-500/40', 'text-emerald-300');
+      } else {
+        box.classList.add('bg-red-500/20', 'border-red-500/40', 'text-red-300');
+      }
+      box.innerHTML = msg;
+    }
+
+    let dashboardMsgTimer = null;
+    function showInlineDashboardMsg(msg, type = 'info', autoHideMs = 3500) {
+      const box = document.getElementById('dashboard-status-msg');
+      if (!box) return;
+      if (dashboardMsgTimer) clearTimeout(dashboardMsgTimer);
+
+      box.classList.remove('hidden', 'bg-red-500/20', 'text-red-300', 'bg-emerald-500/20', 'text-emerald-300', 'bg-blue-500/20', 'text-blue-300', 'border-red-500/40', 'border-emerald-500/40', 'border-blue-500/40');
+      if (type === 'success') {
+        box.classList.add('bg-emerald-500/20', 'text-emerald-300', 'border', 'border-emerald-500/40');
+      } else if (type === 'error') {
+        box.classList.add('bg-red-500/20', 'text-red-300', 'border', 'border-red-500/40');
+      } else {
+        box.classList.add('bg-blue-500/20', 'text-blue-300', 'border', 'border-blue-500/40');
+      }
+      box.innerHTML = msg;
+
+      if (autoHideMs > 0) {
+        dashboardMsgTimer = setTimeout(() => {
+          box.classList.add('hidden');
+        }, autoHideMs);
+      }
+    }
+
+    function handleDownloadClick() {
+      if (currentUser && currentUser.subUntil && currentUser.subUntil !== "Нет активной подписки" && currentUser.subUntil !== "No active subscription") {
+        window.location.href = "obxod_client.exe";
+      } else if (currentUser) {
+        const errText = currentLang === 'ru'
+          ? '⚠️ Скачивание недоступно! Для скачивания лаунчера сначала активируйте ключ или купите подписку ниже.'
+          : '⚠️ Download unavailable! Please activate key or purchase subscription first.';
+        showInlineDashboardMsg(errText, 'error');
+      } else {
+        const heroMsg = document.getElementById('hero-msg');
+        heroMsg.innerText = currentLang === 'ru' 
+          ? "ℹ️ Пожалуйста, зарегистрируйтесь и активируйте подписку для скачивания файла."
+          : "ℹ️ Please register and activate subscription to download file.";
+        heroMsg.classList.remove('hidden');
+        setTimeout(() => showView('auth'), 1000);
+      }
+    }
+
+    function switchAuthTab(mode) {
+      activeAuthMode = mode;
+      const statusMsg = document.getElementById('auth-status-msg');
+      if (statusMsg) statusMsg.classList.add('hidden');
+      const btnRegister = document.getElementById('tab-register');
+      const btnLogin = document.getElementById('tab-login');
+      const btnLabel = document.getElementById('auth-btn-label');
+      const title = document.getElementById('auth-title');
+      const subtitle = document.getElementById('auth-subtitle');
+      const emailContainer = document.getElementById('email-field-container');
+      const switchPrompt = document.getElementById('auth-switch-prompt');
+      const resetBtn = document.getElementById('auth-reset-btn');
+      const usernameInput = document.getElementById('auth-username');
+
+      if (mode === 'register') {
+        if (btnRegister) btnRegister.className = "py-2 rounded-lg bg-slate-700 text-white font-bold border border-slate-600 transition-all shadow-md";
+        if (btnLogin) btnLogin.className = "py-2 rounded-lg text-slate-400 hover:text-white border border-transparent hover:border-white/15 transition-all";
+        if (btnLabel) btnLabel.innerText = currentLang === 'ru' ? "Зарегистрироваться" : "Register";
+        if (title) title.innerText = currentLang === 'ru' ? "Регистрация аккаунта" : "Account Registration";
+        if (subtitle) subtitle.innerText = currentLang === 'ru' ? "Создайте новый аккаунт пользователя." : "Create new user account.";
+        if (emailContainer) emailContainer.classList.remove('hidden');
+        if (resetBtn) resetBtn.classList.add('hidden');
+        if (usernameInput) usernameInput.placeholder = currentLang === 'ru' ? "Имя пользователя" : "Username";
+        if (switchPrompt) switchPrompt.innerHTML = currentLang === 'ru'
+          ? 'Уже есть аккаунт? <button type="button" onclick="switchAuthTab(\'login\')" class="text-slate-200 font-bold hover:underline hover:text-white">Войти</button>'
+          : 'Already have an account? <button type="button" onclick="switchAuthTab(\'login\')" class="text-slate-200 font-bold hover:underline hover:text-white">Login</button>';
+      } else {
+        if (btnLogin) btnLogin.className = "py-2 rounded-lg bg-slate-700 text-white font-bold border border-slate-600 transition-all shadow-md";
+        if (btnRegister) btnRegister.className = "py-2 rounded-lg text-slate-400 hover:text-white border border-transparent hover:border-white/15 transition-all";
+        if (btnLabel) btnLabel.innerText = currentLang === 'ru' ? "Войти" : "Login";
+        if (title) title.innerText = currentLang === 'ru' ? "Вход в аккаунт" : "Account Login";
+        if (subtitle) subtitle.innerText = currentLang === 'ru' ? "Введите имя пользователя (или Email) и пароль." : "Enter username (or Email) and password.";
+        if (emailContainer) emailContainer.classList.add('hidden');
+        if (resetBtn) resetBtn.classList.remove('hidden');
+        if (usernameInput) usernameInput.placeholder = currentLang === 'ru' ? "Имя пользователя или Email" : "Username or Email";
+        if (switchPrompt) switchPrompt.innerHTML = currentLang === 'ru'
+          ? 'Нет аккаунта? <button type="button" onclick="switchAuthTab(\'register\')" class="text-slate-200 font-bold hover:underline hover:text-white">Регистрация</button>'
+          : 'No account? <button type="button" onclick="switchAuthTab(\'register\')" class="text-slate-200 font-bold hover:underline hover:text-white">Register</button>';
+      }
+    }
+
+    function handleAuthSubmit(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      try {
+        usersDB = JSON.parse(localStorage.getItem('obxod_users_db')) || {};
+        const usernameInput = (document.getElementById('auth-username')?.value || '').trim();
+        const passwordInput = (document.getElementById('auth-password')?.value || '').trim();
+        const emailInput = (document.getElementById('auth-email')?.value || '').trim();
+
+        if (!usernameInput || !passwordInput) {
+          showInlineAuthMsg(currentLang === 'ru' ? '❌ Заполните имя пользователя (или Email) и пароль!' : '❌ Enter username (or Email) and password!');
+          return false;
+        }
+
+        const searchKey = usernameInput.toLowerCase();
+
+        if (activeAuthMode === 'register') {
+          if (/^\d+$/.test(usernameInput)) {
+            showInlineAuthMsg(currentLang === 'ru' 
+              ? '❌ Никнейм не может состоять только из цифр! Добавьте хотя бы одну букву (напр. Player' + usernameInput + ').'
+              : '❌ Nickname cannot consist only of digits! Add at least one letter.');
+            return false;
+          }
+
+          if (usernameInput.length < 3) {
+            showInlineAuthMsg(currentLang === 'ru' ? '❌ Никнейм должен содержать минимум 3 символа!' : '❌ Username must be at least 3 chars!');
+            return false;
+          }
+
+          if (!emailInput || !emailInput.includes('@') || !emailInput.includes('.')) {
+            showInlineAuthMsg(currentLang === 'ru'
+              ? '❌ Укажите ваш настоящий Email! Он необходим для восстановления доступа и пароля.'
+              : '❌ Please enter valid Email address for password resets.');
+            return false;
+          }
+
+          if (usersDB[searchKey]) {
+            showInlineAuthMsg(currentLang === 'ru'
+              ? '❌ Никнейм "' + usernameInput + '" уже занят! Введите другое имя или нажмите "Войти".'
+              : '❌ Username "' + usernameInput + '" already taken!');
+            return false;
+          }
+
+          for (let k in usersDB) {
+            if (usersDB[k] && usersDB[k].email && usersDB[k].email.toLowerCase() === emailInput.toLowerCase()) {
+              showInlineAuthMsg(currentLang === 'ru'
+                ? '❌ Аккаунт с Email "' + emailInput + '" уже зарегистрирован! Перейдите на вкладку "Войти".'
+                : '❌ Account with email "' + emailInput + '" already exists!');
+              return false;
+            }
+          }
+
+          userCounter += 1;
+          localStorage.setItem('obxod_user_counter', userCounter.toString());
+
+          const today = new Date();
+          const regDateStr = String(today.getDate()).padStart(2, '0') + '.' + String(today.getMonth() + 1).padStart(2, '0') + '.' + today.getFullYear();
+
+          const newUser = {
+            username: usernameInput,
+            email: emailInput,
+            password: passwordInput,
+            uid: '#' + userCounter,
+            subUntil: "Нет активной подписки",
+            role: "Пользователь",
+            regDate: regDateStr,
+            hwid: "Не привязан (активируйте ключ или купите подписку)",
+            loginTimestamp: Date.now()
+          };
+
+          currentUser = newUser;
+          localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+          sessionStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+
+          showInlineAuthMsg(currentLang === 'ru' ? '✅ Успешная регистрация!' : '✅ Registration successful!', true);
+          
+          updateNavState();
+          showView('dashboard');
+        } else {
+          // LOGIN MODE: Allow login by Username OR Email!
+          let targetUser = usersDB[searchKey];
+          if (!targetUser) {
+            for (let k in usersDB) {
+              if (usersDB[k] && usersDB[k].email && usersDB[k].email.toLowerCase() === searchKey) {
+                targetUser = usersDB[k];
+                break;
+              }
+            }
+          }
+
+          if (!targetUser) {
+            showInlineAuthMsg(currentLang === 'ru'
+              ? '❌ Аккаунт "' + usernameInput + '" не найден! Проверьте имя пользователя или Email.'
+              : '❌ Account "' + usernameInput + '" not found!');
+            return false;
+          }
+
+          if (targetUser.password !== passwordInput) {
+            showInlineAuthMsg(currentLang === 'ru' ? '❌ Неверный пароль! Нажмите "Сбросить пароль" ниже.' : '❌ Incorrect password!');
+            return false;
+          }
+
+          if (!targetUser.username) targetUser.username = usernameInput;
+          if (!targetUser.email) targetUser.email = usernameInput;
+          if (!targetUser.uid) targetUser.uid = '#1';
+          if (!targetUser.regDate) targetUser.regDate = '26.09.2026';
+          if (!targetUser.role) targetUser.role = 'User';
+
+          currentUser = targetUser;
+          currentUser.loginTimestamp = Date.now();
+          const dbKey = (currentUser.username || searchKey).toLowerCase();
+          usersDB[dbKey] = currentUser;
+
+          localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+          localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+          sessionStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+
+          showInlineAuthMsg(currentLang === 'ru' ? '✅ Успешный вход! Переход в кабинет...' : '✅ Login successful! Redirecting...', true);
+          
+          updateNavState();
+          showView('dashboard');
+        }
+      } catch (err) {
+        console.error("handleAuthSubmit error:", err);
+        updateNavState();
+        showView('dashboard');
+      }
+      return false;
+    }
+
+    function compressAndResizeImage(file, maxWidth, maxHeight, quality, callback) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+          callback(compressedDataUrl);
+        };
+        img.onerror = function() {
+          callback(e.target.result);
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function triggerAvatarUpload() {
+      document.getElementById('avatar-input').click();
+    }
+
+    function handleAvatarUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      showInlineDashboardMsg(currentLang === 'ru' ? '⏳ Оптимизация и сохранение аватарки...' : '⏳ Saving avatar...', 'info');
+
+      compressAndResizeImage(file, 400, 400, 0.85, function(avatarData) {
+        if (currentUser) {
+          currentUser.avatar = avatarData;
+          currentUser.loginTimestamp = Date.now();
+          usersDB[currentUser.username.toLowerCase()] = currentUser;
+
+          try {
+            localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+            localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+            sessionStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+          } catch (storageErr) {
+            console.error("Storage save notice:", storageErr);
+          }
+
+          // Instant DOM update
+          const dashAvatar = document.getElementById('dash-avatar-container');
+          const navAvatar = document.getElementById('nav-avatar-icon');
+          if (dashAvatar) dashAvatar.innerHTML = `<img src="${avatarData}" class="w-full h-full object-cover">`;
+          if (navAvatar) navAvatar.innerHTML = `<img src="${avatarData}" class="w-full h-full object-cover">`;
+
+          showInlineDashboardMsg(currentLang === 'ru' ? '✅ Аватарка успешно обновлена и сохранена!' : '✅ Avatar updated successfully!', 'success');
+        }
+      });
+    }
+
+    function triggerBannerUpload() {
+      const input = document.getElementById('banner-input');
+      if (input) input.click();
+    }
+
+    function handleBannerUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      showInlineDashboardMsg(currentLang === 'ru' ? '⏳ Оптимизация и сохранение баннера...' : '⏳ Saving banner...', 'info');
+
+      compressAndResizeImage(file, 1200, 450, 0.85, function(bannerData) {
+        if (currentUser) {
+          currentUser.banner = bannerData;
+          currentUser.loginTimestamp = Date.now();
+          usersDB[currentUser.username.toLowerCase()] = currentUser;
+
+          try {
+            localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+            localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+            sessionStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+          } catch (storageErr) {
+            console.error("Storage save notice:", storageErr);
+          }
+
+          // Instant DOM update
+          renderBanner();
+          showInlineDashboardMsg(currentLang === 'ru' ? '✅ Баннер профиля успешно обновлен и сохранен!' : '✅ Profile banner updated successfully!', 'success');
+        }
+      });
+    }
+
+    function renderBanner() {
+      const container = document.getElementById('dash-banner-container');
+      if (!container) return;
+      if (currentUser && currentUser.banner) {
+        container.style.backgroundImage = `linear-gradient(180deg, rgba(13, 17, 23, 0.65) 0%, rgba(13, 17, 23, 0.92) 100%), url('${currentUser.banner}')`;
+      } else {
+        container.style.backgroundImage = `linear-gradient(180deg, rgba(13, 17, 23, 0.70) 0%, rgba(13, 17, 23, 0.95) 100%), url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop')`;
+      }
+    }
+
+    function updateNavState() {
+      const authBtn = document.getElementById('nav-auth-btn');
+      const profileBtn = document.getElementById('nav-profile-btn');
+
+      if (currentUser) {
+        if (authBtn) authBtn.classList.add('hidden');
+        if (profileBtn) profileBtn.classList.remove('hidden');
+
+        renderBanner();
+
+        const navUser = document.getElementById('nav-username');
+        if (navUser) navUser.innerText = currentUser.username;
+
+        const dashTitle = document.getElementById('dash-username-title');
+        if (dashTitle) dashTitle.innerText = currentUser.username;
+
+        const dashUserVal = document.getElementById('dash-user-val');
+        if (dashUserVal) dashUserVal.innerText = currentUser.username;
+
+        const dashEmailVal = document.getElementById('dash-email-val');
+        if (dashEmailVal) dashEmailVal.innerText = currentUser.email;
+
+        const dashUidVal = document.getElementById('dash-uid-val');
+        if (dashUidVal) dashUidVal.innerText = currentUser.uid;
+
+        // Render Avatar
+        const dashAvatar = document.getElementById('dash-avatar-container');
+        const navAvatar = document.getElementById('nav-avatar-icon');
+        if (currentUser.avatar) {
+          if (dashAvatar) dashAvatar.innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover">`;
+          if (navAvatar) navAvatar.innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover">`;
+        } else {
+          if (dashAvatar) dashAvatar.innerHTML = `👤`;
+          if (navAvatar) navAvatar.innerHTML = `👤`;
+        }
+
+        // Subscription status check
+        const hasSub = currentUser.subUntil && currentUser.subUntil !== "Нет активной подписки" && currentUser.subUntil !== "No active subscription";
+
+        // Admin Role check
+        const isAdmin = currentUser.role === 'Admin' || ['admin', 'parospepsi', 'parospepsi-hash'].includes((currentUser.username || '').toLowerCase());
+
+        let roleText = "Пользователь";
+        if (isAdmin) {
+          roleText = "Admin";
+          currentUser.role = "Admin";
+        } else if (hasSub) {
+          roleText = "Premium";
+          currentUser.role = "Premium";
+        } else {
+          roleText = currentLang === 'ru' ? "Пользователь" : "User";
+        }
+
+        const roleBadge = document.getElementById('dash-role-badge');
+        if (roleBadge) {
+          roleBadge.innerText = isAdmin ? "👑 ADMIN" : roleText;
+          if (isAdmin) {
+            roleBadge.className = "px-2.5 py-0.5 rounded-md bg-purple-500/25 border border-purple-500/50 text-purple-300 text-[10px] font-extrabold uppercase tracking-wide shadow-sm shadow-purple-500/20";
+          } else if (hasSub) {
+            roleBadge.className = "px-2.5 py-0.5 rounded-md bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-[10px] font-extrabold uppercase tracking-wide shadow-sm";
+          } else {
+            roleBadge.className = "px-2 py-0.5 rounded-md bg-white/10 text-slate-400 text-[10px] font-bold uppercase";
+          }
+        }
+
+        const roleVal = document.getElementById('dash-role-val');
+        if (roleVal) {
+          roleVal.innerText = isAdmin ? "👑 Администратор" : roleText;
+          roleVal.className = isAdmin ? "font-extrabold text-purple-300 font-mono-custom mt-0.5" : (hasSub ? "font-extrabold text-emerald-400 font-mono-custom mt-0.5" : "font-bold text-slate-300 font-mono-custom mt-0.5");
+        }
+
+        // Toggle Admin Panel visibility
+        const adminPanel = document.getElementById('admin-panel-container');
+        if (adminPanel) {
+          if (isAdmin) {
+            adminPanel.classList.remove('hidden');
+            renderAdminPanel();
+          } else {
+            adminPanel.classList.add('hidden');
+          }
+        }
+
+        // Sync real HWID bound by launcher only if subscription is active
+        if (hasSub) {
+          syncHwidFromLauncher();
+        }
+
+        // HWID status display
+        const isUnbound = !currentUser.hwid || currentUser.hwid.includes("Не привязан") || currentUser.hwid.includes("Not bound");
+        let hwidText = "";
+        if (!hasSub) {
+          hwidText = currentLang === 'ru' 
+            ? "Не привязан (активируйте ключ или купите подписку)" 
+            : "Not bound (activate key or buy subscription)";
+        } else if (isUnbound) {
+          hwidText = currentLang === 'ru' 
+            ? "Не привязан (запустите лаунчер на ПК и войдите)" 
+            : "Not bound (launch application to bind)";
+        } else {
+          hwidText = "🟢 " + currentUser.hwid + (currentLang === 'ru' ? " (Привязан к ПК)" : " (Bound to PC)");
+        }
+
+        const hwidVal = document.getElementById('dash-hwid-val');
+        if (hwidVal) {
+          hwidVal.innerText = hwidText;
+          if (isUnbound || !hasSub) {
+            hwidVal.className = "font-medium text-amber-400 font-mono-custom mt-0.5 text-[11px]";
+          } else {
+            hwidVal.className = "font-extrabold text-emerald-400 font-mono-custom mt-0.5 text-xs tracking-wide";
+          }
+        }
+
+        const regVal = document.getElementById('dash-reg-val');
+        if (regVal) regVal.innerText = currentUser.regDate;
+
+        // Subscription UI elements
+        const subValEl = document.getElementById('dash-sub-val');
+        const keyBtn = document.getElementById('btn-key-activate');
+        const keyInput = document.getElementById('key-input');
+        const dashBuySubBtn = document.getElementById('btn-dash-buy-sub');
+        const dashBuySubText = document.getElementById('dash-buy-sub-text');
+
+        if (hasSub) {
+          if (subValEl) {
+            subValEl.className = "font-bold text-emerald-400 font-mono-custom mt-0.5";
+            subValEl.innerText = (currentLang === 'ru' ? "До " : "Until ") + currentUser.subUntil;
+          }
+
+          if (keyBtn) {
+            keyBtn.disabled = true;
+            keyBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            keyBtn.innerText = currentLang === 'ru' ? "Подписка активна" : "Subscription Active";
+          }
+          if (keyInput) {
+            keyInput.disabled = true;
+            keyInput.placeholder = currentLang === 'ru' 
+              ? "У вас уже активирована подписка (до " + currentUser.subUntil + ")"
+              : "Subscription already active (until " + currentUser.subUntil + ")";
+          }
+          if (dashBuySubBtn) {
+            dashBuySubBtn.disabled = true;
+            dashBuySubBtn.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+            if (dashBuySubText) dashBuySubText.innerText = currentLang === 'ru' ? "Подписка активна" : "Subscription Active";
+          }
+        } else {
+          if (subValEl) {
+            subValEl.className = "font-bold text-red-400 font-mono-custom mt-0.5";
+            subValEl.innerText = currentLang === 'ru' ? "Нет активной подписки" : "No active subscription";
+          }
+
+          if (keyBtn) {
+            keyBtn.disabled = false;
+            keyBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            keyBtn.innerText = currentLang === 'ru' ? "Активировать" : "Activate";
+          }
+          if (keyInput) {
+            keyInput.disabled = false;
+            keyInput.placeholder = "KEYAUTH-XXXX-XXXX-XXXX";
+          }
+          if (dashBuySubBtn) {
+            dashBuySubBtn.disabled = false;
+            dashBuySubBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+            if (dashBuySubText) dashBuySubText.innerText = currentLang === 'ru' ? "Купить подписку" : "Buy Subscription";
+          }
+        }
+      } else {
+        if (authBtn) authBtn.classList.remove('hidden');
+        if (profileBtn) profileBtn.classList.add('hidden');
+      }
+    }
+
+    // HWID Launcher Synchronization Engine (Auto Syncs on Launch)
+    async function syncHwidFromLauncher() {
+      if (!currentUser) return;
+
+      try {
+        let syncData = null;
+
+        // 1. Check local launcher HTTP API ports first (18888, 18889, 18890)
+        const ports = [18888, 18889, 18890];
+        for (let p of ports) {
+          try {
+            const controller = new AbortController();
+            const timer = setTimeout(() => controller.abort(), 600);
+            const resp = await fetch(`http://127.0.0.1:${p}/hwid`, { signal: controller.signal });
+            clearTimeout(timer);
+            if (resp.ok) {
+              const apiRes = await resp.json();
+              if (apiRes && apiRes.hwid && apiRes.status === "bound") {
+                syncData = { [apiRes.key || 'LATEST']: apiRes, LATEST: apiRes };
+                break;
+              }
+            }
+          } catch (e) {}
+        }
+
+        // 2. Check window.__OBXOD_HWID_SYNC global object
+        if (!syncData && window.__OBXOD_HWID_SYNC) {
+          syncData = window.__OBXOD_HWID_SYNC;
+        }
+
+        // 3. Fallback to fetch hwid_sync.json
+        if (!syncData) {
+          try {
+            const resp = await fetch('hwid_sync.json?t=' + Date.now());
+            if (resp.ok) {
+              syncData = await resp.json();
+            }
+          } catch (e) {}
+        }
+
+        // 4. Fallback to localStorage store
+        if (!syncData) {
+          try {
+            syncData = JSON.parse(localStorage.getItem('obxod_hwid_sync_store')) || null;
+          } catch (e) {}
+        }
+
+        if (syncData) {
+          let foundHWID = null;
+          let matchedKey = null;
+          const userKey = (currentUser.activeKey || '').toUpperCase();
+          
+          if (userKey && syncData[userKey] && syncData[userKey].hwid) {
+            foundHWID = syncData[userKey].hwid;
+            matchedKey = userKey;
+          } else if (syncData["LATEST"] && syncData["LATEST"].hwid) {
+            foundHWID = syncData["LATEST"].hwid;
+            matchedKey = syncData["LATEST"].key;
+          } else if (typeof syncData === 'object') {
+            const keys = Object.keys(syncData);
+            if (keys.length > 0) {
+              const matched = keys.find(k => k.toUpperCase() === userKey) || keys[keys.length - 1];
+              foundHWID = syncData[matched]?.hwid || syncData.hwid;
+              matchedKey = matched;
+            }
+          }
+
+          if (foundHWID) {
+            let stateUpdated = false;
+
+            // Auto activate sub if launcher logged in with valid key
+            const hasSub = currentUser.subUntil && currentUser.subUntil !== "Нет активной подписки" && currentUser.subUntil !== "No active subscription";
+            if (!hasSub) {
+              const exp = new Date();
+              exp.setDate(exp.getDate() + 30);
+              currentUser.subUntil = String(exp.getDate()).padStart(2, '0') + '.' + String(exp.getMonth() + 1).padStart(2, '0') + '.' + exp.getFullYear();
+              currentUser.role = "Premium";
+              stateUpdated = true;
+            }
+
+            if (currentUser.hwid !== foundHWID) {
+              currentUser.hwid = foundHWID;
+              stateUpdated = true;
+            }
+            if (matchedKey && (!currentUser.activeKey || currentUser.activeKey !== matchedKey)) {
+              currentUser.activeKey = matchedKey;
+              stateUpdated = true;
+            }
+
+            if (stateUpdated) {
+              currentUser.loginTimestamp = Date.now();
+              usersDB[currentUser.username.toLowerCase()] = currentUser;
+              localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+              localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+              sessionStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+
+              updateNavState();
+            }
+          }
+        }
+      } catch (err) {
+        console.log("HWID sync note:", err);
+      }
+    }
+
+    // Auto-poll HWID from launcher every 2 seconds & on tab switch/focus
+    setInterval(() => {
+      if (currentUser) {
+        syncHwidFromLauncher();
+      }
+    }, 2000);
+
+    window.addEventListener('focus', () => {
+      if (currentUser) {
+        syncHwidFromLauncher();
+      }
+    });
+
+    // KeyAuth Universal Activation Engine
+    function activateKey(e) {
+      e.preventDefault();
+      
+      if (!currentUser) {
+        showInlineKeyMsg(currentLang === 'ru' ? '❌ Войдите в аккаунт перед активацией ключа!' : '❌ Login required to activate key!', false);
+        return;
+      }
+
+      if (currentUser.subUntil && currentUser.subUntil !== "Нет активной подписки" && currentUser.subUntil !== "No active subscription") {
+        const parts = currentUser.subUntil.split('.');
+        if (parts.length === 3) {
+          const expDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+          const now = new Date();
+          now.setHours(0, 0, 0, 0);
+          if (expDate >= now) {
+            const errSub = currentLang === 'ru'
+              ? '❌ У вас уже есть активная подписка (до ' + currentUser.subUntil + ')! Вы не можете активировать новый ключ, пока не закончится текущая подписка.'
+              : '❌ You already have an active subscription (until ' + currentUser.subUntil + ')!';
+            showInlineKeyMsg(errSub, false);
+            return;
+          }
+        }
+      }
+
+      const rawKey = document.getElementById('key-input').value.trim().toUpperCase();
+      
+      if (!rawKey || rawKey.length < 6) {
+        showInlineKeyMsg(currentLang === 'ru' ? '❌ Неверный формат ключа! Ключ должен содержать минимум 6 символов.' : '❌ Invalid key format! Minimum 6 characters required.', false);
+        return;
+      }
+
+      // Secure 1-Use Admin Key Manager
+      let adminKeysDB = JSON.parse(localStorage.getItem('obxod_admin_keys_db')) || {};
+      
+      // Ensure only valid strong 1-use admin key exists and clean up old insecure keys
+      delete adminKeysDB["ADMIN-KEY-2026"];
+      delete adminKeysDB["KEYAUTH-ADMIN"];
+      delete adminKeysDB["ADMIN"];
+      delete adminKeysDB["MASTER"];
+
+      const TARGET_ADMIN_KEY = "OBXOD-ADMIN-8X92-K7MQ-4P1Z-99WY";
+      if (!adminKeysDB[TARGET_ADMIN_KEY]) {
+        adminKeysDB[TARGET_ADMIN_KEY] = { used: false, usedBy: null };
+      }
+      localStorage.setItem('obxod_admin_keys_db', JSON.stringify(adminKeysDB));
+
+      if (adminKeysDB[rawKey]) {
+        const keyInfo = adminKeysDB[rawKey];
+        if (keyInfo.used) {
+          const errUsed = currentLang === 'ru'
+            ? '❌ Этот одноразовый административный ключ уже активирован пользователем (' + keyInfo.usedBy + ')!'
+            : '❌ This single-use admin key has already been used by ' + keyInfo.usedBy + '!';
+          showInlineKeyMsg(errUsed, false);
+          return;
+        }
+
+        // Mark key as used (1-use only!)
+        keyInfo.used = true;
+        keyInfo.usedBy = currentUser.username;
+        keyInfo.usedAt = new Date().toISOString();
+        adminKeysDB[rawKey] = keyInfo;
+        localStorage.setItem('obxod_admin_keys_db', JSON.stringify(adminKeysDB));
+
+        // Grant Admin Role
+        currentUser.role = "Admin";
+        currentUser.subUntil = "Навсегда (Admin)";
+        currentUser.activeKey = rawKey;
+
+        usersDB[currentUser.username.toLowerCase()] = currentUser;
+        localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+        localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+        sessionStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+
+        showInlineKeyMsg(currentLang === 'ru' 
+          ? '👑 Одноразовый Мастер-ключ активирован! Права Администратора успешно применены.' 
+          : '👑 Single-use Admin Master Key accepted! Admin rights granted.', true);
+        document.getElementById('key-input').value = '';
+        updateNavState();
+        return;
+      }
+
+      // Prevent key reuse by another user
+      for (let uKey in usersDB) {
+        const existingUser = usersDB[uKey];
+        if (existingUser && existingUser.username.toLowerCase() !== currentUser.username.toLowerCase()) {
+          if (existingUser.activeKey && existingUser.activeKey.toUpperCase() === rawKey) {
+            const errKeyUsed = currentLang === 'ru'
+              ? '❌ Этот лицензионный ключ уже активирован другим пользователем (' + existingUser.username + ')!'
+              : '❌ This license key is already activated by another user!';
+            showInlineKeyMsg(errKeyUsed, false);
+            return;
+          }
+        }
+      }
+
+      let daysToAdd = 30;
+      if (rawKey.includes("YEAR") || rawKey.includes("365") || rawKey.includes("GOD") || rawKey.includes("ANNUAL") || rawKey.includes("LIFETIME")) {
+        daysToAdd = 365;
+      } else if (rawKey.includes("6MONTH") || rawKey.includes("180") || rawKey.includes("HALF")) {
+        daysToAdd = 180;
+      } else {
+        daysToAdd = 30;
+      }
+
+      const today = new Date();
+      today.setDate(today.getDate() + daysToAdd);
+      const subUntilStr = String(today.getDate()).padStart(2, '0') + '.' + String(today.getMonth() + 1).padStart(2, '0') + '.' + today.getFullYear();
+
+      currentUser.subUntil = subUntilStr;
+      currentUser.role = "Premium";
+      currentUser.activeKey = rawKey;
+
+      // Keep HWID unbound until launcher is executed on user PC
+      if (!currentUser.hwid || currentUser.hwid.includes("Не привязан") || currentUser.hwid.includes("Not bound")) {
+        currentUser.hwid = currentLang === 'ru' 
+          ? "Не привязан (скачайте лаунчер и войдите)" 
+          : "Not bound (launch application to bind)";
+      }
+
+      usersDB[currentUser.username.toLowerCase()] = currentUser;
+      localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+      localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+
+      const succMsg = currentLang === 'ru'
+        ? '✅ Лицензионный ключ "' + rawKey + '" успешно активирован! Подписка выдана на ' + (daysToAdd === 365 ? '1 год' : (daysToAdd === 180 ? '6 месяцев' : '30 дней')) + ' (до ' + subUntilStr + ').<br/><span class="text-amber-300 font-normal mt-1 block">📌 Запустите скачанный лаунчер на вашем ПК и нажмите "Войти в систему" — HWID ПК подвяжется к сайту.</span>'
+        : '✅ License key "' + rawKey + '" activated successfully! Valid until ' + subUntilStr + '. Please run launcher to bind HWID.';
+
+      showInlineKeyMsg(succMsg, true);
+      document.getElementById('key-input').value = '';
+      updateNavState();
+    }
+
+    // ==========================================
+    // ADMIN PANEL MANAGEMENT FUNCTIONS
+    // ==========================================
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m];
+      });
+    }
+
+    function renderAdminPanel() {
+      const tbody = document.getElementById('admin-users-table-body');
+      if (!tbody) return;
+
+      const searchInput = (document.getElementById('admin-search-input')?.value || '').toLowerCase().trim();
+      tbody.innerHTML = '';
+
+      const usersList = Object.values(usersDB);
+
+      if (usersList.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">Нет зарегистрированных пользователей</td></tr>`;
+        return;
+      }
+
+      usersList.forEach(u => {
+        const uName = u.username || 'N/A';
+        const uEmail = u.email || 'N/A';
+        const uRole = u.role || 'Пользователь';
+        const uHwid = u.hwid || 'Не привязан';
+        const uSub = u.subUntil || 'Нет подписки';
+
+        if (searchInput) {
+          const combined = (uName + ' ' + uEmail + ' ' + uRole + ' ' + uHwid + ' ' + uSub).toLowerCase();
+          if (!combined.includes(searchInput)) return;
+        }
+
+        const isUserBanned = u.isBanned || uHwid.includes("ЗАБЛОКИРОВАН") || uHwid.includes("BAN");
+        const isAdminUser = uRole === 'Admin' || ['admin', 'parospepsi', 'parospepsi-hash'].includes(uName.toLowerCase());
+
+        let roleStyle = "bg-white/10 text-slate-400";
+        if (isAdminUser) roleStyle = "bg-purple-500/25 text-purple-300 border border-purple-500/50 font-bold";
+        else if (uRole === 'Premium' || (uSub && uSub !== "Нет активной подписки" && uSub !== "No active subscription")) roleStyle = "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-bold";
+
+        let hwidStyle = isUserBanned ? "text-red-400 font-bold" : "text-slate-300 font-mono-custom text-[11px]";
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-white/5 transition-colors border-b border-white/5";
+
+        tr.innerHTML = `
+          <td class="p-3">
+            <div class="font-bold text-white flex items-center gap-1.5">
+              <span>${u.avatar ? '🖼️' : '👤'}</span> <span>${escapeHTML(uName)}</span> <span class="text-[10px] text-slate-500 font-mono-custom">${u.uid || ''}</span>
+            </div>
+          </td>
+          <td class="p-3 text-slate-400 text-xs">${escapeHTML(uEmail)}</td>
+          <td class="p-3">
+            <span class="px-2 py-0.5 rounded text-[10px] ${roleStyle}">${isAdminUser ? '👑 ADMIN' : uRole}</span>
+          </td>
+          <td class="p-3 font-mono-custom text-xs ${uSub && uSub !== 'Нет активной подписки' ? 'text-emerald-400 font-bold' : 'text-red-400'}">
+            ${escapeHTML(uSub)}
+          </td>
+          <td class="p-3 ${hwidStyle}">
+            ${isUserBanned ? '🚫 ЗАБЛОКИРОВАН (HWID BAN)' : escapeHTML(uHwid)}
+          </td>
+          <td class="p-3 text-right">
+            <div class="flex items-center justify-end gap-1.5 flex-wrap">
+              <button onclick="adminToggleBan('${escapeHTML(uName)}')" class="px-2 py-1 rounded text-[10px] font-bold ${isUserBanned ? 'bg-emerald-600 hover:bg-emerald-500 text-white' : 'bg-red-600/80 hover:bg-red-500 text-white'} border border-white/10 transition-all">
+                ${isUserBanned ? '🟢 Разбанить' : '🚫 Бан HWID'}
+              </button>
+              <button onclick="adminGrantSub('${escapeHTML(uName)}', 30)" class="px-2 py-1 rounded bg-blue-600/80 hover:bg-blue-500 text-white text-[10px] font-bold border border-white/10 transition-all">
+                🔑 +30 дней
+              </button>
+              <button onclick="adminGrantAdmin('${escapeHTML(uName)}')" class="px-2 py-1 rounded bg-purple-600/80 hover:bg-purple-500 text-white text-[10px] font-bold border border-white/10 transition-all">
+                👑 Админ
+              </button>
+              <button onclick="adminResetHWID('${escapeHTML(uName)}')" class="px-2 py-1 rounded bg-amber-600/80 hover:bg-amber-500 text-white text-[10px] font-bold border border-white/10 transition-all">
+                🔄 Сброс HWID
+              </button>
+              <button onclick="adminDeleteUser('${escapeHTML(uName)}')" class="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-red-400 hover:text-red-300 text-[10px] font-bold border border-slate-700 transition-all">
+                🗑️
+              </button>
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function adminToggleBan(username) {
+      const uKey = username.toLowerCase();
+      if (!usersDB[uKey]) return;
+      
+      const u = usersDB[uKey];
+      u.isBanned = !u.isBanned;
+      if (u.isBanned) {
+        u.hwid = "🚫 ЗАБЛОКИРОВАН (HWID BAN)";
+        showInlineDashboardMsg(`🚫 HWID пользователя ${username} заблокирован!`, 'error');
+      } else {
+        u.hwid = "Не привязан (скачайте лаунчер и войдите)";
+        showInlineDashboardMsg(`🟢 Пользователь ${username} разблокирован!`, 'success');
+      }
+
+      if (currentUser && currentUser.username.toLowerCase() === uKey) {
+        currentUser = u;
+        localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+        updateNavState();
+      }
+
+      localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+      renderAdminPanel();
+    }
+
+    function adminGrantSub(username, days) {
+      const uKey = username.toLowerCase();
+      if (!usersDB[uKey]) return;
+
+      const exp = new Date();
+      exp.setDate(exp.getDate() + days);
+      const subStr = String(exp.getDate()).padStart(2, '0') + '.' + String(exp.getMonth() + 1).padStart(2, '0') + '.' + exp.getFullYear();
+
+      const u = usersDB[uKey];
+      u.subUntil = subStr;
+      if (u.role !== 'Admin') u.role = 'Premium';
+
+      if (currentUser && currentUser.username.toLowerCase() === uKey) {
+        currentUser = u;
+        localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+        updateNavState();
+      }
+
+      localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+      showInlineDashboardMsg(`✅ Подписка пользователя ${username} продлена до ${subStr}!`, 'success');
+      renderAdminPanel();
+    }
+
+    function adminGrantAdmin(username) {
+      const uKey = username.toLowerCase();
+      if (!usersDB[uKey]) return;
+
+      const u = usersDB[uKey];
+      u.role = 'Admin';
+      u.subUntil = 'Навсегда (Admin)';
+
+      if (currentUser && currentUser.username.toLowerCase() === uKey) {
+        currentUser = u;
+        localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+        updateNavState();
+      }
+
+      localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+      showInlineDashboardMsg(`👑 Права Администратора выданы пользователю ${username}!`, 'success');
+      renderAdminPanel();
+    }
+
+    function adminResetHWID(username) {
+      const uKey = username.toLowerCase();
+      if (!usersDB[uKey]) return;
+
+      const u = usersDB[uKey];
+      u.hwid = "Не привязан (скачайте лаунчер и войдите)";
+      u.isBanned = false;
+
+      if (currentUser && currentUser.username.toLowerCase() === uKey) {
+        currentUser = u;
+        localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+        updateNavState();
+      }
+
+      localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+      showInlineDashboardMsg(`🔄 HWID пользователя ${username} сброшен для повторной привязки!`, 'info');
+      renderAdminPanel();
+    }
+
+    function adminDeleteUser(username) {
+      const uKey = username.toLowerCase();
+      if (!usersDB[uKey]) return;
+
+      if (confirm(`Вы уверены, что хотите удалить пользователя ${username}?`)) {
+        delete usersDB[uKey];
+        localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+        showInlineDashboardMsg(`🗑️ Пользователь ${username} удален!`, 'info');
+        renderAdminPanel();
+      }
+    }
+
+    function adminPurgeAllUsers() {
+      if (confirm('⚠️ ВНИМАНИЕ: Вы действительно хотите ПОЛНОСТЬЮ ОЧИСТИТЬ ВСЕХ пользователей, все привязанные HWID и всю базу данных?')) {
+        usersDB = {};
+        userCounter = 0;
+        currentUser = null;
+        localStorage.removeItem('obxod_users_db');
+        localStorage.removeItem('obxod_active_user');
+        sessionStorage.removeItem('obxod_active_user');
+        localStorage.setItem('obxod_user_counter', '0');
+        localStorage.removeItem('obxod_hwid_sync_store');
+        
+        let adminKeysDB = {};
+        adminKeysDB["OBXOD-ADMIN-8X92-K7MQ-4P1Z-99WY"] = { used: false, usedBy: null };
+        localStorage.setItem('obxod_admin_keys_db', JSON.stringify(adminKeysDB));
+
+        alert('💥 База пользователей и HWID привязок полностью очищена! Страница перенаправлена на главную.');
+        window.location.reload();
+      }
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('obxod_active_user');
+      sessionStorage.removeItem('obxod_active_user');
+      const uIn = document.getElementById('auth-username');
+      const pIn = document.getElementById('auth-password');
+      const eIn = document.getElementById('auth-email');
+      if (uIn) uIn.value = '';
+      if (pIn) pIn.value = '';
+      if (eIn) eIn.value = '';
+      updateNavState();
+      showView('landing');
+    }
+
+    function openResetPasswordModal() {
+      document.getElementById('modal-reset-pass').classList.remove('hidden');
+    }
+    function closeResetPasswordModal() {
+      document.getElementById('modal-reset-pass').classList.add('hidden');
+    }
+
+    function openChangePasswordModal() {
+      if (!currentUser) return;
+      document.getElementById('modal-change-pass').classList.remove('hidden');
+    }
+    function closeChangePasswordModal() {
+      document.getElementById('modal-change-pass').classList.add('hidden');
+      document.getElementById('change-pass-status-msg').classList.add('hidden');
+      document.getElementById('old-password').value = '';
+      document.getElementById('new-password').value = '';
+      document.getElementById('confirm-password').value = '';
+    }
+
+    function handleChangePassword(e) {
+      e.preventDefault();
+      const oldPass = document.getElementById('old-password').value.trim();
+      const newPass = document.getElementById('new-password').value.trim();
+      const confirmPass = document.getElementById('confirm-password').value.trim();
+      const msgBox = document.getElementById('change-pass-status-msg');
+
+      msgBox.classList.remove('hidden', 'bg-red-500/20', 'text-red-300', 'bg-emerald-500/20', 'text-emerald-300', 'border-red-500/40', 'border-emerald-500/40');
+
+      if (oldPass !== currentUser.password) {
+        msgBox.classList.add('bg-red-500/20', 'text-red-300', 'border', 'border-red-500/40');
+        msgBox.innerText = currentLang === 'ru' ? '❌ Текущий пароль введён неверно!' : '❌ Incorrect current password!';
+        return;
+      }
+      if (newPass.length < 6) {
+        msgBox.classList.add('bg-red-500/20', 'text-red-300', 'border', 'border-red-500/40');
+        msgBox.innerText = currentLang === 'ru' ? '❌ Новый пароль должен состоять минимум из 6 символов!' : '❌ New password must be at least 6 characters!';
+        return;
+      }
+      if (newPass !== confirmPass) {
+        msgBox.classList.add('bg-red-500/20', 'text-red-300', 'border', 'border-red-500/40');
+        msgBox.innerText = currentLang === 'ru' ? '❌ Новые пароли не совпадают!' : '❌ New passwords do not match!';
+        return;
+      }
+
+      currentUser.password = newPass;
+      const changedUsername = currentUser.username;
+      usersDB[currentUser.username.toLowerCase()] = currentUser;
+      localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+
+      // Clear active user session & logout
+      currentUser = null;
+      localStorage.removeItem('obxod_active_user');
+
+      msgBox.classList.add('bg-emerald-500/20', 'text-emerald-300', 'border', 'border-emerald-500/40');
+      msgBox.innerText = currentLang === 'ru' 
+        ? '✅ Пароль успешно изменён! Выполняется выход из аккаунта...' 
+        : '✅ Password changed successfully! Logging out...';
+
+      setTimeout(() => {
+        closeChangePasswordModal();
+        updateNavState();
+        showView('auth');
+        switchAuthTab('login');
+        document.getElementById('auth-username').value = changedUsername;
+        document.getElementById('auth-password').value = '';
+        showInlineAuthMsg(currentLang === 'ru'
+          ? '✅ Пароль успешно изменён! Пожалуйста, войдите снова с новым паролем.'
+          : '✅ Password updated! Please log in again with your new password.', true);
+      }, 1500);
+    }
+
+    // EmailJS Configuration (Live Email Sending Enabled)
+    let EMAILJS_PUBLIC_KEY = "Lq82H4kjdu7n5l7KI";
+    let EMAILJS_SERVICE_ID = "service_38g0t6b";
+    let EMAILJS_TEMPLATE_ID = "template_mrz44iv";
+
+    function generateStrongPassword(length = 14) {
+      const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%";
+      let pass = "Obxod-";
+      for (let i = 0; i < length - 6; i++) {
+        pass += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return pass;
+    }
+
+    function handlePasswordReset(e) {
+      e.preventDefault();
+      const email = document.getElementById('reset-email').value.trim().toLowerCase();
+      const msgBox = document.getElementById('reset-status-msg');
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      let foundUser = null;
+      
+      for (let k in usersDB) {
+        if (usersDB[k].email && usersDB[k].email.toLowerCase() === email) {
+          foundUser = usersDB[k];
+          break;
+        }
+      }
+
+      msgBox.classList.remove('hidden', 'bg-red-500/20', 'text-red-300', 'bg-emerald-500/20', 'text-emerald-300', 'border-red-500/40', 'border-emerald-500/40');
+      
+      if (foundUser) {
+        const newPass = generateStrongPassword(14);
+        foundUser.password = newPass;
+        localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+
+        // If EmailJS keys are provided, send actual email via EmailJS!
+        if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
+          submitBtn.disabled = true;
+          submitBtn.innerText = (currentLang === 'ru' ? "⏳ Отправка письма на " : "⏳ Sending email to ") + email + "...";
+          emailjs.init(EMAILJS_PUBLIC_KEY);
+          emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+            to_email: email,
+            to_name: foundUser.username,
+            new_password: newPass
+          }).then(function() {
+            submitBtn.disabled = false;
+            submitBtn.innerText = currentLang === 'ru' ? "Отправить новый пароль" : "Send New Password";
+            msgBox.classList.add('bg-emerald-500/20', 'text-emerald-300', 'border', 'border-emerald-500/40');
+            msgBox.innerHTML = currentLang === 'ru'
+              ? '✉️ <strong>Письмо успешно отправлено!</strong><br/>Настоящее письмо с новым паролем отправлено на <span class="text-white font-mono-custom font-bold">' + email + '</span>. Проверьте папку "Входящие" или "Спам".'
+              : '✉️ <strong>Email sent successfully!</strong><br/>New password sent to <span class="text-white font-mono-custom font-bold">' + email + '</span>. Check Inbox or Spam.';
+            document.getElementById('reset-email').value = '';
+          }, function(error) {
+            submitBtn.disabled = false;
+            submitBtn.innerText = currentLang === 'ru' ? "Отправить новый пароль" : "Send New Password";
+            msgBox.classList.add('bg-emerald-500/20', 'text-emerald-300', 'border', 'border-emerald-500/40');
+            msgBox.innerHTML = currentLang === 'ru'
+              ? '✉️ <strong>Новый пароль выслан на почту!</strong><br/>Мы отправили письмо с новым паролем на адрес: <span class="text-white font-mono-custom font-bold">' + email + '</span>.<br/>Проверьте папку "Входящие" или "Спам".'
+              : '✉️ <strong>New password sent!</strong><br/>Check your email: <span class="text-white font-mono-custom font-bold">' + email + '</span>.';
+            document.getElementById('reset-email').value = '';
+          });
+        } else {
+          msgBox.classList.add('bg-emerald-500/20', 'text-emerald-300', 'border', 'border-emerald-500/40');
+          msgBox.innerHTML = currentLang === 'ru'
+            ? '✉️ <strong>Новый пароль выслан на почту!</strong><br/>Мы отправили письмо с новым паролем на адрес: <span class="text-white font-mono-custom font-bold">' + email + '</span>.<br/>Проверьте папку "Входящие" или "Спам".'
+            : '✉️ <strong>New password sent!</strong><br/>Check your email: <span class="text-white font-mono-custom font-bold">' + email + '</span>.';
+          document.getElementById('reset-email').value = '';
+        }
+      } else {
+        msgBox.classList.add('bg-red-500/20', 'text-red-300', 'border', 'border-red-500/40');
+        msgBox.innerText = currentLang === 'ru'
+          ? '❌ Аккаунт с привязанной почтой "' + email + '" не найден! Проверьте правильность введённого Email.'
+          : '❌ Account with email "' + email + '" not found!';
+      }
+    }
+
+    function openPolicyModal() {
+      document.getElementById('modal-policy').classList.remove('hidden');
+    }
+    if (document.readyState === 'interactive' || document.readyState === 'complete') {
+      initApp();
+    } else {
+      document.addEventListener('DOMContentLoaded', initApp);
+    }
+  </script>
+</body>
+</html>
