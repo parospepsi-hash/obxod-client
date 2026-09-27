@@ -225,9 +225,11 @@
 <body class="bg-[#0b0d12] text-slate-100 min-h-screen flex flex-col justify-between antialiased selection:bg-slate-700 selection:text-white">
 
   <!-- Fixed Live 4K/2K Minecraft Harbor Village Video Background -->
-  <div id="bg-wallpaper" class="fixed inset-0 pointer-events-none z-[-2] overflow-hidden">
-    <video autoplay loop muted playsinline class="w-full h-full object-cover scale-100 filter brightness-[0.85]">
+  <div id="bg-wallpaper" class="fixed inset-0 pointer-events-none z-[-2] overflow-hidden bg-slate-950 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920&auto=format&fit=crop');">
+    <video autoplay loop muted playsinline poster="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920&auto=format&fit=crop" class="w-full h-full object-cover scale-100 filter brightness-[0.85]">
       <source src="./assets/harbor_village.mp4" type="video/mp4">
+      <source src="./harbor_village.mp4" type="video/mp4">
+      <source src="assets/harbor_village.mp4" type="video/mp4">
     </video>
     <div class="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-950/60 to-slate-950/85"></div>
   </div>
@@ -2658,12 +2660,14 @@
         // Render Avatar
         const dashAvatar = document.getElementById('dash-avatar-container');
         const navAvatar = document.getElementById('nav-avatar-icon');
-        if (currentUser.avatar) {
-          if (dashAvatar) dashAvatar.innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover">`;
-          if (navAvatar) navAvatar.innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover">`;
+        const defaultAvatarSVG = `<svg class="w-full h-full text-slate-300 p-1.5 fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm0 14c-2.03 0-3.8-1.04-4.83-2.61.03-1.6 3.22-2.48 4.83-2.48s4.8 1.88 4.83 2.48C15.83 18.96 14.03 20 12 20z"/></svg>`;
+
+        if (currentUser && currentUser.avatar && currentUser.avatar.length > 5) {
+          if (dashAvatar) dashAvatar.innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover rounded-full">`;
+          if (navAvatar) navAvatar.innerHTML = `<img src="${currentUser.avatar}" class="w-full h-full object-cover rounded-full">`;
         } else {
-          if (dashAvatar) dashAvatar.innerHTML = `👤`;
-          if (navAvatar) navAvatar.innerHTML = `👤`;
+          if (dashAvatar) dashAvatar.innerHTML = defaultAvatarSVG;
+          if (navAvatar) navAvatar.innerHTML = defaultAvatarSVG;
         }
 
         // Subscription status check
