@@ -226,7 +226,7 @@
 
   <!-- Fixed Live 4K/2K Minecraft Harbor Village Video Background -->
   <div id="bg-wallpaper" class="fixed inset-0 pointer-events-none z-[-2] overflow-hidden bg-slate-950 bg-cover bg-center" style="background-image: url('./assets/harbor_village_poster.jpg');">
-    <video autoplay loop muted playsinline poster="./assets/harbor_village_poster.jpg" class="w-full h-full object-cover scale-100 filter brightness-[0.85]">
+    <video autoplay loop muted playsinline poster="./assets/harbor_village_poster.jpg" class="w-full h-full object-cover scale-100 filter brightness-[0.95]">
       <source src="./assets/harbor_village.mp4" type="video/mp4">
       <source src="assets/harbor_village.mp4" type="video/mp4">
       <source src="harbor_village.mp4" type="video/mp4">
@@ -243,7 +243,7 @@
         }
       })();
     </script>
-    <div class="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-950/60 to-slate-950/85"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-slate-950/25 via-slate-950/45 to-slate-950/70"></div>
   </div>
 
   <!-- Top Floating Pill Navigation Bar (Transparent Glass with Border) -->
@@ -796,7 +796,7 @@
     <!-- VIEW 3: PERSONAL CABINET / USER DASHBOARD -->
     <div id="view-dashboard" class="hidden space-y-6">
       
-      <div id="dash-banner-container" class="glass-panel rounded-3xl p-6 sm:p-8 relative overflow-hidden bg-cover bg-center border border-white/10 shadow-2xl transition-all" style="background-image: linear-gradient(180deg, rgba(13, 17, 23, 0.70) 0%, rgba(13, 17, 23, 0.95) 100%), url('./assets/minecraft_bg.jpg');">
+      <div id="dash-banner-container" class="glass-panel rounded-3xl p-6 sm:p-8 relative overflow-hidden bg-cover bg-center border border-white/10 shadow-2xl transition-all" style="background-image: linear-gradient(180deg, rgba(13, 17, 23, 0.30) 0%, rgba(13, 17, 23, 0.80) 100%), url('./assets/minecraft_bg.jpg');">
         
         <!-- Change Banner Button in top right of banner -->
         <button onclick="triggerBannerUpload()" title="Сменить баннер" class="absolute top-4 right-4 px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-200 text-xs font-semibold border border-white/15 backdrop-blur-md transition-all flex items-center gap-1.5 shadow-md cursor-pointer z-10">
@@ -1934,10 +1934,14 @@
         if (fbResp.ok) {
           const fbDB = await fbResp.json();
           if (fbDB && typeof fbDB === 'object') {
-            // Merge fbDB with existing local usersDB so newly registered accounts are NEVER lost!
             for (let k in usersDB) {
-              if (usersDB[k] && usersDB[k].username && !fbDB[k]) {
-                fbDB[k] = usersDB[k];
+              if (usersDB[k] && usersDB[k].username) {
+                if (!fbDB[k]) {
+                  fbDB[k] = usersDB[k];
+                } else {
+                  if (usersDB[k].avatar && !fbDB[k].avatar) fbDB[k].avatar = usersDB[k].avatar;
+                  if (usersDB[k].banner && !fbDB[k].banner) fbDB[k].banner = usersDB[k].banner;
+                }
               }
             }
             usersDB = fbDB;
@@ -1954,7 +1958,11 @@
             if (currentUser && currentUser.username) {
               const uKey = currentUser.username.toLowerCase();
               if (usersDB[uKey]) {
+                const oldAv = currentUser.avatar;
+                const oldBn = currentUser.banner;
                 currentUser = usersDB[uKey];
+                if (oldAv && !currentUser.avatar) currentUser.avatar = oldAv;
+                if (oldBn && !currentUser.banner) currentUser.banner = oldBn;
                 localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
               } else {
                 usersDB[uKey] = currentUser;
@@ -2636,10 +2644,10 @@
     function renderBanner() {
       const container = document.getElementById('dash-banner-container');
       if (!container) return;
-      if (currentUser && currentUser.banner) {
-        container.style.backgroundImage = `linear-gradient(180deg, rgba(13, 17, 23, 0.65) 0%, rgba(13, 17, 23, 0.92) 100%), url('${currentUser.banner}')`;
+      if (currentUser && currentUser.banner && currentUser.banner.length > 5) {
+        container.style.backgroundImage = `linear-gradient(180deg, rgba(13, 17, 23, 0.25) 0%, rgba(13, 17, 23, 0.80) 100%), url('${currentUser.banner}')`;
       } else {
-        container.style.backgroundImage = `linear-gradient(180deg, rgba(13, 17, 23, 0.70) 0%, rgba(13, 17, 23, 0.95) 100%), url('./assets/minecraft_bg.jpg')`;
+        container.style.backgroundImage = `linear-gradient(180deg, rgba(13, 17, 23, 0.30) 0%, rgba(13, 17, 23, 0.82) 100%), url('./assets/harbor_village_poster.jpg')`;
       }
     }
 
