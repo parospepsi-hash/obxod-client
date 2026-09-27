@@ -225,8 +225,8 @@
 <body class="bg-[#0b0d12] text-slate-100 min-h-screen flex flex-col justify-between antialiased selection:bg-slate-700 selection:text-white">
 
   <!-- Fixed Live 4K/2K Minecraft Harbor Village Video Background -->
-  <div id="bg-wallpaper" class="fixed inset-0 pointer-events-none z-[-2] overflow-hidden bg-slate-950 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920&auto=format&fit=crop');">
-    <video autoplay loop muted playsinline poster="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920&auto=format&fit=crop" class="w-full h-full object-cover scale-100 filter brightness-[0.85]">
+  <div id="bg-wallpaper" class="fixed inset-0 pointer-events-none z-[-2] overflow-hidden bg-slate-950 bg-cover bg-center" style="background-image: url('./assets/minecraft_bg.jpg');">
+    <video autoplay loop muted playsinline poster="./assets/minecraft_bg.jpg" class="w-full h-full object-cover scale-100 filter brightness-[0.85]">
       <source src="./assets/harbor_village.mp4" type="video/mp4">
       <source src="./harbor_village.mp4" type="video/mp4">
       <source src="assets/harbor_village.mp4" type="video/mp4">
@@ -784,7 +784,7 @@
     <!-- VIEW 3: PERSONAL CABINET / USER DASHBOARD -->
     <div id="view-dashboard" class="hidden space-y-6">
       
-      <div id="dash-banner-container" class="glass-panel rounded-3xl p-6 sm:p-8 relative overflow-hidden bg-cover bg-center border border-white/10 shadow-2xl transition-all" style="background-image: linear-gradient(180deg, rgba(13, 17, 23, 0.70) 0%, rgba(13, 17, 23, 0.95) 100%), url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop');">
+      <div id="dash-banner-container" class="glass-panel rounded-3xl p-6 sm:p-8 relative overflow-hidden bg-cover bg-center border border-white/10 shadow-2xl transition-all" style="background-image: linear-gradient(180deg, rgba(13, 17, 23, 0.70) 0%, rgba(13, 17, 23, 0.95) 100%), url('./assets/minecraft_bg.jpg');">
         
         <!-- Change Banner Button in top right of banner -->
         <button onclick="triggerBannerUpload()" title="Сменить баннер" class="absolute top-4 right-4 px-3.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-200 text-xs font-semibold border border-white/15 backdrop-blur-md transition-all flex items-center gap-1.5 shadow-md cursor-pointer z-10">
@@ -1407,7 +1407,7 @@
   <div id="modal-user-details" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
     <div class="bg-[#181d28] rounded-3xl max-w-lg w-full relative border border-slate-700/80 shadow-2xl overflow-hidden">
       <!-- Flush Top Profile Cover Banner Header -->
-      <div id="user-details-banner" class="h-32 sm:h-36 w-full bg-cover bg-center relative flex items-end p-5 transition-all" style="background-image: linear-gradient(180deg, rgba(13, 17, 23, 0.30) 0%, rgba(13, 17, 23, 0.95) 100%), url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop');">
+      <div id="user-details-banner" class="h-32 sm:h-36 w-full bg-cover bg-center relative flex items-end p-5 transition-all" style="background-image: linear-gradient(180deg, rgba(13, 17, 23, 0.30) 0%, rgba(13, 17, 23, 0.95) 100%), url('./assets/minecraft_bg.jpg');">
         <button onclick="closeUserDetailsModal()" class="absolute top-3.5 right-3.5 text-slate-300 hover:text-white text-sm z-20 bg-slate-900/70 hover:bg-slate-900/90 w-8 h-8 rounded-full border border-white/20 flex items-center justify-center transition-all shadow-md">✕</button>
         
         <div class="flex items-center gap-3.5 z-10 w-full">
@@ -2627,7 +2627,7 @@
       if (currentUser && currentUser.banner) {
         container.style.backgroundImage = `linear-gradient(180deg, rgba(13, 17, 23, 0.65) 0%, rgba(13, 17, 23, 0.92) 100%), url('${currentUser.banner}')`;
       } else {
-        container.style.backgroundImage = `linear-gradient(180deg, rgba(13, 17, 23, 0.70) 0%, rgba(13, 17, 23, 0.95) 100%), url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop')`;
+        container.style.backgroundImage = `linear-gradient(180deg, rgba(13, 17, 23, 0.70) 0%, rgba(13, 17, 23, 0.95) 100%), url('./assets/minecraft_bg.jpg')`;
       }
     }
 
@@ -4015,7 +4015,7 @@
 
       const bannerEl = document.getElementById('user-details-banner');
       if (bannerEl) {
-        const defaultBanner = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop';
+        const defaultBanner = './assets/minecraft_bg.jpg';
         const bannerUrl = (user.banner && user.banner.length > 5) ? user.banner : defaultBanner;
         bannerEl.style.backgroundImage = `linear-gradient(180deg, rgba(13, 17, 23, 0.45) 0%, rgba(13, 17, 23, 0.95) 100%), url('${bannerUrl}')`;
       }
