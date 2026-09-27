@@ -856,25 +856,25 @@
         <!-- Admin Quick Action Control Bar (Target User by Nickname) -->
         <div class="mb-4 p-4 rounded-2xl bg-slate-900/60 border border-white/10 flex flex-col md:flex-row items-center justify-between gap-3 shadow-lg">
           <div class="flex items-center gap-2.5 w-full md:w-auto flex-1">
-            <span class="text-xs font-bold text-slate-300 whitespace-nowrap">👤 Действие над ником:</span>
-            <input type="text" id="admin-action-username-input" placeholder="Введите логин пользователя..."
+            <span class="text-xs font-bold text-slate-300 whitespace-nowrap" data-i18n="admin_action_nick_lbl">👤 Действие над ником:</span>
+            <input type="text" id="admin-action-username-input" placeholder="Введите логин пользователя..." data-i18n-ph="ph_admin_action_nick"
                    class="w-full px-3.5 py-2 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none">
           </div>
           <div class="flex items-center gap-2 flex-wrap w-full md:w-auto justify-end">
             <button type="button" onclick="adminQuickAction('ban')" class="px-3 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-all border border-white/15 flex items-center gap-1 shrink-0 shadow-md">
-              🚫 Бан / Разбан
+              <span data-i18n="btn_quick_ban">🚫 Бан / Разбан</span>
             </button>
             <button type="button" onclick="adminQuickAction('sub')" class="px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all border border-white/15 flex items-center gap-1 shrink-0 shadow-md">
-              🔑 Продлить подписку
+              <span data-i18n="btn_quick_sub">🔑 Продлить подписку</span>
             </button>
             <button type="button" onclick="adminQuickAction('grant_admin')" class="px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all border border-white/15 flex items-center gap-1 shrink-0 shadow-md">
-              👑 Выдать Admin
+              <span data-i18n="btn_quick_grant_admin">👑 Выдать Admin</span>
             </button>
             <button type="button" onclick="adminQuickAction('revoke_admin')" class="px-3 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition-all border border-white/15 flex items-center gap-1 shrink-0 shadow-md">
-              ⚔️ Снять админку
+              <span data-i18n="btn_quick_revoke_admin">⚔️ Снять админку</span>
             </button>
             <button type="button" onclick="adminQuickAction('reset_hwid')" class="px-3 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold transition-all border border-white/15 flex items-center gap-1 shrink-0 shadow-md">
-              🔄 Сброс HWID
+              <span data-i18n="btn_quick_reset_hwid">🔄 Сброс HWID</span>
             </button>
           </div>
         </div>
@@ -1960,8 +1960,22 @@
             }
           }
 
-          userCounter += 1;
-          localStorage.setItem('obxod_user_counter', userCounter.toString());
+    function getNextAvailableUID() {
+      const existingUIDs = new Set();
+      for (let k in usersDB) {
+        if (usersDB[k] && usersDB[k].uid) {
+          const num = parseInt(String(usersDB[k].uid).replace('#', '').trim());
+          if (!isNaN(num)) existingUIDs.add(num);
+        }
+      }
+      let nextId = 1;
+      while (existingUIDs.has(nextId)) {
+        nextId++;
+      }
+      return '#' + nextId;
+    }
+
+          const assignedUID = getNextAvailableUID();
 
           const today = new Date();
           const regDateStr = String(today.getDate()).padStart(2, '0') + '.' + String(today.getMonth() + 1).padStart(2, '0') + '.' + today.getFullYear();
@@ -1970,7 +1984,7 @@
             username: usernameInput,
             email: emailInput,
             password: passwordInput,
-            uid: '#' + userCounter,
+            uid: assignedUID,
             subUntil: "Нет активной подписки",
             role: "Пользователь",
             regDate: regDateStr,
@@ -2593,6 +2607,8 @@
       usersDB[currentUser.username.toLowerCase()] = currentUser;
       localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
       localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+      sessionStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+      syncUsersDBToBackend();
 
       const succMsg = currentLang === 'ru'
         ? '✅ Лицензионный ключ "' + rawKey + '" успешно активирован! Подписка выдана на ' + (daysToAdd === 365 ? '1 год' : (daysToAdd === 180 ? '6 месяцев' : '30 дней')) + ' (до ' + subUntilStr + ').<br/><span class="text-amber-300 font-normal mt-1 block">📌 Запустите скачанный лаунчер на вашем ПК и нажмите "Войти в систему" — HWID ПК подвяжется к сайту.</span>'
