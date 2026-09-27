@@ -1741,6 +1741,7 @@
     }
 
     function showView(viewName) {
+      clearKeyStatusMsg();
       if (viewName === 'dashboard' && !currentUser) {
         switchAuthTab('register');
         viewName = 'auth';
@@ -1812,8 +1813,23 @@
       box.innerHTML = msg;
     }
 
+    let keyMsgTimer = null;
+    function clearKeyStatusMsg() {
+      const box = document.getElementById('key-status-msg');
+      if (box) {
+        box.classList.add('hidden');
+        box.innerHTML = '';
+      }
+      if (keyMsgTimer) {
+        clearTimeout(keyMsgTimer);
+        keyMsgTimer = null;
+      }
+    }
+
     function showInlineKeyMsg(msg, isSuccess = false) {
       const box = document.getElementById('key-status-msg');
+      if (!box) return;
+      if (keyMsgTimer) clearTimeout(keyMsgTimer);
       box.classList.remove('hidden', 'bg-red-500/20', 'border-red-500/40', 'text-red-300', 'bg-emerald-500/20', 'border-emerald-500/40', 'text-emerald-300');
       if (isSuccess) {
         box.classList.add('bg-emerald-500/20', 'border-emerald-500/40', 'text-emerald-300');
@@ -1821,6 +1837,9 @@
         box.classList.add('bg-red-500/20', 'border-red-500/40', 'text-red-300');
       }
       box.innerHTML = msg;
+      keyMsgTimer = setTimeout(() => {
+        box.classList.add('hidden');
+      }, 5000);
     }
 
     let dashboardMsgTimer = null;
@@ -1870,6 +1889,7 @@
 
     function switchAuthTab(mode) {
       activeAuthMode = mode;
+      clearKeyStatusMsg();
       const statusMsg = document.getElementById('auth-status-msg');
       if (statusMsg) statusMsg.classList.add('hidden');
       const btnRegister = document.getElementById('tab-register');
@@ -2116,6 +2136,8 @@
             console.error("Storage save notice:", storageErr);
           }
 
+          syncUsersDBToBackend();
+
           // Instant DOM update
           const dashAvatar = document.getElementById('dash-avatar-container');
           const navAvatar = document.getElementById('nav-avatar-icon');
@@ -2151,6 +2173,8 @@
           } catch (storageErr) {
             console.error("Storage save notice:", storageErr);
           }
+
+          syncUsersDBToBackend();
 
           // Instant DOM update
           renderBanner();
@@ -2583,10 +2607,28 @@
       }
 
       let daysToAdd = 30;
+      
+      const matchCustomDays = rawKey.match(/(\d+)\s*(D|DAY|DAYS)/i);
+      const matchCustomMonths = rawKey.match(/(\d+)\s*(M|MONTH|MONTHS)/i);
+
       if (rawKey.includes("YEAR") || rawKey.includes("365") || rawKey.includes("GOD") || rawKey.includes("ANNUAL") || rawKey.includes("LIFETIME")) {
         daysToAdd = 365;
-      } else if (rawKey.includes("6MONTH") || rawKey.includes("180") || rawKey.includes("HALF")) {
+      } else if (rawKey.includes("180") || rawKey.includes("6MONTH") || rawKey.includes("HALF")) {
         daysToAdd = 180;
+      } else if (rawKey.includes("90") || rawKey.includes("3MONTH") || rawKey.includes("QUARTER")) {
+        daysToAdd = 90;
+      } else if (rawKey.includes("60") || rawKey.includes("2MONTH")) {
+        daysToAdd = 60;
+      } else if (rawKey.includes("30") || rawKey.includes("1MONTH") || rawKey.includes("MONTH")) {
+        daysToAdd = 30;
+      } else if (rawKey.includes("14") || rawKey.includes("2WEEK")) {
+        daysToAdd = 14;
+      } else if (rawKey.includes("7") || rawKey.includes("1WEEK")) {
+        daysToAdd = 7;
+      } else if (matchCustomDays) {
+        daysToAdd = parseInt(matchCustomDays[1]) || 30;
+      } else if (matchCustomMonths) {
+        daysToAdd = (parseInt(matchCustomMonths[1]) || 1) * 30;
       } else {
         daysToAdd = 30;
       }
@@ -2610,9 +2652,34 @@
       sessionStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
       syncUsersDBToBackend();
 
+      let periodStrRU = daysToAdd + ' дней';
+      let periodStrEN = daysToAdd + ' days';
+      if (daysToAdd === 365) {
+        periodStrRU = '1 год (365 дней)';
+        periodStrEN = '1 year (365 days)';
+      } else if (daysToAdd === 180) {
+        periodStrRU = '6 месяцев (180 дней)';
+        periodStrEN = '6 months (180 days)';
+      } else if (daysToAdd === 90) {
+        periodStrRU = '90 дней (3 месяца)';
+        periodStrEN = '90 days (3 months)';
+      } else if (daysToAdd === 60) {
+        periodStrRU = '60 дней (2 месяца)';
+        periodStrEN = '60 days (2 months)';
+      } else if (daysToAdd === 30) {
+        periodStrRU = '30 дней (1 месяц)';
+        periodStrEN = '30 days (1 month)';
+      } else if (daysToAdd === 14) {
+        periodStrRU = '14 дней (2 недели)';
+        periodStrEN = '14 days (2 weeks)';
+      } else if (daysToAdd === 7) {
+        periodStrRU = '7 дней (1 неделя)';
+        periodStrEN = '7 days (1 week)';
+      }
+
       const succMsg = currentLang === 'ru'
-        ? '✅ Лицензионный ключ "' + rawKey + '" успешно активирован! Подписка выдана на ' + (daysToAdd === 365 ? '1 год' : (daysToAdd === 180 ? '6 месяцев' : '30 дней')) + ' (до ' + subUntilStr + ').<br/><span class="text-amber-300 font-normal mt-1 block">📌 Запустите скачанный лаунчер на вашем ПК и нажмите "Войти в систему" — HWID ПК подвяжется к сайту.</span>'
-        : '✅ License key "' + rawKey + '" activated successfully! Valid until ' + subUntilStr + '. Please run launcher to bind HWID.';
+        ? '✅ Лицензионный ключ "' + rawKey + '" успешно активирован! Подписка выдана на ' + periodStrRU + ' (до ' + subUntilStr + ').<br/><span class="text-amber-300 font-normal mt-1 block">📌 Запустите скачанный лаунчер на вашем ПК и нажмите "Войти в систему" — HWID ПК подвяжется к сайту.</span>'
+        : '✅ License key "' + rawKey + '" activated successfully! Granted for ' + periodStrEN + ' (until ' + subUntilStr + '). Please run launcher to bind HWID.';
 
       showInlineKeyMsg(succMsg, true);
       document.getElementById('key-input').value = '';
@@ -2698,7 +2765,11 @@
           if (uSub === 'Навсегда (Admin)') uSub = 'Forever (Admin)';
           if (uSub.startsWith('До ')) uSub = uSub.replace('До ', 'Until ');
           
-          if (uHwid.includes('Не привязан')) uHwid = 'Not bound (download launcher & log in)';
+          if (uHwid.includes('купите подписку') || uHwid.includes('activate key')) {
+            uHwid = 'Not bound (activate key or buy subscription)';
+          } else if (uHwid.includes('Не привязан') || uHwid.includes('скачайте лаунчер')) {
+            uHwid = 'Not bound (download launcher & log in)';
+          }
         }
 
         if (searchInput) {
@@ -2792,6 +2863,8 @@
         showInlineDashboardMsg(`❌ Пользователь "${targetUser}" не найден в базе данных!`, 'error');
         return;
       }
+
+      if (inputEl) inputEl.value = '';
 
       if (actionType === 'ban') {
         adminToggleAccountBan(matchedName);
