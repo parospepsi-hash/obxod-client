@@ -225,12 +225,24 @@
 <body class="bg-[#0b0d12] text-slate-100 min-h-screen flex flex-col justify-between antialiased selection:bg-slate-700 selection:text-white">
 
   <!-- Fixed Live 4K/2K Minecraft Harbor Village Video Background -->
-  <div id="bg-wallpaper" class="fixed inset-0 pointer-events-none z-[-2] overflow-hidden bg-slate-950 bg-cover bg-center" style="background-image: url('./assets/harbor_village_poster.jpg');">
+  <div id="bg-wallpaper" class="fixed inset-0 pointer-events-none z-[-2] overflow-hidden bg-slate-950 bg-cover bg-center" style="background-image: url('./assets/harbor_village_poster.jpg'), url('assets/harbor_village_poster.jpg'), url('assets/minecraft_bg.jpg'), url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1920&auto=format&fit=crop');">
     <video autoplay loop muted playsinline poster="./assets/harbor_village_poster.jpg" class="w-full h-full object-cover scale-100 filter brightness-[0.85]">
       <source src="./assets/harbor_village.mp4" type="video/mp4">
-      <source src="./harbor_village.mp4" type="video/mp4">
       <source src="assets/harbor_village.mp4" type="video/mp4">
+      <source src="harbor_village.mp4" type="video/mp4">
     </video>
+    <script>
+      (function() {
+        var v = document.querySelector('#bg-wallpaper video');
+        if (v) {
+          v.muted = true;
+          v.play().catch(function() {
+            document.addEventListener('click', function() { v.play(); }, { once: true });
+            document.addEventListener('touchstart', function() { v.play(); }, { once: true });
+          });
+        }
+      })();
+    </script>
     <div class="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-950/60 to-slate-950/85"></div>
   </div>
 
