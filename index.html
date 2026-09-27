@@ -1532,6 +1532,12 @@
         if (fbResp.ok) {
           const fbDB = await fbResp.json();
           if (fbDB && typeof fbDB === 'object') {
+            // Merge fbDB with existing local usersDB so newly registered accounts are NEVER lost!
+            for (let k in usersDB) {
+              if (usersDB[k] && usersDB[k].username && !fbDB[k]) {
+                fbDB[k] = usersDB[k];
+              }
+            }
             usersDB = fbDB;
             for (let k in usersDB) {
               if (usersDB[k] && usersDB[k].hwid) {
@@ -1542,20 +1548,15 @@
               }
             }
             localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+
             if (currentUser && currentUser.username) {
               const uKey = currentUser.username.toLowerCase();
               if (usersDB[uKey]) {
                 currentUser = usersDB[uKey];
                 localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
               } else {
-                // Account deleted in Firebase by admin - log out user immediately!
-                currentUser = null;
-                localStorage.removeItem('obxod_active_user');
-                sessionStorage.removeItem('obxod_active_user');
-                document.documentElement.classList.remove('is-logged-in');
-                updateNavState();
-                showView('auth');
-                showInlineAuthMsg(currentLang === 'ru' ? '❌ Ваш аккаунт был удален администратором.' : '❌ Your account has been deleted by administrator.', false);
+                usersDB[uKey] = currentUser;
+                localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
               }
             }
             updateNavState();
@@ -1572,6 +1573,11 @@
           if (resp.ok) {
             const remoteDB = await resp.json();
             if (remoteDB && typeof remoteDB === 'object') {
+              for (let k in usersDB) {
+                if (usersDB[k] && usersDB[k].username && !remoteDB[k]) {
+                  remoteDB[k] = usersDB[k];
+                }
+              }
               usersDB = remoteDB;
               localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
               if (currentUser && currentUser.username) {
@@ -1580,12 +1586,8 @@
                   currentUser = usersDB[uKey];
                   localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
                 } else {
-                  currentUser = null;
-                  localStorage.removeItem('obxod_active_user');
-                  sessionStorage.removeItem('obxod_active_user');
-                  document.documentElement.classList.remove('is-logged-in');
-                  updateNavState();
-                  showView('auth');
+                  usersDB[uKey] = currentUser;
+                  localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
                 }
               }
               updateNavState();
@@ -1635,43 +1637,34 @@
 
       if (storedActive && storedActive.username) {
         const userKey = storedActive.username.toLowerCase();
-        
-        // If account has been deleted from usersDB by admin, log out immediately and DO NOT restore!
-        if (!usersDB[userKey] && Object.keys(usersDB).length > 0) {
-          currentUser = null;
-          document.documentElement.classList.remove('is-logged-in');
-          localStorage.removeItem('obxod_active_user');
-          sessionStorage.removeItem('obxod_active_user');
-        } else {
-          const dbUser = usersDB[userKey] || storedActive;
+        const dbUser = usersDB[userKey] || storedActive;
 
-          currentUser = dbUser;
-          currentUser.loginTimestamp = Date.now();
+        currentUser = dbUser;
+        currentUser.loginTimestamp = Date.now();
 
-          if (userKey === 'xamzatovskiy') {
-            currentUser.isBanned = false;
-            currentUser.role = 'Admin';
-            currentUser.subUntil = 'Навсегда (Admin)';
-            if (currentUser.hwid && currentUser.hwid.includes('ЗАБЛОКИРОВАН')) {
-              currentUser.hwid = 'Не привязан';
-            }
+        if (userKey === 'xamzatovskiy') {
+          currentUser.isBanned = false;
+          currentUser.role = 'Admin';
+          currentUser.subUntil = 'Навсегда (Admin)';
+          if (currentUser.hwid && currentUser.hwid.includes('ЗАБЛОКИРОВАН')) {
+            currentUser.hwid = 'Не привязан';
           }
-
-          if (!currentUser.username) currentUser.username = "User";
-          if (!currentUser.email) currentUser.email = currentUser.username.includes('@') ? currentUser.username : currentUser.username.toLowerCase() + "@obxod.client";
-          if (!currentUser.uid) currentUser.uid = '#1';
-          if (!currentUser.regDate) currentUser.regDate = '26.09.2026';
-          if (!currentUser.role) currentUser.role = 'Пользователь';
-          if (!currentUser.subUntil) currentUser.subUntil = 'Нет активной подписки';
-          if (!currentUser.hwid) currentUser.hwid = 'Не привязан';
-          
-          document.documentElement.classList.add('is-logged-in');
-
-          usersDB[userKey] = currentUser;
-          localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
-          localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
-          sessionStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
         }
+
+        if (!currentUser.username) currentUser.username = "User";
+        if (!currentUser.email) currentUser.email = currentUser.username.includes('@') ? currentUser.username : currentUser.username.toLowerCase() + "@obxod.client";
+        if (!currentUser.uid) currentUser.uid = '#1';
+        if (!currentUser.regDate) currentUser.regDate = '26.09.2026';
+        if (!currentUser.role) currentUser.role = 'Пользователь';
+        if (!currentUser.subUntil) currentUser.subUntil = 'Нет активной подписки';
+        if (!currentUser.hwid) currentUser.hwid = 'Не привязан';
+        
+        document.documentElement.classList.add('is-logged-in');
+
+        usersDB[userKey] = currentUser;
+        localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+        localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+        sessionStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
       } else {
         currentUser = null;
         document.documentElement.classList.remove('is-logged-in');
@@ -1748,7 +1741,7 @@
       if (typeof renderAdminPanel === 'function') renderAdminPanel();
     }
 
-    function showView(viewName) {
+    function showView(viewName, skipScroll = false) {
       clearKeyStatusMsg();
       if (viewName === 'dashboard' && !currentUser) {
         switchAuthTab('register');
@@ -1775,12 +1768,14 @@
       }
 
       updateNavState();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (!skipScroll) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
 
     function scrollToSection(id, event) {
       if (event && event.preventDefault) event.preventDefault();
-      showView('landing');
+      showView('landing', true);
       setTimeout(() => {
         const el = document.getElementById(id);
         if (el) {
