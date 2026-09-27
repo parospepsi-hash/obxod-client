@@ -14,52 +14,159 @@
       background-color: #0b0d12;
       color: #f1f5f9;
       scroll-behavior: smooth;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    input, textarea, [contenteditable="true"], .select-text, .select-all {
+      user-select: text !important;
+      -webkit-user-select: text !important;
     }
     .font-mono-custom {
       font-family: 'JetBrains Mono', monospace;
     }
 
-    /* Background Blur & Glassmorphism - Genuine Minecraft Shader Wallpaper */
-    .bg-mc-wallpaper {
-      background: linear-gradient(180deg, rgba(9, 12, 18, 0.60) 0%, rgba(11, 13, 18, 0.90) 100%), 
-                  url('https://wallpapers.com/images/featured/minecraft-s2kxfahyg30sob8q.jpg') center/cover no-repeat fixed;
+    /* 4K Background Layer & Tree Sway Animation */
+    @keyframes treeSway {
+      0%, 100% {
+        transform: scale(1.05) rotate(0deg) translateY(0px);
+      }
+      25% {
+        transform: scale(1.08) rotate(0.8deg) translateY(-8px);
+      }
+      50% {
+        transform: scale(1.05) rotate(-0.6deg) translateY(-3px);
+      }
+      75% {
+        transform: scale(1.09) rotate(0.7deg) translateY(-10px);
+      }
+    @keyframes fogMove {
+      0% { transform: translateX(-8%) translateY(0px); opacity: 0.2; }
+      50% { transform: translateX(8%) translateY(-12px); opacity: 0.45; }
+      100% { transform: translateX(-8%) translateY(0px); opacity: 0.2; }
     }
-    .bg-blue-theme {
-      background: linear-gradient(180deg, rgba(4, 24, 44, 0.65) 0%, rgba(6, 18, 34, 0.92) 100%), 
-                  url('https://wallpapers.com/images/featured/minecraft-s2kxfahyg30sob8q.jpg') center/cover no-repeat fixed !important;
+    .fog-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      background: radial-gradient(ellipse at 50% 60%, rgba(200, 220, 240, 0.15) 0%, rgba(11, 13, 18, 0) 75%);
+      animation: fogMove 22s ease-in-out infinite;
+    }
+    /* Realistic Rain Drops & Sky Lightning Overlay */
+    .rain-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .rain-drop {
+      position: absolute;
+      top: -100px;
+      width: 1.4px;
+      height: 50px;
+      background: linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.75) 100%);
+      pointer-events: none;
+      filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.25));
+      animation: dropFall linear infinite;
+      border-radius: 999px;
+    }
+    @keyframes dropFall {
+      0% {
+        transform: translateY(-140px) rotate(12deg);
+        opacity: 0;
+      }
+      15% {
+        opacity: 0.8;
+      }
+      85% {
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(115vh) rotate(12deg);
+        opacity: 0;
+      }
+    }
+    .lightning-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background: radial-gradient(circle at 50% 20%, rgba(220, 235, 255, 0.25) 0%, rgba(255, 255, 255, 0.08) 50%, transparent 80%);
+      opacity: 0;
+      transition: opacity 0.05s ease-in-out;
+    }
+    .lightning-flash {
+      animation: flashLightning 0.6s ease-out forwards;
+    }
+    @keyframes flashLightning {
+      0% { opacity: 0; }
+      10% { opacity: 0.85; }
+      20% { opacity: 0.2; }
+      35% { opacity: 0.95; }
+      60% { opacity: 0.3; }
+      100% { opacity: 0; }
     }
     .glass-nav {
-      background: rgba(18, 22, 31, 0.25);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(15, 23, 42, 0.35) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.18) !important;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15) !important;
     }
     .glass-panel {
-      background: rgba(18, 22, 31, 0.35);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(14, 19, 28, 0.55) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      border: 2px solid rgba(255, 255, 255, 0.4) !important;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(255, 255, 255, 0.1) !important;
     }
-    .glass-input {
-      background: rgba(15, 19, 28, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+    input, select, textarea, .glass-input {
+      background-color: #0f131c !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      outline: none !important;
     }
-    .glass-input:focus, .glass-input:hover {
-      border-color: rgba(255, 255, 255, 0.3);
-      box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
+    input:focus, select:focus, textarea:focus, .glass-input:focus,
+    input:active, select:active, textarea:active, .glass-input:active,
+    input:hover, select:hover, textarea:hover, .glass-input:hover {
+      background-color: #0f131c !important;
+      color: #ffffff !important;
+      border-color: rgba(255, 255, 255, 0.4) !important;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.15) !important;
+    }
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 1000px #0f131c inset !important;
+      -webkit-text-fill-color: #ffffff !important;
+      caret-color: #ffffff !important;
+      transition: background-color 50000s ease-in-out 0s !important;
+    }
+    input:-moz-ui-invalid, input:invalid {
+      box-shadow: none !important;
     }
 
     /* Glow Effects */
     .cyan-glow-btn {
       background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     }
     .cyan-glow-btn:hover {
       background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
     }
 
     .modal-backdrop {
-      background: rgba(5, 8, 14, 0.85);
-      backdrop-filter: blur(12px);
+      background: rgba(4, 6, 12, 0.94);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
     }
 
     /* Zero-flicker Instant Logged-In State for Top Nav Pill */
@@ -115,15 +222,25 @@
     })();
   </script>
 </head>
-<body class="bg-[#0b0d12] text-slate-100 min-h-screen bg-mc-wallpaper flex flex-col justify-between antialiased selection:bg-slate-700 selection:text-white">
+<body class="bg-[#0b0d12] text-slate-100 min-h-screen flex flex-col justify-between antialiased selection:bg-slate-700 selection:text-white">
+
+  <!-- Fixed Live 4K/2K Minecraft Harbor Village Video Background -->
+  <div id="bg-wallpaper" class="fixed inset-0 pointer-events-none z-[-2] overflow-hidden">
+    <video autoplay loop muted playsinline class="w-full h-full object-cover scale-100 filter brightness-[0.85]">
+      <source src="./assets/harbor_village.mp4" type="video/mp4">
+    </video>
+    <div class="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-950/60 to-slate-950/85"></div>
+  </div>
 
   <!-- Top Floating Pill Navigation Bar (Transparent Glass with Border) -->
   <header class="fixed top-5 left-1/2 -translate-x-1/2 z-50 w-full max-w-5xl px-4">
-    <div class="glass-nav rounded-full px-6 py-3 flex items-center justify-between shadow-lg">
+    <div class="glass-nav rounded-full px-6 py-3.5 flex items-center justify-between border border-white/20 shadow-2xl backdrop-blur-md">
       <!-- Logo -->
       <a href="#" onclick="showView('landing')" class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-full bg-slate-900 border border-white/20 flex items-center justify-center text-white font-extrabold text-sm shadow-md">
-          ⚡
+        <div class="w-8 h-8 rounded-xl bg-[#161d2a] border border-slate-700/70 flex items-center justify-center text-white shadow-md shrink-0">
+          <svg class="w-4 h-4 text-white fill-current" viewBox="0 0 24 24">
+            <path d="M13 2L3 14h7v8l10-12h-7l3-8z"/>
+          </svg>
         </div>
         <span class="font-bold text-base tracking-tight text-white">ObxodClient</span>
       </a>
@@ -131,39 +248,45 @@
       <!-- Center Links -->
       <nav class="hidden md:flex items-center gap-6 text-xs font-medium text-slate-300">
         <a href="#advantages" onclick="scrollToSection('advantages', event)" class="hover:text-white transition-colors flex items-center gap-1.5">
-          <span>✨</span> <span data-i18n="nav_advantages">Преимущества</span>
+          <svg class="w-4 h-4 text-amber-400 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+          <span data-i18n="nav_advantages">Преимущества</span>
         </a>
         <a href="#product" onclick="scrollToSection('product', event)" class="hover:text-white transition-colors flex items-center gap-1.5">
-          <span>📦</span> <span data-i18n="nav_product">Продукт</span>
+          <svg class="w-4 h-4 text-blue-400 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          <span data-i18n="nav_product">Продукт</span>
         </a>
         <a href="#overview" onclick="scrollToSection('overview', event)" class="hover:text-white transition-colors flex items-center gap-1.5">
-          <span>📊</span> <span data-i18n="nav_overview">Обзор</span>
+          <svg class="w-4 h-4 text-indigo-400 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          <span data-i18n="nav_overview">Обзор</span>
         </a>
         <a href="#policy" onclick="openPolicyModal(event)" class="hover:text-white transition-colors flex items-center gap-1.5">
-          <span>⚖️</span> <span data-i18n="nav_policy">Политика</span>
+          <svg class="w-4 h-4 text-emerald-400 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          <span data-i18n="nav_policy">Политика</span>
         </a>
       </nav>
 
       <!-- Right Profile Pill / Auth Button & Language Switcher -->
       <div class="flex items-center gap-3">
         <!-- Language Switcher -->
-        <button type="button" onclick="toggleLanguage()" class="px-3 py-1 rounded-full bg-white/5 hover:bg-white/15 text-xs font-mono-custom text-slate-200 border border-white/10 transition-all flex items-center gap-1">
+        <button type="button" onclick="toggleLanguage()" class="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-xs font-mono-custom text-slate-100 border border-white/25 hover:border-white/50 transition-all flex items-center gap-1 shadow-sm">
           <span id="lang-current">RU</span>
         </button>
 
         <!-- Logged In Profile Pill -->
         <div id="nav-profile-btn" class="hidden">
-          <button onclick="showView('dashboard')" class="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/15 border border-white/10 hover:border-white/30 transition-all">
-            <div id="nav-avatar-icon" class="w-6 h-6 rounded-full bg-white/10 border border-white/20 text-slate-200 flex items-center justify-center font-bold text-[10px] overflow-hidden shrink-0">
+          <button onclick="showView('dashboard')" class="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/25 hover:border-white/50 transition-all shadow-sm">
+            <div id="nav-avatar-icon" class="w-6 h-6 rounded-full bg-white/15 border border-white/30 text-slate-200 flex items-center justify-center font-bold text-[10px] overflow-hidden shrink-0">
               👤
             </div>
             <span id="nav-username" class="text-xs font-bold text-white"></span>
           </button>
         </div>
 
+
+
         <!-- Logged Out Auth Button -->
         <div id="nav-auth-btn">
-          <button onclick="showView('auth')" class="px-4 py-1.5 rounded-full bg-white/5 hover:bg-white/15 text-white font-bold text-xs transition-all border border-white/10" data-i18n="btn_login_nav">
+          <button onclick="showView('auth')" class="px-4 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-all border border-white/25 hover:border-white/50 shadow-sm" data-i18n="btn_login_nav">
             Вход / Регистрация
           </button>
         </div>
@@ -172,7 +295,7 @@
   </header>
 
   <!-- MAIN CONTENT VIEWS CONTAINER -->
-  <main class="flex-1 pt-32 pb-24 px-4 sm:px-8 max-w-[1600px] mx-auto w-full">
+  <main class="relative z-10 flex-1 pt-32 pb-24 px-4 sm:px-8 max-w-[1600px] mx-auto w-full">
 
     <!-- VIEW 1: LANDING PAGE -->
     <div id="view-landing" class="space-y-36 sm:space-y-48">
@@ -182,12 +305,12 @@
 
         <h1 class="text-4xl sm:text-6xl font-extrabold text-white tracking-tight mb-8 leading-tight">
           <span data-i18n="hero_title_1">Полный контроль над</span><br/>
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-300 via-blue-400 to-indigo-400" data-i18n="hero_title_2">AnyDesk подключением</span>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-slate-100 via-slate-300 to-slate-400" data-i18n="hero_title_2">AnyDesk подключением</span>
         </h1>
 
         <div class="flex flex-col items-center justify-center gap-3 mb-32 sm:mb-40">
           <div class="flex items-center justify-center gap-4">
-            <a href="#product" onclick="scrollToSection('product')" class="px-8 py-3.5 rounded-xl cyan-glow-btn font-extrabold text-sm transition-all flex items-center gap-2">
+            <a href="#product" onclick="handleBuyClick(event, 'hero')" class="px-8 py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-extrabold text-sm border border-white/25 hover:border-white/50 backdrop-blur-md transition-all flex items-center gap-2 shadow-lg">
               <span>💳</span> <span data-i18n="btn_buy_hero">Купить подписку</span>
             </a>
           </div>
@@ -197,7 +320,6 @@
 
         <!-- Laptop Device Mockup - REAL OBXOD CLIENT APP UI (Matches Screenshot 2) -->
         <div id="overview" class="relative max-w-4xl mx-auto pt-4 pb-12">
-          <div class="absolute -inset-2 bg-red-600/20 rounded-3xl blur-2xl"></div>
           
           <!-- Outer App Window Frame -->
           <div class="relative bg-[#090c10] border-2 border-slate-700/80 rounded-2xl overflow-hidden shadow-2xl text-left text-xs font-sans">
@@ -305,8 +427,8 @@
                   </div>
 
                   <!-- Blocked Connections Table -->
-                  <div class="rounded-xl bg-slate-950/90 border border-slate-800 overflow-hidden">
-                    <div class="p-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between text-xs font-bold text-white">
+                  <div class="rounded-xl bg-white/5 border border-white/10 backdrop-blur-md overflow-hidden">
+                    <div class="p-3 bg-white/5 border-b border-white/10 flex items-center justify-between text-xs font-bold text-white">
                       <div class="flex items-center gap-2">
                         <span>⚡</span> <span data-i18n="mock_tbl_title">Заблокированные подключения</span> <span class="text-slate-500 font-mono-custom font-normal text-[11px]" data-i18n="mock_tbl_count">(0 перехвачено)</span>
                       </div>
@@ -342,17 +464,17 @@
       <section id="product" class="glass-panel rounded-3xl p-10 sm:p-14 border border-white/5 shadow-2xl space-y-12">
         
         <div class="text-center max-w-2xl mx-auto space-y-4">
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/90 border border-slate-700 text-slate-300 text-xs font-mono-custom">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/20 backdrop-blur-md text-slate-300 text-xs font-mono-custom shadow-sm">
             <span>🛡️</span> <span data-i18n="product_badge">Официальные тарифы</span>
           </div>
           <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight" data-i18n="product_title">Выберите план подписки</h2>
           <p class="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-lg mx-auto" data-i18n="product_subtitle">
-            Выберите удобный период доступа для полной защиты от нежелательных подключений AnyDesk и очистки ПК.
+            Выберите удобный период доступа для полной защиты от нежелательных подключений AnyDesk.
           </p>
 
           <!-- Subscriptions Pill Badge -->
-          <div class="inline-flex items-center p-1 rounded-xl bg-slate-900/90 border border-slate-800 text-xs font-semibold mt-4">
-            <span class="px-6 py-2.5 rounded-lg bg-[#3b82f6] text-white shadow-md" data-i18n="btn_sub_pill">Доступные подписки</span>
+          <div class="inline-flex items-center p-1 rounded-xl bg-white/5 border border-white/10 backdrop-blur-md text-xs font-semibold mt-4">
+            <span class="px-6 py-2.5 rounded-lg bg-white/10 border border-white/20 text-white shadow-sm backdrop-blur-md" data-i18n="btn_sub_pill">Доступные подписки</span>
           </div>
         </div>
 
@@ -360,11 +482,11 @@
         <div id="pricing" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-6">
           
           <!-- Card 1: 30 days -->
-          <div class="rounded-2xl bg-slate-900/90 border border-slate-800 overflow-hidden flex flex-col justify-between hover:border-[#3b82f6] transition-all shadow-lg group">
+          <div class="rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl overflow-hidden flex flex-col justify-between hover:border-white/30 transition-all shadow-xl group">
             <div>
               <div class="h-32 overflow-hidden relative">
-                <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=800&auto=format&fit=crop" alt="Cat Banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90"/>
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=100&w=1200&auto=format&fit=crop" alt="30 Days Banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-95"/>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
               </div>
               <div class="p-5">
                 <h3 class="text-lg font-bold text-white mb-1" data-i18n="plan_30_title">30 дней</h3>
@@ -372,26 +494,26 @@
                 <div class="text-2xl font-extrabold text-white mb-5 font-mono-custom">100 ₽ <span class="text-xs font-normal text-slate-400" data-i18n="lbl_per_30">/ 30 дней</span></div>
                 
                 <ul class="space-y-2.5 text-xs text-slate-300">
-                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_30_f1">Защита AnyDesk 24/7</span></li>
-                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_30_f2">Все 3 режима сброса</span></li>
-                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_30_f3">Чистка кэша Minecraft</span></li>
-                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_30_f4">Быстрая настройка</span></li>
+                  <li class="flex items-center gap-2"><span class="text-slate-400 font-bold">✓</span> <span data-i18n="plan_30_f1">Защита AnyDesk 24/7</span></li>
+                  <li class="flex items-center gap-2"><span class="text-slate-400 font-bold">✓</span> <span data-i18n="plan_30_f2">Все 3 режима сброса</span></li>
+                  <li class="flex items-center gap-2"><span class="text-slate-400 font-bold">✓</span> <span data-i18n="plan_30_f3">Чистка кэша Minecraft</span></li>
+                  <li class="flex items-center gap-2"><span class="text-slate-400 font-bold">✓</span> <span data-i18n="plan_30_f4">Быстрая настройка</span></li>
                 </ul>
               </div>
             </div>
             <div class="p-5 pt-0">
-              <a href="https://t.me/" target="_blank" class="w-full py-2.5 rounded-xl bg-[#3b82f6] hover:bg-[#2563eb] text-white text-center text-xs font-extrabold transition-all flex items-center justify-center gap-1 shadow-md" data-i18n="btn_buy_card">
+              <a href="https://t.me/" target="_blank" onclick="return handleBuyClick(event, 'card')" class="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/15 text-white text-center text-xs font-extrabold border border-white/20 hover:border-white/40 backdrop-blur-md transition-all flex items-center justify-center gap-1 shadow-sm" data-i18n="btn_buy_card">
                 Купить ↗
               </a>
             </div>
           </div>
 
           <!-- Card 2: 90 days -->
-          <div class="rounded-2xl bg-slate-900/90 border border-slate-800 overflow-hidden flex flex-col justify-between hover:border-[#3b82f6] transition-all shadow-lg group">
+          <div class="rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl overflow-hidden flex flex-col justify-between hover:border-white/30 transition-all shadow-xl group">
             <div>
               <div class="h-32 overflow-hidden relative">
-                <img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?q=80&w=800&auto=format&fit=crop" alt="Cat Banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90"/>
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                <img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?q=100&w=1200&auto=format&fit=crop" alt="90 Days Banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-95"/>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
               </div>
               <div class="p-5">
                 <h3 class="text-lg font-bold text-white mb-1" data-i18n="plan_90_title">90 дней</h3>
@@ -399,26 +521,26 @@
                 <div class="text-2xl font-extrabold text-white mb-5 font-mono-custom">200 ₽ <span class="text-xs font-normal text-slate-400" data-i18n="lbl_per_90">/ 90 дней</span></div>
                 
                 <ul class="space-y-2.5 text-xs text-slate-300">
-                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_90_f1">Всё из тарифа 30 дней</span></li>
-                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_90_f2">Экономия > 30% стоимости</span></li>
-                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_90_f3">Обновления v5.6+</span></li>
-                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_90_f4">Приоритет поддержка</span></li>
+                  <li class="flex items-center gap-2"><span class="text-slate-400 font-bold">✓</span> <span data-i18n="plan_90_f1">Всё из тарифа 30 дней</span></li>
+                  <li class="flex items-center gap-2"><span class="text-slate-400 font-bold">✓</span> <span data-i18n="plan_90_f2">Экономия > 30% стоимости</span></li>
+                  <li class="flex items-center gap-2"><span class="text-slate-400 font-bold">✓</span> <span data-i18n="plan_90_f3">Обновления v5.6+</span></li>
+                  <li class="flex items-center gap-2"><span class="text-slate-400 font-bold">✓</span> <span data-i18n="plan_90_f4">Приоритет поддержка</span></li>
                 </ul>
               </div>
             </div>
             <div class="p-5 pt-0">
-              <a href="https://t.me/" target="_blank" class="w-full py-2.5 rounded-xl bg-[#3b82f6] hover:bg-[#2563eb] text-white text-center text-xs font-extrabold transition-all flex items-center justify-center gap-1 shadow-md" data-i18n="btn_buy_card">
+              <a href="https://t.me/" target="_blank" onclick="return handleBuyClick(event, 'card')" class="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/15 text-white text-center text-xs font-extrabold border border-white/20 hover:border-white/40 backdrop-blur-md transition-all flex items-center justify-center gap-1 shadow-sm" data-i18n="btn_buy_card">
                 Купить ↗
               </a>
             </div>
           </div>
 
           <!-- Card 3: 365 days -->
-          <div class="rounded-2xl bg-slate-900/90 border border-slate-800 overflow-hidden flex flex-col justify-between hover:border-[#3b82f6] transition-all shadow-lg group">
+          <div class="rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl overflow-hidden flex flex-col justify-between hover:border-white/30 transition-all shadow-xl group">
             <div>
               <div class="h-32 overflow-hidden relative">
-                <img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=800&auto=format&fit=crop" alt="Cat Banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90"/>
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                <img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=100&w=1200&auto=format&fit=crop" alt="365 Days Banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-95"/>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
               </div>
               <div class="p-5">
                 <h3 class="text-lg font-bold text-white mb-1" data-i18n="plan_365_title">365 дней</h3>
@@ -426,42 +548,42 @@
                 <div class="text-2xl font-extrabold text-white mb-5 font-mono-custom">350 ₽ <span class="text-xs font-normal text-slate-400" data-i18n="lbl_per_365">/ 365 дней</span></div>
                 
                 <ul class="space-y-2.5 text-xs text-slate-300">
-                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_365_f1">Подписка на 1 год (365д)</span></li>
-                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_365_f2">Все релизы и апдейты</span></li>
-                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_365_f3">Поддержка 24/7</span></li>
-                  <li class="flex items-center gap-2"><span class="text-[#3b82f6]">✓</span> <span data-i18n="plan_365_f4">Максимальный приоритет</span></li>
+                  <li class="flex items-center gap-2"><span class="text-slate-400 font-bold">✓</span> <span data-i18n="plan_365_f1">Подписка на 1 год (365д)</span></li>
+                  <li class="flex items-center gap-2"><span class="text-slate-400 font-bold">✓</span> <span data-i18n="plan_365_f2">Все релизы и апдейты</span></li>
+                  <li class="flex items-center gap-2"><span class="text-slate-400 font-bold">✓</span> <span data-i18n="plan_365_f3">Поддержка 24/7</span></li>
+                  <li class="flex items-center gap-2"><span class="text-slate-400 font-bold">✓</span> <span data-i18n="plan_365_f4">Максимальный приоритет</span></li>
                 </ul>
               </div>
             </div>
             <div class="p-5 pt-0">
-              <a href="https://t.me/" target="_blank" class="w-full py-2.5 rounded-xl bg-[#3b82f6] hover:bg-[#2563eb] text-white text-center text-xs font-extrabold transition-all flex items-center justify-center gap-1 shadow-md" data-i18n="btn_buy_card">
+              <a href="https://t.me/" target="_blank" onclick="return handleBuyClick(event, 'card')" class="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/15 text-white text-center text-xs font-extrabold border border-white/20 hover:border-white/40 backdrop-blur-md transition-all flex items-center justify-center gap-1 shadow-sm" data-i18n="btn_buy_card">
                 Купить ↗
               </a>
             </div>
           </div>
 
           <!-- Card 4: HWID Reset (50 Rubles) -->
-          <div class="rounded-2xl bg-slate-900/90 border border-emerald-500/40 overflow-hidden flex flex-col justify-between hover:border-emerald-400 transition-all shadow-lg group">
+          <div class="rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl overflow-hidden flex flex-col justify-between hover:border-white/30 transition-all shadow-xl group">
             <div>
               <div class="h-32 overflow-hidden relative">
-                <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=800&auto=format&fit=crop" alt="HWID Banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-90"/>
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=100&w=1200&auto=format&fit=crop" alt="HWID Reset Banner" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-95"/>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent"></div>
               </div>
               <div class="p-5">
-                <h3 class="text-lg font-bold text-emerald-400 mb-1" data-i18n="plan_hwid_title">Сброс HWID</h3>
+                <h3 class="text-lg font-bold text-white mb-1" data-i18n="plan_hwid_title">Сброс HWID</h3>
                 <p class="text-xs text-slate-400 mb-4" data-i18n="plan_hwid_desc">Перепривязка на новый ПК.</p>
                 <div class="text-2xl font-extrabold text-white mb-5 font-mono-custom">50 ₽</div>
                 
                 <ul class="space-y-2.5 text-xs text-slate-300">
-                  <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> <span data-i18n="plan_hwid_f1">Отвязка от старого железа</span></li>
-                  <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> <span data-i18n="plan_hwid_f2">Привязка к новому ПК</span></li>
-                  <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> <span data-i18n="plan_hwid_f3">Сохранение подписки</span></li>
-                  <li class="flex items-center gap-2"><span class="text-emerald-400">✓</span> <span data-i18n="plan_hwid_f4">Выполнение за 5 минут</span></li>
+                  <li class="flex items-center gap-2"><span class="text-slate-400 font-bold">✓</span> <span data-i18n="plan_hwid_f1">Отвязка от старого железа</span></li>
+                  <li class="flex items-center gap-2"><span class="text-slate-400 font-bold">✓</span> <span data-i18n="plan_hwid_f2">Привязка к новому ПК</span></li>
+                  <li class="flex items-center gap-2"><span class="text-slate-400 font-bold">✓</span> <span data-i18n="plan_hwid_f3">Сохранение подписки</span></li>
+                  <li class="flex items-center gap-2"><span class="text-slate-400 font-bold">✓</span> <span data-i18n="plan_hwid_f4">Выполнение за 5 минут</span></li>
                 </ul>
               </div>
             </div>
             <div class="p-5 pt-0">
-              <a href="https://t.me/" target="_blank" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-center text-xs font-extrabold transition-all flex items-center justify-center gap-1 shadow-md" data-i18n="btn_buy_hwid">
+              <a href="https://t.me/" target="_blank" onclick="return handleBuyClick(event, 'card')" class="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/15 text-white text-center text-xs font-extrabold border border-white/20 hover:border-white/40 backdrop-blur-md transition-all flex items-center justify-center gap-1 shadow-sm" data-i18n="btn_buy_hwid">
                 Купить сброс ↗
               </a>
             </div>
@@ -470,16 +592,16 @@
         </div>
 
         <!-- FunPay & Telegram Payment Seller Note Box -->
-        <div class="p-5 rounded-2xl bg-slate-950/80 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+        <div class="p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/40 flex items-center justify-center text-lg font-bold">🛒</div>
+            <div class="w-10 h-10 rounded-xl bg-transparent text-slate-200 border border-white/10 flex items-center justify-center text-lg font-bold">🛒</div>
             <div>
               <div class="text-xs font-bold text-white" data-i18n="seller_title">Оплата через FunPay (KarenMakaren)</div>
               <div class="text-[11px] text-slate-400" data-i18n="seller_desc">Быстрая выдача лицензионного ключа.</div>
             </div>
           </div>
           <a href="https://funpay.com/users/8203586/" target="_blank" 
-             class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-all shadow-md whitespace-nowrap" data-i18n="btn_open_funpay">
+             class="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/15 text-white font-bold text-xs border border-white/20 hover:border-white/40 backdrop-blur-md transition-all shadow-sm whitespace-nowrap" data-i18n="btn_open_funpay">
             Открыть FunPay ➔
           </a>
         </div>
@@ -494,80 +616,77 @@
           </div>
           <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight" data-i18n="why_title">Почему выбирают Obxod Client</h2>
           <p class="text-xs sm:text-sm text-slate-400 leading-relaxed" data-i18n="why_subtitle">
-            Мощная автономная система блокировки нежелательных подключений AnyDesk и очистки ресурсов компьютера.
+            Мощная автономная система блокировки нежелательных подключений AnyDesk.
           </p>
         </div>
 
-        <!-- 6-Grid Features Section with Vertical Divider & Unique Obxod Client Features -->
-        <div id="advantages" class="relative max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-14">
+        <!-- 6-Grid Features Section with Sleek Glass Cards -->
+        <div id="advantages" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           
-          <!-- Center Vertical Dashed Line on Desktop -->
-          <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-px border-r border-dashed border-slate-700/60 -translate-x-1/2"></div>
-
-          <!-- Column 1 -->
-          <div class="space-y-12">
-            <div class="flex items-start gap-4">
-              <div class="text-blue-400 text-xl mt-1">⚡</div>
-              <div>
-                <h3 class="text-base font-bold text-white mb-1" data-i18n="adv_1_title">Имитация Таймаута (~60с)</h3>
-                <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_1_desc">
-                  Естественное сбрасывание подключения AnyDesk. Соперник или проверяющий увидит только стандартное сообщение о сетевом таймауте.
-                </p>
-              </div>
+          <!-- Card 1 -->
+          <div class="glass-panel p-6 rounded-2xl border-2 border-white/40 transition-all hover:-translate-y-1 shadow-lg space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
-
-            <div class="flex items-start gap-4">
-              <div class="text-blue-400 text-xl mt-1">⚙️</div>
-              <div>
-                <h3 class="text-base font-bold text-white mb-1" data-i18n="adv_2_title">Автономный Portable.exe</h3>
-                <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_2_desc">
-                  Не требует установки тяжелых библиотек. Работает в фоновом режиме из любой папки без нагрузки на процессор.
-                </p>
-              </div>
-            </div>
-
-            <div class="flex items-start gap-4">
-              <div class="text-blue-400 text-xl mt-1">📥</div>
-              <div>
-                <h3 class="text-base font-bold text-white mb-1" data-i18n="adv_3_title">Мгновенный Kill-Switch</h3>
-                <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_3_desc">
-                  Принудительное экстренное завершение всех процессов AnyDesk в 1 клик при зафиксированной внешней активности.
-                </p>
-              </div>
-            </div>
+            <h3 class="text-base font-bold text-white" data-i18n="adv_1_title">Имитация Таймаута (~60с)</h3>
+            <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_1_desc">
+              Естественное сбрасывание подключения AnyDesk. Соперник или проверяющий увидит только стандартное сообщение о сетевом таймауте.
+            </p>
           </div>
 
-          <!-- Column 2 -->
-          <div class="space-y-12">
-            <div class="flex items-start gap-4">
-              <div class="text-blue-400 text-xl mt-1">🎨</div>
-              <div>
-                <h3 class="text-base font-bold text-white mb-1" data-i18n="adv_4_title">10 Монохромных Тим</h3>
-                <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_4_desc">
-                  Элегантный интерфейс с мгновенной сменой акцентного цвета под любое оформление вашей системы.
-                </p>
-              </div>
+          <!-- Card 2 -->
+          <div class="glass-panel p-6 rounded-2xl border-2 border-white/40 transition-all hover:-translate-y-1 shadow-lg space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
             </div>
+            <h3 class="text-base font-bold text-white" data-i18n="adv_2_title">Автономный Portable.exe</h3>
+            <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_2_desc">
+              Не требует установки тяжелых библиотек. Работает в фоновом режиме из любой папки без нагрузки на процессор.
+            </p>
+          </div>
 
-            <div class="flex items-start gap-4">
-              <div class="text-blue-400 text-xl mt-1">🧹</div>
-              <div>
-                <h3 class="text-base font-bold text-white mb-1" data-i18n="adv_5_title">Очистка кэша Minecraft</h3>
-                <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_5_desc">
-                  Безопасное удаление временных файлов логов, кэша и краш-дампов для освобождения оперативной памяти перед игрой.
-                </p>
-              </div>
+          <!-- Card 3 -->
+          <div class="glass-panel p-6 rounded-2xl border-2 border-white/40 transition-all hover:-translate-y-1 shadow-lg space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             </div>
+            <h3 class="text-base font-bold text-white" data-i18n="adv_3_title">Мгновенный Kill-Switch</h3>
+            <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_3_desc">
+              Принудительное экстренное завершение всех процессов AnyDesk в 1 клик при зафиксированной внешней активности.
+            </p>
+          </div>
 
-            <div class="flex items-start gap-4">
-              <div class="text-blue-400 text-xl mt-1">🔄</div>
-              <div>
-                <h3 class="text-base font-bold text-white mb-1" data-i18n="adv_6_title">Защита Лицензий & HWID</h3>
-                <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_6_desc">
-                  Надежная привязка лицензии к ПК и онлайн-валидация гарантируют стабильность и защиту ваших данных.
-                </p>
-              </div>
+          <!-- Card 4 -->
+          <div class="glass-panel p-6 rounded-2xl border-2 border-white/40 transition-all hover:-translate-y-1 shadow-lg space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-400 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
             </div>
+            <h3 class="text-base font-bold text-white" data-i18n="adv_4_title">10 Монохромных Тим</h3>
+            <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_4_desc">
+              Элегантный интерфейс с мгновенной сменой акцентного цвета под любое оформление вашей системы.
+            </p>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="glass-panel p-6 rounded-2xl border-2 border-white/40 transition-all hover:-translate-y-1 shadow-lg space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </div>
+            <h3 class="text-base font-bold text-white" data-i18n="adv_5_title">Очистка кэша Minecraft</h3>
+            <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_5_desc">
+              Безопасное удаление временных файлов логов, кэша и краш-дампов для освобождения оперативной памяти перед игрой.
+            </p>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="glass-panel p-6 rounded-2xl border-2 border-white/40 transition-all hover:-translate-y-1 shadow-lg space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </div>
+            <h3 class="text-base font-bold text-white" data-i18n="adv_6_title">Защита Лицензий & HWID</h3>
+            <p class="text-xs text-slate-400 leading-relaxed" data-i18n="adv_6_desc">
+              Надежная привязка лицензии к ПК и онлайн-валидация гарантируют стабильность и защиту ваших данных.
+            </p>
           </div>
 
         </div>
@@ -580,7 +699,7 @@
             Приобретение лицензионного ключа занимает меньше 2 минут. Начните играть уверенно вместе с Obxod Client.
           </p>
           <div class="pt-4">
-            <a href="#product" onclick="scrollToSection('product')" class="inline-flex items-center justify-center px-8 py-3.5 rounded-xl bg-[#3b82f6] hover:bg-[#2563eb] text-white font-extrabold text-sm transition-all shadow-lg" data-i18n="btn_buy_card">
+            <a href="#product" onclick="handleBuyClick(event, 'hero')" class="inline-flex items-center justify-center px-8 py-3.5 rounded-xl bg-white/5 hover:bg-white/15 text-white font-extrabold text-sm border border-white/20 hover:border-white/40 backdrop-blur-md transition-all shadow-sm" data-i18n="btn_buy_card">
               Купить ↗
             </a>
           </div>
@@ -595,7 +714,11 @@
       <div class="max-w-md mx-auto glass-panel rounded-3xl overflow-hidden shadow-2xl border border-white/10 p-8 bg-[#10141e]/90">
         <div class="flex flex-col justify-center">
           <div class="text-center mb-6">
-            <div class="w-10 h-10 rounded-full bg-slate-900 border border-white/20 text-white flex items-center justify-center text-lg mx-auto mb-3">⚡</div>
+            <div class="w-10 h-10 rounded-xl bg-[#161d2a] border border-slate-700/70 flex items-center justify-center text-white mx-auto mb-3 shadow-md shrink-0">
+              <svg class="w-5 h-5 text-white fill-current" viewBox="0 0 24 24">
+                <path d="M13 2L3 14h7v8l10-12h-7l3-8z"/>
+              </svg>
+            </div>
             <h3 id="auth-title" class="text-xl font-bold text-white">Регистрация аккаунта</h3>
             <p id="auth-subtitle" class="text-xs text-slate-400 mt-1">Создайте новый аккаунт пользователя.</p>
           </div>
@@ -609,17 +732,17 @@
           <form onsubmit="handleAuthSubmit(event); return false;" novalidate class="space-y-4">
             <div>
               <input type="text" id="auth-username" name="username" autocomplete="username email" placeholder="Имя пользователя" data-i18n-ph="ph_username" value=""
-                     class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none transition-all">
+                     class="w-full px-4 py-3 rounded-xl glass-input bg-[#0f131c] text-xs text-white placeholder:text-slate-500 outline-none transition-all">
             </div>
 
             <div id="email-field-container">
               <input type="email" id="auth-email" name="email" autocomplete="email" placeholder="Ваш Email (обязательно)" data-i18n-ph="ph_email" value=""
-                     class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none transition-all">
+                     class="w-full px-4 py-3 rounded-xl glass-input bg-[#0f131c] text-xs text-white placeholder:text-slate-500 outline-none transition-all">
             </div>
 
             <div>
               <input type="password" id="auth-password" name="password" autocomplete="current-password" placeholder="Пароль" data-i18n-ph="ph_password" value=""
-                     class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none transition-all">
+                     class="w-full px-4 py-3 rounded-xl glass-input bg-[#0f131c] text-xs text-white placeholder:text-slate-500 outline-none transition-all">
             </div>
 
             <!-- INLINE STATUS MESSAGE BOX (REPLACES POPUP ALERTS) -->
@@ -692,8 +815,8 @@
         </div>
       </div>
 
-      <!-- Dashboard Status Toast Container -->
-      <div id="dashboard-status-msg" class="hidden text-xs font-semibold p-4 rounded-xl border transition-all"></div>
+      <!-- Dashboard Status Toast Container (Minimalist & Sleek) -->
+      <div id="dashboard-status-msg" class="hidden text-xs font-semibold px-4 py-2.5 rounded-xl border backdrop-blur-md transition-all shadow-lg flex items-center justify-between gap-3"></div>
 
       <!-- Banned Account Notice Banner -->
       <div id="dash-banned-banner" class="hidden my-4 p-4 rounded-2xl bg-red-950/90 border-2 border-red-600 text-red-300 shadow-xl shadow-red-950/60 flex items-center gap-4">
@@ -712,12 +835,13 @@
           
           <div class="glass-panel rounded-3xl p-6">
             <div class="flex items-center gap-2 text-sm font-bold text-white mb-6 border-b border-white/5 pb-4">
-              <span>👤</span> <span data-i18n="account_details">Данные аккаунта</span>
+              <svg class="w-4 h-4 text-purple-400 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+              <span data-i18n="account_details">Данные аккаунта</span>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3">
-                <span class="text-slate-400 text-base">👤</span>
+                <svg class="w-4 h-4 text-purple-400 stroke-current shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                 <div>
                   <div class="text-[10px] text-slate-500 font-mono-custom uppercase" data-i18n="lbl_username">ИМЯ ПОЛЬЗОВАТЕЛЯ</div>
                   <div id="dash-user-val" class="font-bold text-white mt-0.5"></div>
@@ -725,7 +849,7 @@
               </div>
 
               <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3">
-                <span class="text-slate-400 text-base">✉️</span>
+                <svg class="w-4 h-4 text-blue-400 stroke-current shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                 <div>
                   <div class="text-[10px] text-slate-500 font-mono-custom uppercase">EMAIL</div>
                   <div id="dash-email-val" class="font-bold text-white mt-0.5"></div>
@@ -733,7 +857,7 @@
               </div>
 
               <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3">
-                <span class="text-slate-400 text-base">🆔</span>
+                <svg class="w-4 h-4 text-indigo-400 stroke-current shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 012-2h2a2 2 0 012 2v1m-4 0h4"/></svg>
                 <div>
                   <div class="text-[10px] text-slate-500 font-mono-custom uppercase">UID</div>
                   <div id="dash-uid-val" class="font-bold text-white font-mono-custom mt-0.5">#1</div>
@@ -741,7 +865,7 @@
               </div>
 
               <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3">
-                <span class="text-slate-400 text-base">💎</span>
+                <svg class="w-4 h-4 text-amber-400 stroke-current shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 <div>
                   <div class="text-[10px] text-slate-500 font-mono-custom uppercase" data-i18n="lbl_role">РОЛЬ</div>
                   <div id="dash-role-val" class="font-bold text-slate-300 mt-0.5">User</div>
@@ -749,7 +873,7 @@
               </div>
 
               <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3">
-                <span class="text-slate-400 text-base">⏰</span>
+                <svg class="w-4 h-4 text-red-400 stroke-current shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 <div>
                   <div class="text-[10px] text-slate-500 font-mono-custom uppercase" data-i18n="lbl_sub">ПОДПИСКА ДО</div>
                   <div id="dash-sub-val" class="font-bold text-red-400 font-mono-custom mt-0.5">Нет активной подписки</div>
@@ -757,10 +881,10 @@
               </div>
 
               <div class="p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center gap-3">
-                <span class="text-slate-400 text-base">📅</span>
+                <svg class="w-4 h-4 text-emerald-400 stroke-current shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 <div>
                   <div class="text-[10px] text-slate-500 font-mono-custom uppercase" data-i18n="lbl_reg">РЕГИСТРАЦИЯ</div>
-                  <div id="dash-reg-val" class="font-bold text-white font-mono-custom mt-0.5"></div>
+                  <div id="dash-reg-val" class="font-bold text-white font-mono-custom mt-0.5">26.09.2026</div>
                 </div>
               </div>
             </div>
@@ -768,10 +892,10 @@
             <!-- HWID Display -->
             <div class="mt-4 p-3.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm flex items-center justify-between text-xs">
               <div class="flex items-center gap-3">
-                <span class="text-slate-400 text-base">💻</span>
+                <svg class="w-4 h-4 text-cyan-400 stroke-current shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                 <div>
                   <div class="text-[10px] text-slate-500 font-mono-custom uppercase">HWID</div>
-                  <div id="dash-hwid-val" class="font-mono-custom text-slate-300 text-[11px] mt-0.5">Не привязан (скачайте лаунчер и войдите)</div>
+                  <div id="dash-hwid-val" class="font-mono-custom text-amber-400 text-[11px] mt-0.5">Не привязан</div>
                 </div>
               </div>
             </div>
@@ -780,13 +904,14 @@
           <!-- Key Activation Card with INLINE Status Messages -->
           <div class="glass-panel rounded-3xl p-6">
             <div class="flex items-center gap-2 text-sm font-bold text-white mb-2">
-              <span>🗝️</span> <span data-i18n="key_title">Активировать лицензионный ключ</span>
+              <svg class="w-4 h-4 text-emerald-400 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+              <span data-i18n="key_title">Активировать лицензионный ключ</span>
             </div>
             <p class="text-xs text-slate-400 mb-4" data-i18n="key_desc">Введите ваш лицензионный ключ для активации подписки.</p>
 
             <form onsubmit="activateKey(event)" novalidate class="flex flex-col sm:flex-row items-center gap-3">
               <input type="text" id="key-input" placeholder="OBXOD-XXXX-XXXX-XXXX"
-                     class="w-full px-4 py-3 rounded-xl glass-input text-xs font-mono-custom text-white placeholder:text-slate-600 outline-none">
+                     class="w-full px-4 py-3 rounded-xl glass-input bg-[#0f131c] text-xs font-mono-custom text-white placeholder:text-slate-500 border border-white/20 focus:border-white/40 outline-none">
               <button type="submit" id="btn-key-activate" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white border border-white/20 font-extrabold text-xs transition-all whitespace-nowrap shadow-md" data-i18n="btn_activate">
                 Активировать
               </button>
@@ -801,110 +926,165 @@
         <div class="space-y-6">
           <div class="glass-panel rounded-3xl p-6">
             <div class="flex items-center gap-2 text-sm font-bold text-white mb-6 border-b border-white/5 pb-4">
-              <span>⚡</span> <span data-i18n="quick_actions">Быстрые действия</span>
+              <svg class="w-4 h-4 text-amber-400 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              <span data-i18n="quick_actions">Быстрые действия</span>
             </div>
 
             <div class="space-y-3 text-xs">
+              <!-- Admin Panel Button (Visible ONLY for Admins) -->
+              <button id="btn-dash-admin-panel" onclick="showView('admin')"
+                      class="hidden w-full p-3.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-200 font-semibold flex items-center gap-3 transition-all border border-white/10 shadow-sm backdrop-blur-sm">
+                <svg class="w-4 h-4 text-red-400 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                <span data-i18n="admin_panel_title">Панель Администратора</span>
+              </button>
+
               <button onclick="handleDownloadClick()"
                  class="w-full p-3.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-200 font-semibold flex items-center gap-3 transition-all border border-white/10 shadow-sm backdrop-blur-sm">
-                <span>📥</span> <span data-i18n="btn_download_exe">Скачать Лаунчер</span>
+                <svg class="w-4 h-4 text-blue-400 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                <span data-i18n="btn_download_exe">Скачать Лаунчер</span>
               </button>
 
               <button id="btn-dash-buy-sub" onclick="scrollToSection('product', event)"
                       class="w-full p-3.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-200 font-semibold flex items-center gap-3 transition-all border border-white/10 shadow-sm backdrop-blur-sm">
-                <span>💳</span> <span id="dash-buy-sub-text" data-i18n="btn_buy_sub">Купить подписку</span>
+                <svg class="w-4 h-4 text-emerald-400 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                <span id="dash-buy-sub-text" data-i18n="btn_buy_sub">Купить подписку</span>
               </button>
 
               <button onclick="openChangePasswordModal()"
                       class="w-full p-3.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-200 font-semibold flex items-center gap-3 transition-all border border-white/10 shadow-sm backdrop-blur-sm">
-                <span>🔑</span> <span data-i18n="btn_change_pass">Сменить пароль</span>
+                <svg class="w-4 h-4 text-amber-400 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                <span data-i18n="btn_change_pass">Сменить пароль</span>
               </button>
 
               <button onclick="logout()"
                       class="w-full p-3.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 font-semibold flex items-center gap-3 transition-all border border-red-500/20">
-                <span>🚪</span> <span data-i18n="btn_logout">Выйти из аккаунта</span>
+                <svg class="w-4 h-4 text-red-400 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                <span data-i18n="btn_logout">Выйти из аккаунта</span>
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ADMIN PANEL SECTION (Visible only for Admin users - Full Width 100%) -->
-      <div id="admin-panel-container" class="hidden mt-8 w-full glass-panel rounded-3xl p-6 border border-white/10 shadow-2xl">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-4 mb-6">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 text-white flex items-center justify-center text-xl font-bold">
+    </div>
+
+    <!-- VIEW 4: SEPARATE FULL-PAGE ADMIN CONTROL PANEL -->
+    <div id="view-admin" class="hidden space-y-6 w-full">
+      <!-- Admin Header Banner -->
+      <div class="glass-panel rounded-3xl p-6 relative overflow-hidden border border-white/10 bg-slate-950/20 backdrop-blur-xl shadow-2xl">
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 text-slate-200 flex items-center justify-center text-3xl shrink-0 shadow-none">
               👑
             </div>
             <div>
-              <h3 class="text-base font-extrabold text-white flex items-center gap-2">
-                <span data-i18n="admin_panel_title">Панель Администратора</span>
-              </h3>
-              <p class="text-xs text-slate-400 mt-0.5" data-i18n="admin_panel_desc">Управление пользователями, выдача подписок, сброс/блокировка HWID и баны.</p>
+              <div class="flex items-center gap-2">
+                <h2 class="text-2xl font-extrabold text-white tracking-tight" data-i18n="admin_panel_title">Панель Администратора</h2>
+              </div>
+              <p class="text-xs text-slate-300 mt-1" data-i18n="admin_panel_desc">Управление пользователями, выдача подписок, сброс/блокировка HWID и генерация ключей.</p>
             </div>
           </div>
-          <div class="flex items-center gap-2 w-full sm:w-auto flex-wrap">
-            <button type="button" onclick="adminGenerateNewKeyModal()" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all border border-white/15 flex items-center gap-1.5 shrink-0 shadow-md">
+
+          <div class="flex items-center gap-2.5 flex-wrap w-full lg:w-auto">
+            <button type="button" onclick="adminGenerateNewKeyModal()" class="px-3.5 py-2.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/25 text-emerald-300 hover:text-white text-xs font-extrabold transition-all border border-emerald-500/40 flex items-center gap-1.5 shrink-0 shadow-sm">
               ✨ <span data-i18n="btn_gen_key">Сгенерировать ключ</span>
             </button>
-            <button type="button" onclick="adminRefreshList()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition-all border border-white/15 flex items-center gap-1.5 shrink-0">
+            <button type="button" onclick="adminPromptSub()" class="px-3.5 py-2.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/25 text-blue-300 hover:text-white text-xs font-bold transition-all border border-blue-500/40 flex items-center gap-1.5 shrink-0 shadow-sm">
+              <span data-i18n="btn_extend_revoke_sub">🔑 Продлить/Забрать</span>
+            </button>
+            <button type="button" onclick="adminPromptGrantAdmin()" class="px-3.5 py-2.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/25 text-purple-300 hover:text-white text-xs font-extrabold transition-all border border-purple-500/40 flex items-center gap-1.5 shrink-0 shadow-sm">
+              <span data-i18n="btn_grant_admin">👑 Выдать Admin</span>
+            </button>
+            <button type="button" onclick="adminPromptRevokeAdmin()" class="px-3.5 py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/25 text-amber-300 hover:text-white text-xs font-extrabold transition-all border border-amber-500/40 flex items-center gap-1.5 shrink-0 shadow-sm">
+              <span data-i18n="btn_revoke_admin">⚔️ Снять админку</span>
+            </button>
+            <button type="button" onclick="adminPromptBan()" class="px-3.5 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/25 text-red-300 hover:text-white text-xs font-bold transition-all border border-red-500/40 flex items-center gap-1.5 shrink-0 shadow-sm">
+              <span data-i18n="btn_ban_unban">🚫 Бан / Разбан</span>
+            </button>
+            <button type="button" onclick="adminPromptResetHWID()" class="px-3.5 py-2.5 rounded-xl bg-slate-500/10 hover:bg-slate-500/25 text-slate-300 hover:text-white text-xs font-bold transition-all border border-slate-500/40 flex items-center gap-1.5 shrink-0 shadow-sm">
+              <span data-i18n="btn_reset_hwid">🔄 Сброс HWID</span>
+            </button>
+            <button type="button" onclick="adminRefreshList()" class="px-3.5 py-2.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white text-xs font-bold transition-all border border-white/10 flex items-center gap-1.5 shrink-0">
               🔄 <span data-i18n="btn_refresh_list">Обновить список</span>
             </button>
-          </div>
-        </div>
-
-        <!-- Admin Quick Action Control Bar (Target User by Nickname) -->
-        <div class="mb-4 p-4 rounded-2xl bg-slate-900/60 border border-white/10 flex flex-col md:flex-row items-center justify-between gap-3 shadow-lg">
-          <div class="flex items-center gap-2.5 w-full md:w-auto flex-1">
-            <span class="text-xs font-bold text-slate-300 whitespace-nowrap" data-i18n="admin_action_nick_lbl">👤 Действие над ником:</span>
-            <input type="text" id="admin-action-username-input" placeholder="Введите логин пользователя..." data-i18n-ph="ph_admin_action_nick"
-                   class="w-full px-3.5 py-2 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none">
-          </div>
-          <div class="flex items-center gap-2 flex-wrap w-full md:w-auto justify-end">
-            <button type="button" onclick="adminQuickAction('ban')" class="px-3 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-all border border-white/15 flex items-center gap-1 shrink-0 shadow-md">
-              <span data-i18n="btn_quick_ban">🚫 Бан / Разбан</span>
-            </button>
-            <button type="button" onclick="adminQuickAction('sub')" class="px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all border border-white/15 flex items-center gap-1 shrink-0 shadow-md">
-              <span data-i18n="btn_quick_sub">🔑 Продлить подписку</span>
-            </button>
-            <button type="button" onclick="adminQuickAction('grant_admin')" class="px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all border border-white/15 flex items-center gap-1 shrink-0 shadow-md">
-              <span data-i18n="btn_quick_grant_admin">👑 Выдать Admin</span>
-            </button>
-            <button type="button" onclick="adminQuickAction('revoke_admin')" class="px-3 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition-all border border-white/15 flex items-center gap-1 shrink-0 shadow-md">
-              <span data-i18n="btn_quick_revoke_admin">⚔️ Снять админку</span>
-            </button>
-            <button type="button" onclick="adminQuickAction('reset_hwid')" class="px-3 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold transition-all border border-white/15 flex items-center gap-1 shrink-0 shadow-md">
-              <span data-i18n="btn_quick_reset_hwid">🔄 Сброс HWID</span>
+            <button type="button" onclick="showView('dashboard')" class="px-3.5 py-2.5 rounded-xl bg-white/5 hover:bg-white/15 text-slate-300 hover:text-white text-xs font-bold transition-all border border-white/10 flex items-center gap-1.5 shrink-0">
+              <span data-i18n="btn_to_cabinet">🏠 В кабинет</span>
             </button>
           </div>
         </div>
 
-        <!-- Admin Search Bar -->
-        <div class="mb-4 flex flex-col sm:flex-row items-center gap-3">
-          <input type="text" id="admin-search-input" onkeyup="renderAdminPanel()" placeholder="🔍 Поиск по имени пользователя, Email, роли или HWID..." data-i18n-ph="ph_admin_search"
-                 class="w-full px-4 py-2.5 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none">
-        </div>
+        <!-- Live Statistics Counter Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5 mt-6 pt-6 border-t border-white/10">
+          <!-- Card 1: Total Accounts -->
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-blue-500/10 via-cyan-500/5 to-transparent border border-blue-500/30 hover:border-blue-500/50 backdrop-blur-xl shadow-lg transition-all flex flex-col justify-between group">
+            <div class="flex items-center justify-between gap-2">
+              <div class="text-[10px] text-blue-300 font-bold uppercase tracking-wider font-mono-custom" data-i18n="stat_total_accounts">ВСЕГО АККАУНТОВ</div>
+              <div class="w-6 h-6 rounded-lg bg-blue-500/20 border border-blue-500/40 text-blue-300 flex items-center justify-center text-xs shrink-0 group-hover:scale-110 transition-transform">📊</div>
+            </div>
+            <div id="admin-stat-total" class="text-2xl font-black text-blue-200 font-mono-custom mt-2 tracking-tight drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]">0</div>
+          </div>
 
-        <!-- Users Management Table -->
-        <div class="overflow-x-auto rounded-2xl border border-white/10 bg-black/40">
-          <table class="w-full text-left text-xs text-slate-300">
-            <thead class="bg-white/5 text-[10px] font-mono-custom uppercase text-slate-400 border-b border-white/10">
-              <tr>
-                <th class="p-3" data-i18n="th_user">Пользователь</th>
-                <th class="p-3" data-i18n="th_email">Email</th>
-                <th class="p-3" data-i18n="th_role">Роль</th>
-                <th class="p-3" data-i18n="th_sub">Подписка</th>
-                <th class="p-3" data-i18n="th_hwid">HWID</th>
-                <th class="p-3 text-right" data-i18n="th_actions">Управление</th>
-              </tr>
-            </thead>
-            <tbody id="admin-users-table-body" class="divide-y divide-white/5">
-              <!-- Dynamically populated via renderAdminPanel() -->
-            </tbody>
-          </table>
+          <!-- Card 2: Active Subs -->
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-transparent border border-emerald-500/30 hover:border-emerald-500/50 backdrop-blur-xl shadow-lg transition-all flex flex-col justify-between group">
+            <div class="flex items-center justify-between gap-2">
+              <div class="text-[10px] text-emerald-300 font-bold uppercase tracking-wider font-mono-custom" data-i18n="stat_active_subs">АКТИВНЫХ ПОДПИСОК</div>
+              <div class="w-6 h-6 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 flex items-center justify-center text-xs shrink-0 group-hover:scale-110 transition-transform">⭐</div>
+            </div>
+            <div id="admin-stat-subs" class="text-2xl font-black text-emerald-300 font-mono-custom mt-2 tracking-tight drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]">0</div>
+          </div>
+
+          <!-- Card 3: Banned Accounts -->
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-rose-500/10 via-red-500/5 to-transparent border border-rose-500/30 hover:border-rose-500/50 backdrop-blur-xl shadow-lg transition-all flex flex-col justify-between group">
+            <div class="flex items-center justify-between gap-2">
+              <div class="text-[10px] text-rose-300 font-bold uppercase tracking-wider font-mono-custom" data-i18n="stat_banned">ЗАБЛОКИРОВАНО (BAN)</div>
+              <div class="w-6 h-6 rounded-lg bg-rose-500/20 border border-rose-500/40 text-rose-300 flex items-center justify-center text-xs shrink-0 group-hover:scale-110 transition-transform">🚫</div>
+            </div>
+            <div id="admin-stat-banned" class="text-2xl font-black text-rose-300 font-mono-custom mt-2 tracking-tight drop-shadow-[0_0_8px_rgba(244,63,94,0.3)]">0</div>
+          </div>
+
+          <!-- Card 4: Administrators -->
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-purple-500/10 via-indigo-500/5 to-transparent border border-purple-500/30 hover:border-purple-500/50 backdrop-blur-xl shadow-lg transition-all flex flex-col justify-between group">
+            <div class="flex items-center justify-between gap-2">
+              <div class="text-[10px] text-purple-300 font-bold uppercase tracking-wider font-mono-custom" data-i18n="stat_admins">АДМИНИСТРАТОРОВ</div>
+              <div class="w-6 h-6 rounded-lg bg-purple-500/20 border border-purple-500/40 text-purple-300 flex items-center justify-center text-xs shrink-0 group-hover:scale-110 transition-transform">👑</div>
+            </div>
+            <div id="admin-stat-admins" class="text-2xl font-black text-purple-200 font-mono-custom mt-2 tracking-tight drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]">0</div>
+          </div>
         </div>
       </div>
 
+      <!-- Admin Status Toast Container (Minimalist & Sleek) -->
+      <div id="admin-status-msg" class="hidden text-xs font-semibold px-4 py-2.5 rounded-xl border backdrop-blur-md transition-all shadow-lg flex items-center justify-between gap-3"></div>
+
+      <!-- Compact Centered Search & Accounts Table Container -->
+      <div class="flex flex-col items-center gap-3 w-full">
+        <!-- Compact Search Bar -->
+        <div class="w-full max-w-sm">
+          <input type="text" id="admin-search-input" onkeyup="renderAdminPanel()" placeholder="🔍 Поиск по имени пользователя, Email, роли или HWID..." data-i18n-ph="ph_admin_search"
+                 class="w-full px-4 py-2.5 rounded-xl text-xs text-white placeholder:text-slate-500 bg-white/5 border border-white/10 outline-none transition-all focus:border-white/20 focus:bg-white/10 shadow-none">
+        </div>
+
+        <!-- Centered Accounts Table -->
+        <div class="glass-panel rounded-3xl p-3 border border-white/10 bg-slate-950/20 backdrop-blur-xl shadow-2xl overflow-hidden inline-block max-w-full">
+          <div class="overflow-x-auto rounded-2xl">
+            <table class="text-left text-xs text-slate-300">
+              <thead class="bg-white/[0.03] text-[10px] font-mono-custom uppercase text-slate-400 border-b border-white/10">
+                <tr>
+                  <th class="p-3.5 text-left whitespace-nowrap" data-i18n="th_user">Пользователь</th>
+                  <th class="p-3.5 text-left whitespace-nowrap" data-i18n="th_email">Email</th>
+                  <th class="p-3.5 text-left whitespace-nowrap" data-i18n="th_role">Роль</th>
+                  <th class="p-3.5 text-left whitespace-nowrap" data-i18n="th_sub">Подписка</th>
+                  <th class="p-3.5 text-left whitespace-nowrap" data-i18n="th_hwid">HWID</th>
+                  <th class="p-3.5 text-left whitespace-nowrap" data-i18n="th_actions">Управление</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-table-body" class="divide-y divide-white/5">
+                <!-- Dynamically populated via renderAdminPanel() -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
 
@@ -970,16 +1150,25 @@
       <button onclick="closeGrantSubModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
       
       <div class="text-center mb-5">
-        <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 text-white flex items-center justify-center text-xl mx-auto mb-3">🔑</div>
-        <h3 class="text-lg font-extrabold text-white">Продление лицензии</h3>
-        <p class="text-xs text-slate-400 mt-0.5">Аккаунт: <span id="grant-target-username" class="text-purple-300 font-bold"></span></p>
-        <div class="mt-2 inline-block px-3 py-1 rounded-lg bg-slate-900 border border-white/10 text-[11px] font-mono-custom text-slate-300">
-          Активный ключ: <span id="grant-target-key-display" class="text-emerald-400 font-bold"></span>
-        </div>
+        <div class="w-12 h-12 rounded-2xl bg-blue-500/20 border border-blue-500/40 text-blue-400 flex items-center justify-center text-xl mx-auto mb-3">🔑</div>
+        <h3 class="text-lg font-extrabold text-white">Управление подпиской</h3>
+        <p class="text-xs text-slate-400 mt-1">Продление или аннулирование подписки пользователя</p>
       </div>
 
       <form onsubmit="handleGrantSubSubmit(event)" class="space-y-4">
-        <input type="hidden" id="grant-target-user-hidden">
+        <div>
+          <label class="block text-xs font-mono-custom text-slate-400 mb-1.5">Выберите или введите логин / Email:</label>
+          <div class="relative custom-user-select-container">
+            <input type="text" id="grant-username-input" autocomplete="off" required placeholder="Начните вводить никнейм..."
+                   onfocus="showCustomUserDropdown(this)" oninput="filterCustomUserDropdown(this)"
+                   class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none">
+            <div class="custom-user-dropdown hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-slate-900/95 border border-white/15 backdrop-blur-xl rounded-2xl shadow-2xl max-h-48 overflow-y-auto p-1.5 space-y-1"></div>
+          </div>
+          <input type="hidden" id="grant-target-user-hidden">
+        </div>
+
+        <div id="grant-sub-prompt-error" class="hidden text-xs text-red-400 font-semibold p-2.5 bg-red-950/50 rounded-xl border border-red-500/30"></div>
+
         <div>
           <label class="block text-xs font-mono-custom text-slate-400 mb-1.5">Срок продления подписки:</label>
           <select id="grant-days-select" onchange="toggleCustomDaysInput()" class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white outline-none bg-slate-900 border border-white/15">
@@ -987,7 +1176,9 @@
             <option value="30" selected>💎 30 дней (Месяц)</option>
             <option value="90">⭐ 90 дней (Квартал - 3 месяца)</option>
             <option value="365">👑 365 дней (1 Год)</option>
+            <option value="3650">♾️ Навсегда (Бессрочно)</option>
             <option value="custom">✏️ Указать свой срок (в днях)...</option>
+            <option value="remove" class="text-red-400 font-bold">🚫 0 дней (Забрать / Аннулировать подписку)</option>
           </select>
         </div>
 
@@ -997,14 +1188,14 @@
                  class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-600 outline-none">
         </div>
 
-        <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-slate-300 space-y-1">
-          <div class="font-bold flex items-center gap-1.5 text-purple-300">⚡ Редактирование лицензии:</div>
-          <div>Продление добавит выбранное количество дней к подписи активного ключа пользователя и обновит статус доступа.</div>
+        <div class="flex items-center gap-2 pt-1">
+          <button type="button" onclick="closeGrantSubModal()" class="w-1/3 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition-all border border-white/10">
+            Отмена
+          </button>
+          <button type="submit" class="w-2/3 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs transition-all border border-blue-400/40 shadow-lg flex items-center justify-center gap-1.5">
+            <span>🔑 Продлить sub</span>
+          </button>
         </div>
-
-        <button type="submit" class="w-full py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-xs transition-all border border-white/15 shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2">
-          <span>⚡ Обновить и продлить подписку пользователя</span>
-        </button>
       </form>
     </div>
   </div>
@@ -1092,15 +1283,17 @@
       <button onclick="closeGrantAdminPromptModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
       
       <div class="text-center mb-5">
-        <div class="w-12 h-12 rounded-2xl bg-purple-500/20 border border-purple-500/40 text-purple-400 flex items-center justify-center text-xl mx-auto mb-3">👑</div>
+        <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 text-slate-200 flex items-center justify-center text-xl mx-auto mb-3">👑</div>
         <h3 class="text-lg font-extrabold text-white">Выдача прав Администратора</h3>
-        <p class="text-xs text-slate-400 mt-1">Введите имя пользователя или Email:</p>
+        <p class="text-xs text-slate-400 mt-1">Введите или выберите имя пользователя:</p>
       </div>
 
       <form onsubmit="submitGrantAdminPrompt(event)" class="space-y-4">
-        <div>
-          <input type="text" id="grant-admin-username-input" required placeholder="Имя пользователя с сайта"
+        <div class="relative custom-user-select-container">
+          <input type="text" id="grant-admin-username-input" autocomplete="off" required placeholder="Начните вводить никнейм..."
+                 onfocus="showCustomUserDropdown(this)" oninput="filterCustomUserDropdown(this)"
                  class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none">
+          <div class="custom-user-dropdown hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-slate-900/95 border border-white/15 backdrop-blur-xl rounded-2xl shadow-2xl max-h-48 overflow-y-auto p-1.5 space-y-1"></div>
         </div>
         <div id="grant-admin-prompt-error" class="hidden text-xs text-red-400 font-semibold p-2.5 bg-red-950/50 rounded-xl border border-red-500/30"></div>
         <div class="flex gap-2">
@@ -1115,44 +1308,203 @@
     </div>
   </div>
 
-  <div id="modal-policy" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
-    <div class="glass-panel rounded-3xl p-8 max-w-3xl w-full relative border border-white/10 shadow-2xl max-h-[85vh] overflow-y-auto">
+  <!-- CUSTOM REVOKE ADMIN MODAL (Replaces native browser prompt) -->
+  <div id="modal-revoke-admin-prompt" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
+    <div class="glass-panel rounded-3xl p-6 max-w-md w-full relative border border-white/15 shadow-2xl">
+      <button onclick="closeRevokeAdminPromptModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
+      
+      <div class="text-center mb-5">
+        <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center text-xl mx-auto mb-3">⚔️</div>
+        <h3 class="text-lg font-extrabold text-white">Снятие прав Администратора</h3>
+        <p class="text-xs text-slate-400 mt-1">Введите или выберите имя пользователя:</p>
+      </div>
+
+      <form onsubmit="submitRevokeAdminPrompt(event)" class="space-y-4">
+        <div class="relative custom-user-select-container">
+          <input type="text" id="revoke-admin-username-input" autocomplete="off" required placeholder="Начните вводить никнейм..."
+                 onfocus="showCustomUserDropdown(this)" oninput="filterCustomUserDropdown(this)"
+                 class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none">
+          <div class="custom-user-dropdown hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-slate-900/95 border border-white/15 backdrop-blur-xl rounded-2xl shadow-2xl max-h-48 overflow-y-auto p-1.5 space-y-1"></div>
+        </div>
+        <div id="revoke-admin-prompt-error" class="hidden text-xs text-red-400 font-semibold p-2.5 bg-red-950/50 rounded-xl border border-red-500/30"></div>
+        <div class="flex gap-2">
+          <button type="button" onclick="closeRevokeAdminPromptModal()" class="w-1/2 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition-all border border-white/10">
+            Отмена
+          </button>
+          <button type="submit" class="w-1/2 py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-extrabold text-xs transition-all border border-amber-400/40 shadow-lg">
+            ⚔️ Снять админку
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CUSTOM BAN PROMPT MODAL -->
+  <div id="modal-ban-prompt" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
+    <div class="glass-panel rounded-3xl p-6 max-w-md w-full relative border border-white/15 shadow-2xl">
+      <button onclick="closeBanPromptModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
+      
+      <div class="text-center mb-5">
+        <div class="w-12 h-12 rounded-2xl bg-red-500/20 border border-red-500/40 text-red-400 flex items-center justify-center text-xl mx-auto mb-3">🚫</div>
+        <h3 class="text-lg font-extrabold text-white">Блокировка / Разблокировка</h3>
+        <p class="text-xs text-slate-400 mt-1">Введите или выберите имя пользователя:</p>
+      </div>
+
+      <form onsubmit="submitBanPrompt(event)" class="space-y-4">
+        <div class="relative custom-user-select-container">
+          <input type="text" id="ban-username-input" autocomplete="off" required placeholder="Начните вводить никнейм..."
+                 onfocus="showCustomUserDropdown(this)" oninput="filterCustomUserDropdown(this)"
+                 class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none">
+          <div class="custom-user-dropdown hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-slate-900/95 border border-white/15 backdrop-blur-xl rounded-2xl shadow-2xl max-h-48 overflow-y-auto p-1.5 space-y-1"></div>
+        </div>
+        <div id="ban-prompt-error" class="hidden text-xs text-red-400 font-semibold p-2.5 bg-red-950/50 rounded-xl border border-red-500/30"></div>
+        <div class="flex gap-2">
+          <button type="button" onclick="closeBanPromptModal()" class="w-1/2 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition-all border border-white/10">
+            Отмена
+          </button>
+          <button type="submit" class="w-1/2 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-extrabold text-xs transition-all border border-red-400/40 shadow-lg">
+            🚫 Изменить статус
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CUSTOM RESET HWID PROMPT MODAL -->
+  <div id="modal-reset-hwid-prompt" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
+    <div class="glass-panel rounded-3xl p-6 max-w-md w-full relative border border-white/15 shadow-2xl">
+      <button onclick="closeResetHWIDPromptModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
+      
+      <div class="text-center mb-5">
+        <div class="w-12 h-12 rounded-2xl bg-slate-700/40 border border-slate-500/40 text-slate-300 flex items-center justify-center text-xl mx-auto mb-3">🔄</div>
+        <h3 class="text-lg font-extrabold text-white">Сброс HWID привязки</h3>
+        <p class="text-xs text-slate-400 mt-1">Введите или выберите имя пользователя:</p>
+      </div>
+
+      <form onsubmit="submitResetHWIDPrompt(event)" class="space-y-4">
+        <div class="relative custom-user-select-container">
+          <input type="text" id="reset-hwid-username-input" autocomplete="off" required placeholder="Начните вводить никнейм..."
+                 onfocus="showCustomUserDropdown(this)" oninput="filterCustomUserDropdown(this)"
+                 class="w-full px-4 py-3 rounded-xl glass-input text-xs text-white placeholder:text-slate-500 outline-none">
+          <div class="custom-user-dropdown hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-slate-900/95 border border-white/15 backdrop-blur-xl rounded-2xl shadow-2xl max-h-48 overflow-y-auto p-1.5 space-y-1"></div>
+        </div>
+        <div id="reset-hwid-prompt-error" class="hidden text-xs text-red-400 font-semibold p-2.5 bg-red-950/50 rounded-xl border border-red-500/30"></div>
+        <div class="flex gap-2">
+          <button type="button" onclick="closeResetHWIDPromptModal()" class="w-1/2 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs transition-all border border-white/10">
+            Отмена
+          </button>
+          <button type="submit" class="w-1/2 py-3 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-extrabold text-xs transition-all border border-slate-500/40 shadow-lg">
+            🔄 Сбросить HWID
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- USER DETAILS MODAL -->
+  <div id="modal-user-details" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#181d28] rounded-3xl max-w-lg w-full relative border border-slate-700/80 shadow-2xl overflow-hidden">
+      <!-- Flush Top Profile Cover Banner Header -->
+      <div id="user-details-banner" class="h-32 sm:h-36 w-full bg-cover bg-center relative flex items-end p-5 transition-all" style="background-image: linear-gradient(180deg, rgba(13, 17, 23, 0.30) 0%, rgba(13, 17, 23, 0.95) 100%), url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop');">
+        <button onclick="closeUserDetailsModal()" class="absolute top-3.5 right-3.5 text-slate-300 hover:text-white text-sm z-20 bg-slate-900/70 hover:bg-slate-900/90 w-8 h-8 rounded-full border border-white/20 flex items-center justify-center transition-all shadow-md">✕</button>
+        
+        <div class="flex items-center gap-3.5 z-10 w-full">
+          <div id="user-details-avatar-container" class="shrink-0"></div>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2 flex-wrap">
+              <h3 id="user-details-username" class="text-base sm:text-lg font-extrabold text-white truncate drop-shadow-md">Username</h3>
+              <div id="user-details-role-badge"></div>
+            </div>
+            <div id="user-details-email" class="text-xs text-slate-300 font-mono-custom mt-0.5 truncate drop-shadow">email@example.com</div>
+            <div id="user-details-uid" class="text-[10px] text-slate-400 font-mono-custom mt-0.5 drop-shadow">UID: #12345</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Body Container inside modal -->
+      <div class="p-5 space-y-4 bg-[#181d28]">
+        <!-- Info Grid Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="p-3.5 rounded-2xl bg-[#0f131d] border border-slate-700/60 space-y-1">
+            <div class="text-[10px] font-mono-custom text-slate-400 uppercase" data-i18n="details_active_key">АКТИВНЫЙ КЛЮЧ</div>
+            <div id="user-details-key" class="text-xs font-bold text-emerald-400 font-mono-custom truncate">OBXOD-KEY</div>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-[#0f131d] border border-slate-700/60 space-y-1">
+            <div class="text-[10px] font-mono-custom text-slate-400 uppercase" data-i18n="details_sub_until">ПОДПИСКА ДЕЙСТВИТЕЛЬНА ДО</div>
+            <div id="user-details-sub" class="text-xs font-bold text-slate-200 font-mono-custom">27.09.2098</div>
+          </div>
+
+          <div class="p-3.5 rounded-2xl bg-[#0f131d] border border-slate-700/60 space-y-1 sm:col-span-2">
+            <div class="text-[10px] font-mono-custom text-slate-400 uppercase" data-i18n="details_hwid_lbl">ИДЕНТИФИКАТОР ОБОРУДОВАНИЯ (HWID)</div>
+            <div id="user-details-hwid" class="text-xs font-mono-custom text-slate-300 break-all">HWID_STRING</div>
+          </div>
+        </div>
+
+        <!-- Quick Action Buttons Inside Modal -->
+        <div class="pt-2 border-t border-white/10">
+          <div class="text-xs font-bold text-slate-300 mb-3 flex items-center gap-1.5" data-i18n="details_actions_lbl">⚡ Действия над аккаунтом:</div>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-1.5 w-full">
+            <button type="button" id="btn-details-sub" class="p-2.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/25 text-blue-300 text-xs font-bold border border-blue-500/40 transition-all flex items-center justify-center gap-1 shadow-sm w-full min-w-0">
+              <span data-i18n="btn_details_sub" class="inline-flex items-center gap-1 whitespace-nowrap">🔑 Подписка</span>
+            </button>
+            <button type="button" id="btn-details-grant-admin" class="p-2.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/25 text-purple-300 text-xs font-bold border border-purple-500/40 transition-all flex items-center justify-center gap-1 shadow-sm w-full min-w-0">
+              <span data-i18n="btn_details_grant_admin" class="inline-flex items-center gap-1 whitespace-nowrap">👑 Выдать</span>
+            </button>
+            <button type="button" id="btn-details-revoke-admin" class="p-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/25 text-amber-300 text-xs font-bold border border-amber-500/40 transition-all flex items-center justify-center gap-1 shadow-sm w-full min-w-0">
+              <span data-i18n="btn_details_revoke_admin" class="inline-flex items-center gap-1 whitespace-nowrap">⚔️ Снять</span>
+            </button>
+            <button type="button" id="btn-details-ban" class="p-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/25 text-red-300 text-xs font-bold border border-red-500/40 transition-all flex items-center justify-center gap-1 shadow-sm w-full min-w-0">
+              <span data-i18n="btn_details_ban" class="inline-flex items-center gap-1 whitespace-nowrap">🚫 Бан</span>
+            </button>
+            <button type="button" id="btn-details-hwid" class="p-2.5 rounded-xl bg-slate-500/10 hover:bg-slate-500/25 text-slate-300 text-xs font-bold border border-slate-500/40 transition-all flex items-center justify-center gap-1 shadow-sm w-full min-w-0">
+              <span data-i18n="btn_details_hwid" class="inline-flex items-center gap-1 whitespace-nowrap">🔄 HWID</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-policy" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[#181d28] rounded-3xl p-8 max-w-3xl w-full relative border border-slate-700/80 shadow-2xl max-h-[85vh] overflow-y-auto">
       <button onclick="closePolicyModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">✕</button>
       <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
-        <span>⚖️</span> <span data-i18n="policy_title">Политика конфиденциальности & Условия использования</span>
+        <svg class="w-5 h-5 text-emerald-400 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        <span data-i18n="policy_title">Политика конфиденциальности & Условия использования</span>
       </h3>
       <div class="text-xs text-slate-300 space-y-4 leading-relaxed">
-        <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-1">
+        <div class="p-4 rounded-xl bg-[#0f131d] border border-slate-700/60 space-y-1">
           <h4 class="font-bold text-white text-sm" data-i18n="pol_sec1_title">1. Назначение утилиты и правовой статус</h4>
           <p data-i18n="pol_sec1_desc">Программное обеспечение Obxod Client Pro v5.6 представляет собой инструмент контроля входящих подключений AnyDesk и администрирования параметров безопасности операционной системы Windows.</p>
         </div>
 
-        <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-1">
+        <div class="p-4 rounded-xl bg-[#0f131d] border border-slate-700/60 space-y-1">
           <h4 class="font-bold text-white text-sm" data-i18n="pol_sec2_title">2. Конфиденциальность и защита HWID</h4>
           <p data-i18n="pol_sec2_desc">Все персональные данные, ключи доступа и идентификаторы оборудования (HWID) обрабатываются исключительно на локальном ПК пользователя. Мы не собираем и не передаем ваши приватные файлы третьим лицам.</p>
         </div>
 
-        <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-1">
+        <div class="p-4 rounded-xl bg-[#0f131d] border border-slate-700/60 space-y-1">
           <h4 class="font-bold text-white text-sm" data-i18n="pol_sec3_title">3. Условия подписки и защиты от перезаписи</h4>
           <p data-i18n="pol_sec3_desc">Каждая лицензия имеет свой период действия (30 дней, 90 дней или Lifetime). Активация нового ключа поверх уже действующей активной подписки заблокирована во избежание потери оставшихся дней.</p>
         </div>
 
-        <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-1">
+        <div class="p-4 rounded-xl bg-[#0f131d] border border-slate-700/60 space-y-1">
           <h4 class="font-bold text-white text-sm" data-i18n="pol_sec4_title">4. Безопасность функции чистки Minecraft</h4>
           <p data-i18n="pol_sec4_desc">Модуль очистки производит безопасное удаление только временных логов (.log), кэш-файлов и краш-дампов. Игровые миры, сборки и файлы настроек клиента остаются нетронутыми.</p>
         </div>
 
-        <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-1">
+        <div class="p-4 rounded-xl bg-[#0f131d] border border-slate-700/60 space-y-1">
           <h4 class="font-bold text-white text-sm" data-i18n="pol_sec5_title">5. Правила покупки и мгновенная выдача</h4>
           <p data-i18n="pol_sec5_desc">Официальное приобретение ключей производится напрямую через магазин FunPay (KarenMakaren). Выдача ключа и инструкция по активации выполняются сразу после оплаты.</p>
         </div>
 
-        <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-1">
+        <div class="p-4 rounded-xl bg-[#0f131d] border border-slate-700/60 space-y-1">
           <h4 class="font-bold text-white text-sm" data-i18n="pol_sec6_title">6. Перенос подписки и Сброс HWID (50 ₽)</h4>
           <p data-i18n="pol_sec6_desc">Смена привязки HWID на новый компьютер или при замене комплектующих является отдельной платной услугой стоимостью 50 ₽. Для заказа обратитесь через магазин FunPay (KarenMakaren).</p>
         </div>
 
-        <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 space-y-1">
+        <div class="p-4 rounded-xl bg-[#0f131d] border border-slate-700/60 space-y-1">
           <h4 class="font-bold text-white text-sm" data-i18n="pol_sec7_title">7. Отказ от ответственности</h4>
           <p data-i18n="pol_sec7_desc">Разработчики Obxod Client не несут ответственности за использование утилиты вопреки правилам сторонних игровых серверов. Пользователь берет на себя полную ответственность за запуск программы.</p>
         </div>
@@ -1188,7 +1540,7 @@
         btn_buy_hero: "Купить подписку",
         product_badge: "Официальные тарифы",
         product_title: "Выберите план подписки",
-        product_subtitle: "Выберите удобный период доступа для полной защиты от нежелательных подключений AnyDesk и очистки ПК.",
+        product_subtitle: "Выберите удобный период доступа для полной защиты от нежелательных подключений AnyDesk.",
         btn_sub_pill: "Доступные подписки",
         plan_30_title: "30 дней",
         plan_30_desc: "Базовый период защиты.",
@@ -1225,7 +1577,7 @@
         btn_open_funpay: "Открыть FunPay ➔",
         why_badge: "Безопасность & Контроль",
         why_title: "Почему выбирают Obxod Client",
-        why_subtitle: "Мощная автономная система блокировки нежелательных подключений AnyDesk и очистки ресурсов компьютера.",
+        why_subtitle: "Мощная автономная система блокировки нежелательных подключений AnyDesk.",
         adv_1_title: "Имитация Таймаута (~60с)",
         adv_1_desc: "Естественное сбрасывание подключения AnyDesk. Соперник или проверяющий увидит только стандартное сообщение о сетевом таймауте.",
         adv_2_title: "Автономный Portable.exe",
@@ -1268,6 +1620,24 @@
         btn_gen_key: "Сгенерировать ключ",
         btn_grant_admin: "Выдать Admin",
         btn_refresh_list: "Обновить список",
+        btn_extend_revoke_sub: "🔑 Продлить / Забрать",
+        btn_revoke_admin: "⚔️ Снять админку",
+        btn_ban_unban: "🚫 Бан / Разбан",
+        btn_reset_hwid: "🔄 Сброс HWID",
+        btn_to_cabinet: "🏠 В кабинет",
+        stat_total_accounts: "ВСЕГО АККАУНТОВ",
+        stat_active_subs: "АКТИВНЫХ ПОДПИСОК",
+        stat_banned: "ЗАБЛОКИРОВАНО (BAN)",
+        stat_admins: "АДМИНИСТРАТОРОВ",
+        details_active_key: "АКТИВНЫЙ КЛЮЧ",
+        details_sub_until: "ПОДПИСКА ДЕЙСТВИТЕЛЬНА ДО",
+        details_hwid_lbl: "ИДЕНТИФИКАТОР ОБОРУДОВАНИЯ (HWID)",
+        details_actions_lbl: "⚡ Действия над аккаунтом:",
+        btn_details_sub: "🔑 Подписка",
+        btn_details_grant_admin: "👑 Выдать",
+        btn_details_revoke_admin: "⚔️ Снять",
+        btn_details_ban: "🚫 Бан",
+        btn_details_hwid: "🔄 HWID",
         admin_action_nick_lbl: "👤 Действие над ником:",
         ph_admin_action_nick: "Введите логин пользователя...",
         btn_quick_ban: "🚫 Бан / Разбан",
@@ -1357,7 +1727,7 @@
         btn_buy_hero: "Buy Subscription",
         product_badge: "Official Rates",
         product_title: "Select Subscription Plan",
-        product_subtitle: "Choose convenient access duration for full protection against unwanted AnyDesk connections & PC cleanup.",
+        product_subtitle: "Choose convenient access duration for full protection against unwanted AnyDesk connections.",
         btn_sub_pill: "Available Subscriptions",
         plan_30_title: "30 Days",
         plan_30_desc: "Basic protection plan.",
@@ -1394,7 +1764,7 @@
         btn_open_funpay: "Open FunPay ➔",
         why_badge: "Security & Control",
         why_title: "Why Choose Obxod Client",
-        why_subtitle: "Powerful autonomous system to block unwanted AnyDesk connections and clean PC resources.",
+        why_subtitle: "Powerful autonomous system to block unwanted AnyDesk connections.",
         adv_1_title: "Timeout Simulation (~60s)",
         adv_1_desc: "Natural AnyDesk session drop. Opponent will only see a standard network timeout error.",
         adv_2_title: "Standalone Portable.exe",
@@ -1437,6 +1807,24 @@
         btn_gen_key: "Generate Key",
         btn_grant_admin: "Grant Admin",
         btn_refresh_list: "Refresh List",
+        btn_extend_revoke_sub: "🔑 Extend / Revoke Sub",
+        btn_revoke_admin: "⚔️ Revoke Admin",
+        btn_ban_unban: "🚫 Ban / Unban",
+        btn_reset_hwid: "🔄 Reset HWID",
+        btn_to_cabinet: "🏠 To Cabinet",
+        stat_total_accounts: "TOTAL ACCOUNTS",
+        stat_active_subs: "ACTIVE SUBS",
+        stat_banned: "BANNED ACCOUNTS",
+        stat_admins: "ADMINISTRATORS",
+        details_active_key: "ACTIVE KEY",
+        details_sub_until: "SUBSCRIPTION VALID UNTIL",
+        details_hwid_lbl: "HARDWARE IDENTIFIER (HWID)",
+        details_actions_lbl: "⚡ Account Actions:",
+        btn_details_sub: "🔑 Sub",
+        btn_details_grant_admin: "👑 Grant",
+        btn_details_revoke_admin: "⚔️ Revoke",
+        btn_details_ban: "🚫 Ban",
+        btn_details_hwid: "🔄 HWID",
         admin_action_nick_lbl: "👤 Target Nickname:",
         ph_admin_action_nick: "Enter user nickname...",
         btn_quick_ban: "🚫 Ban / Unban",
@@ -1599,6 +1987,13 @@
       }
     }
 
+    function get2098SubDate(baseDate) {
+      const d = baseDate || new Date();
+      const dd = String(d.getDate()).padStart(2, '0');
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      return `${dd}.${mm}.2098`;
+    }
+
     function initApp() {
       usersDB = JSON.parse(localStorage.getItem('obxod_users_db')) || {};
       let storedActive = JSON.parse(localStorage.getItem('obxod_active_user')) 
@@ -1616,7 +2011,7 @@
           password: '111',
           uid: '#1',
           role: 'Admin',
-          subUntil: 'Навсегда (Admin)',
+          subUntil: '27.09.2098',
           isBanned: false,
           hwid: 'Не привязан',
           regDate: '26.09.2026'
@@ -1625,12 +2020,21 @@
       }
 
       for (let k in usersDB) {
-        if (k === 'xamzatovskiy' || (usersDB[k] && usersDB[k].username && usersDB[k].username.toLowerCase() === 'xamzatovskiy')) {
-          usersDB[k].isBanned = false;
-          usersDB[k].role = 'Admin';
-          usersDB[k].subUntil = 'Навсегда (Admin)';
-          if (usersDB[k].hwid && usersDB[k].hwid.includes('ЗАБЛОКИРОВАН')) {
-            usersDB[k].hwid = 'Не привязан';
+        if (usersDB[k]) {
+          const uNameLower = (usersDB[k].username || k).toLowerCase();
+          const isRealAdmin = usersDB[k].role === 'Admin' || ['admin', 'parospepsi', 'parospepsi-hash', 'xamzatovskiy'].includes(uNameLower);
+
+          if (!isRealAdmin) {
+            if (usersDB[k].subUntil && (usersDB[k].subUntil.includes('Навсегда') || usersDB[k].subUntil.includes('Admin'))) {
+              usersDB[k].subUntil = addDaysToSubDate('26.09.2026', 30);
+            }
+          } else {
+            usersDB[k].isBanned = false;
+            usersDB[k].role = 'Admin';
+            usersDB[k].subUntil = '27.09.2098';
+            if (usersDB[k].hwid && usersDB[k].hwid.includes('ЗАБЛОКИРОВАН')) {
+              usersDB[k].hwid = 'Не привязан';
+            }
           }
         }
       }
@@ -1642,10 +2046,16 @@
         currentUser = dbUser;
         currentUser.loginTimestamp = Date.now();
 
+        const isCurrAdmin = currentUser.role === 'Admin' || ['admin', 'parospepsi', 'parospepsi-hash', 'xamzatovskiy'].includes(userKey);
+
+        if (!isCurrAdmin && currentUser.subUntil && (currentUser.subUntil.includes('Навсегда') || currentUser.subUntil.includes('Admin'))) {
+          currentUser.subUntil = addDaysToSubDate('26.09.2026', 30);
+        }
+
         if (userKey === 'xamzatovskiy') {
           currentUser.isBanned = false;
           currentUser.role = 'Admin';
-          currentUser.subUntil = 'Навсегда (Admin)';
+          currentUser.subUntil = '27.09.2098';
           if (currentUser.hwid && currentUser.hwid.includes('ЗАБЛОКИРОВАН')) {
             currentUser.hwid = 'Не привязан';
           }
@@ -1743,7 +2153,7 @@
 
     function showView(viewName, skipScroll = false) {
       clearKeyStatusMsg();
-      if (viewName === 'dashboard' && !currentUser) {
+      if ((viewName === 'dashboard' || viewName === 'admin') && !currentUser) {
         switchAuthTab('register');
         viewName = 'auth';
       }
@@ -1752,9 +2162,18 @@
         viewName = 'dashboard';
       }
 
+      if (viewName === 'admin') {
+        const isAdmin = currentUser && (currentUser.role === 'Admin' || ['admin', 'parospepsi', 'parospepsi-hash', 'xamzatovskiy'].includes((currentUser.username || '').toLowerCase()));
+        if (!isAdmin) {
+          viewName = 'dashboard';
+        }
+      }
+
       document.getElementById('view-landing').classList.add('hidden');
       document.getElementById('view-auth').classList.add('hidden');
       document.getElementById('view-dashboard').classList.add('hidden');
+      const viewAdminEl = document.getElementById('view-admin');
+      if (viewAdminEl) viewAdminEl.classList.add('hidden');
 
       const target = document.getElementById('view-' + viewName);
       if (target) {
@@ -1765,6 +2184,10 @@
         switchAuthTab(activeAuthMode || 'register');
       } else {
         sessionStorage.setItem('obxod_active_view', viewName);
+      }
+
+      if (viewName === 'admin' && typeof renderAdminPanel === 'function') {
+        renderAdminPanel();
       }
 
       updateNavState();
@@ -1846,24 +2269,34 @@
     }
 
     let dashboardMsgTimer = null;
+    let adminMsgTimer = null;
     function showInlineDashboardMsg(msg, type = 'info', autoHideMs = 3500) {
-      const box = document.getElementById('dashboard-status-msg');
-      if (!box) return;
+      const boxes = [
+        document.getElementById('dashboard-status-msg'),
+        document.getElementById('admin-status-msg')
+      ];
+      
       if (dashboardMsgTimer) clearTimeout(dashboardMsgTimer);
+      if (adminMsgTimer) clearTimeout(adminMsgTimer);
 
-      box.classList.remove('hidden', 'bg-red-500/20', 'text-red-300', 'bg-emerald-500/20', 'text-emerald-300', 'bg-blue-500/20', 'text-blue-300', 'border-red-500/40', 'border-emerald-500/40', 'border-blue-500/40');
-      if (type === 'success') {
-        box.classList.add('bg-emerald-500/20', 'text-emerald-300', 'border', 'border-emerald-500/40');
-      } else if (type === 'error') {
-        box.classList.add('bg-red-500/20', 'text-red-300', 'border', 'border-red-500/40');
-      } else {
-        box.classList.add('bg-blue-500/20', 'text-blue-300', 'border', 'border-blue-500/40');
-      }
-      box.innerHTML = msg;
+      boxes.forEach(box => {
+        if (!box) return;
+        box.classList.remove('hidden', 'bg-red-950/80', 'text-red-300', 'bg-emerald-950/80', 'text-emerald-300', 'bg-blue-950/80', 'text-blue-300', 'border-red-500/40', 'border-emerald-500/40', 'border-blue-500/40', 'bg-red-500/20', 'bg-emerald-500/20', 'bg-blue-500/20');
+        
+        if (type === 'success') {
+          box.classList.add('bg-emerald-950/80', 'text-emerald-300', 'border', 'border-emerald-500/40', 'shadow-emerald-900/20');
+        } else if (type === 'error') {
+          box.classList.add('bg-red-950/80', 'text-red-300', 'border', 'border-red-500/40', 'shadow-red-900/20');
+        } else {
+          box.classList.add('bg-blue-950/80', 'text-blue-300', 'border', 'border-blue-500/40', 'shadow-blue-900/20');
+        }
+        
+        box.innerHTML = `<span>${msg}</span><button type="button" onclick="this.parentElement.classList.add('hidden')" class="text-slate-400 hover:text-white text-xs ml-auto opacity-70 hover:opacity-100 transition-opacity">✕</button>`;
+      });
 
       if (autoHideMs > 0) {
         dashboardMsgTimer = setTimeout(() => {
-          box.classList.add('hidden');
+          boxes.forEach(box => { if (box) box.classList.add('hidden'); });
         }, autoHideMs);
       }
     }
@@ -2011,7 +2444,7 @@
             subUntil: "Нет активной подписки",
             role: "Пользователь",
             regDate: regDateStr,
-            hwid: "Не привязан (активируйте ключ или купите подписку)",
+            hwid: "Не привязан",
             loginTimestamp: Date.now()
           };
 
@@ -2253,11 +2686,11 @@
         const roleBadge = document.getElementById('dash-role-badge');
         if (roleBadge) {
           if (isAdmin) {
-            roleBadge.innerHTML = '<span class="text-xs shrink-0">👑</span><span class="whitespace-nowrap">ADMIN</span>';
-            roleBadge.className = "inline-flex items-center gap-1.5 whitespace-nowrap px-2.5 py-1 rounded-md bg-purple-500/25 border border-purple-500/50 text-purple-300 text-[10px] font-extrabold uppercase tracking-wide shadow-sm shadow-purple-500/20 shrink-0 align-middle";
+            roleBadge.innerHTML = '<span class="text-xs shrink-0">👑</span><span class="whitespace-nowrap font-extrabold tracking-wider">ADMIN</span>';
+            roleBadge.className = "inline-flex items-center gap-1.5 whitespace-nowrap px-3 py-1 rounded-lg bg-red-500/20 border border-red-500/40 text-red-300 backdrop-blur-md text-[10px] font-extrabold uppercase tracking-wider shadow-sm shrink-0 align-middle";
           } else if (hasSub) {
-            roleBadge.innerText = roleText;
-            roleBadge.className = "inline-flex items-center gap-1 whitespace-nowrap px-2.5 py-1 rounded-md bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 text-[10px] font-extrabold uppercase tracking-wide shadow-sm shrink-0 align-middle";
+            roleBadge.innerHTML = '<span class="text-xs shrink-0">⭐</span><span class="whitespace-nowrap font-extrabold tracking-wider">PREMIUM</span>';
+            roleBadge.className = "inline-flex items-center gap-1.5 whitespace-nowrap px-3 py-1 rounded-lg bg-gradient-to-r from-emerald-500/25 via-teal-500/20 to-emerald-500/25 border border-emerald-500/40 text-emerald-300 backdrop-blur-md text-[10px] font-extrabold uppercase tracking-wider shadow-sm shrink-0 align-middle";
           } else {
             roleBadge.innerText = roleText;
             roleBadge.className = "inline-flex items-center gap-1 whitespace-nowrap px-2.5 py-1 rounded-md bg-white/10 text-slate-400 text-[10px] font-bold uppercase shrink-0 align-middle";
@@ -2266,18 +2699,26 @@
 
         const roleVal = document.getElementById('dash-role-val');
         if (roleVal) {
-          roleVal.innerText = isAdmin ? "👑 Администратор" : roleText;
-          roleVal.className = isAdmin ? "font-extrabold text-purple-300 font-mono-custom mt-0.5" : (hasSub ? "font-extrabold text-emerald-400 font-mono-custom mt-0.5" : "font-bold text-slate-300 font-mono-custom mt-0.5");
+          const adminText = currentLang === 'ru' ? "👑 Администратор" : "👑 Administrator";
+          if (isAdmin) {
+            roleVal.innerHTML = `<span class="bg-gradient-to-r from-red-500 via-rose-400 to-red-500 bg-clip-text text-transparent font-extrabold font-mono-custom drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]">${adminText}</span>`;
+            roleVal.className = "mt-0.5 inline-block";
+          } else if (hasSub) {
+            roleVal.innerHTML = `<span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400 bg-clip-text text-transparent font-extrabold font-mono-custom drop-shadow-[0_0_8px_rgba(16,185,129,0.5)]">⭐ Premium</span>`;
+            roleVal.className = "mt-0.5 inline-block";
+          } else {
+            roleVal.innerText = roleText;
+            roleVal.className = "font-bold text-slate-300 font-mono-custom mt-0.5";
+          }
         }
 
-        // Toggle Admin Panel visibility
-        const adminPanel = document.getElementById('admin-panel-container');
-        if (adminPanel) {
+        // Toggle Admin Panel button in Quick Actions (Visible ONLY for Admins)
+        const dashAdminBtn = document.getElementById('btn-dash-admin-panel');
+        if (dashAdminBtn) {
           if (isAdmin) {
-            adminPanel.classList.remove('hidden');
-            renderAdminPanel();
+            dashAdminBtn.classList.remove('hidden');
           } else {
-            adminPanel.classList.add('hidden');
+            dashAdminBtn.classList.add('hidden');
           }
         }
 
@@ -2315,7 +2756,8 @@
         if (hasSub) {
           if (subValEl) {
             subValEl.className = "font-bold text-emerald-400 font-mono-custom mt-0.5";
-            subValEl.innerText = (currentLang === 'ru' ? "До " : "Until ") + currentUser.subUntil;
+            let cleanSub = String(currentUser.subUntil).replace(/навсегда/gi, get2098SubDate()).replace(/\(admin\)/gi, '').trim();
+            subValEl.innerText = (currentLang === 'ru' ? "До " : "Until ") + cleanSub;
           }
 
           if (keyBtn) {
@@ -2328,10 +2770,20 @@
             keyInput.placeholder = "OBXOD-XXXX-XXXX-XXXX";
           }
           if (dashBuySubBtn) {
-            dashBuySubBtn.disabled = false;
-            dashBuySubBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
-            if (dashBuySubText) dashBuySubText.innerText = currentLang === 'ru' ? "Купить подписку" : "Buy Subscription";
+            dashBuySubBtn.disabled = true;
+            dashBuySubBtn.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+            if (dashBuySubText) dashBuySubText.innerText = currentLang === 'ru' ? "Подписка активна" : "Subscription Active";
           }
+
+          // Lock all "Купить подписку" buttons across the site for users with active subscription
+          document.querySelectorAll('[data-i18n="btn_buy_hero"]').forEach(el => {
+            if (el.parentElement) el.parentElement.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+            el.innerText = currentLang === 'ru' ? "Подписка активна" : "Subscription Active";
+          });
+          document.querySelectorAll('[data-i18n="btn_buy_card"]').forEach(el => {
+            el.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+            el.innerText = currentLang === 'ru' ? "Подписка активна" : "Subscription Active";
+          });
         } else {
           if (subValEl) {
             subValEl.className = "font-bold text-red-400 font-mono-custom mt-0.5";
@@ -2352,11 +2804,54 @@
             dashBuySubBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
             if (dashBuySubText) dashBuySubText.innerText = currentLang === 'ru' ? "Купить подписку" : "Buy Subscription";
           }
+
+          document.querySelectorAll('[data-i18n="btn_buy_hero"]').forEach(el => {
+            if (el.parentElement) el.parentElement.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+            el.innerText = currentLang === 'ru' ? "Купить подписку" : "Buy Subscription";
+          });
+          document.querySelectorAll('[data-i18n="btn_buy_card"]').forEach(el => {
+            el.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+            el.innerText = currentLang === 'ru' ? "Купить ↗" : "Buy ↗";
+          });
         }
       } else {
         document.documentElement.classList.remove('is-logged-in');
         if (authBtn) authBtn.classList.remove('hidden');
         if (profileBtn) profileBtn.classList.add('hidden');
+
+        // Reset all buy buttons for unauthenticated guests
+        document.querySelectorAll('[data-i18n="btn_buy_hero"]').forEach(el => {
+          if (el.parentElement) el.parentElement.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+          el.innerText = currentLang === 'ru' ? "Купить подписку" : "Buy Subscription";
+        });
+        document.querySelectorAll('[data-i18n="btn_buy_card"]').forEach(el => {
+          el.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+          el.innerText = currentLang === 'ru' ? "Купить ↗" : "Buy ↗";
+        });
+      }
+    }
+
+    function handleBuyClick(e, type) {
+      const activeUser = JSON.parse(localStorage.getItem('obxod_active_user')) || JSON.parse(sessionStorage.getItem('obxod_active_user'));
+      if (!activeUser) {
+        if (e && e.preventDefault) e.preventDefault();
+        showView('auth');
+        const authSub = document.getElementById('auth-subtitle');
+        if (authSub) {
+          authSub.innerText = currentLang === 'ru' ? "Для покупки подписки необходимо авторизоваться или зарегистрироваться" : "Please login or register to purchase a subscription.";
+          authSub.className = "text-xs font-semibold text-amber-400 mt-1";
+        }
+        return false;
+      }
+      const hasSub = activeUser.subUntil && activeUser.subUntil !== "Нет активной подписки" && activeUser.subUntil !== "No active subscription";
+      if (hasSub) {
+        if (e && e.preventDefault) e.preventDefault();
+        showNotification(currentLang === 'ru' ? 'Подписка уже активна!' : 'Subscription is already active!', 'info');
+        return false;
+      }
+      if (type === 'hero') {
+        scrollToSection('product', e);
+        return false;
       }
     }
 
@@ -2435,9 +2930,9 @@
             const hasSub = currentUser.subUntil && currentUser.subUntil !== "Нет активной подписки" && currentUser.subUntil !== "No active subscription";
             
             if (isUserAdmin) {
-              if (currentUser.role !== 'Admin' || currentUser.subUntil !== 'Навсегда (Admin)') {
+              if (currentUser.role !== 'Admin' || !currentUser.subUntil || currentUser.subUntil.includes('Навсегда') || currentUser.subUntil.includes('Admin')) {
                 currentUser.role = 'Admin';
-                currentUser.subUntil = 'Навсегда (Admin)';
+                currentUser.subUntil = get2098SubDate();
                 stateUpdated = true;
               }
             }
@@ -2539,7 +3034,7 @@
 
         // Grant Admin Role
         currentUser.role = "Admin";
-        currentUser.subUntil = "Навсегда (Admin)";
+        currentUser.subUntil = get2098SubDate();
         currentUser.activeKey = rawKey;
 
         usersDB[currentUser.username.toLowerCase()] = currentUser;
@@ -2567,31 +3062,6 @@
             return;
           }
         }
-      }
-
-      if (rawKey.includes("ADMIN")) {
-        currentUser.role = "Admin";
-        currentUser.subUntil = "Навсегда (Admin)";
-        currentUser.activeKey = rawKey;
-
-        if (!currentUser.hwid || currentUser.hwid.includes("Не привязан") || currentUser.hwid.includes("Not bound")) {
-          currentUser.hwid = currentLang === 'ru' 
-            ? "Не привязан (скачайте лаунчер и войдите)" 
-            : "Not bound (launch application to bind)";
-        }
-
-        usersDB[currentUser.username.toLowerCase()] = currentUser;
-        localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
-        localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
-        sessionStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
-        syncUsersDBToBackend();
-
-        showInlineKeyMsg(currentLang === 'ru'
-          ? '👑 Ключ Администратора "' + rawKey + '" успешно активирован! Выданы права Admin (Навсегда).'
-          : '👑 Admin Key "' + rawKey + '" activated! Admin rights (Forever) granted.', true);
-        document.getElementById('key-input').value = '';
-        updateNavState();
-        return;
       }
 
       let daysToAdd = 30;
@@ -2629,9 +3099,7 @@
 
       // Keep HWID unbound until launcher is executed on user PC
       if (!currentUser.hwid || currentUser.hwid.includes("Не привязан") || currentUser.hwid.includes("Not bound")) {
-        currentUser.hwid = currentLang === 'ru' 
-          ? "Не привязан (скачайте лаунчер и войдите)" 
-          : "Not bound (launch application to bind)";
+        currentUser.hwid = currentLang === 'ru' ? "Не привязан" : "Not bound";
       }
 
       usersDB[currentUser.username.toLowerCase()] = currentUser;
@@ -2736,6 +3204,41 @@
 
       const usersList = Object.values(usersDB);
 
+      // Compute live counter statistics for Admin Dashboard Cards
+      let statTotal = usersList.length;
+      let statSubs = 0;
+      let statBanned = 0;
+      let statAdmins = 0;
+
+      usersList.forEach(u => {
+        const uName = (u.username || '').toLowerCase();
+        const uRole = u.role || 'Пользователь';
+        const rawHwid = String(u.hwid || '');
+        const isBanned = u.isBanned || uRole === 'Banned' || rawHwid.includes("ЗАБЛОКИРОВАН") || rawHwid.includes("BAN");
+        const isAdmin = uRole === 'Admin' || ['admin', 'parospepsi', 'parospepsi-hash', 'xamzatovskiy'].includes(uName);
+        const uSub = u.subUntil || '';
+        const hasSub = uSub && !uSub.includes("Нет") && !uSub.includes("No active");
+
+        if (isBanned) {
+          statBanned++;
+        } else if (isAdmin) {
+          statAdmins++;
+          statSubs++;
+        } else if (uRole === 'Premium' || hasSub) {
+          statSubs++;
+        }
+      });
+
+      const elTotal = document.getElementById('admin-stat-total');
+      const elSubs = document.getElementById('admin-stat-subs');
+      const elBanned = document.getElementById('admin-stat-banned');
+      const elAdmins = document.getElementById('admin-stat-admins');
+
+      if (elTotal) elTotal.innerText = statTotal;
+      if (elSubs) elSubs.innerText = statSubs;
+      if (elBanned) elBanned.innerText = statBanned;
+      if (elAdmins) elAdmins.innerText = statAdmins;
+
       if (usersList.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">${currentLang === 'ru' ? 'Нет зарегистрированных пользователей' : 'No registered users found'}</td></tr>`;
         return;
@@ -2744,15 +3247,24 @@
       usersList.forEach(u => {
         const uName = u.username || 'N/A';
         const uEmail = u.email || 'N/A';
+        const uRole = u.role || 'Пользователь';
         const rawHwid = String(u.hwid || '');
         const isHwidUnbound = !rawHwid || rawHwid.includes('Не привязан') || rawHwid.includes('Not bound') || rawHwid.includes('скачайте') || rawHwid.includes('лаунчер') || rawHwid.includes('активируйте') || rawHwid.includes('купите') || rawHwid.includes('launch') || rawHwid.includes('bind');
 
         let uHwid = isHwidUnbound ? (currentLang === 'ru' ? 'Не привязан' : 'Not bound') : rawHwid;
+        const isAdminUser = uRole === 'Admin' || ['admin', 'parospepsi', 'parospepsi-hash', 'xamzatovskiy'].includes(uName.toLowerCase());
         let uSub = u.subUntil || (currentLang === 'ru' ? 'Нет активной подписки' : 'No active subscription');
+
+        if (!isAdminUser && (uSub.includes('Навсегда') || uSub.includes('Admin'))) {
+          uSub = addDaysToSubDate('26.09.2026', 30);
+          u.subUntil = uSub;
+        } else if (isAdminUser && (uSub.includes('Навсегда') || uSub.includes('Admin'))) {
+          uSub = get2098SubDate();
+          u.subUntil = uSub;
+        }
 
         if (currentLang === 'en') {
           if (uSub === 'Нет активной подписки' || uSub === 'Нет подписки') uSub = 'No active subscription';
-          if (uSub === 'Навсегда (Admin)') uSub = 'Forever (Admin)';
           if (uSub.startsWith('До ')) uSub = uSub.replace('До ', 'Until ');
         }
 
@@ -2762,18 +3274,22 @@
         }
 
         const isUserBanned = u.isBanned || u.role === 'Banned' || uHwid.includes("ЗАБЛОКИРОВАН") || uHwid.includes("BAN");
-        const isAdminUser = uRole === 'Admin' || ['admin', 'parospepsi', 'parospepsi-hash'].includes(uName.toLowerCase());
 
         let roleBadgeHTML = '';
         if (isUserBanned) {
-          roleBadgeHTML = `<span class="px-2 py-0.5 rounded text-[10px] bg-red-600/30 text-red-300 border border-red-500/50 font-extrabold uppercase">🚫 BANNED</span>`;
+          roleBadgeHTML = `<span class="px-2.5 py-1 rounded-lg text-[10px] bg-red-950/40 text-red-400 border border-red-600/50 font-extrabold uppercase tracking-wider inline-flex items-center gap-1">🚫 BANNED</span>`;
         } else if (isAdminUser) {
-          roleBadgeHTML = `<span class="px-2 py-0.5 rounded text-[10px] bg-purple-500/25 text-purple-300 border border-purple-500/50 font-extrabold uppercase">👑 ADMIN</span>`;
+          roleBadgeHTML = `<span class="px-2.5 py-1 rounded-lg text-[10px] bg-red-500/15 text-red-400 border border-red-500/40 font-extrabold uppercase tracking-wider inline-flex items-center gap-1">👑 ADMIN</span>`;
         } else if (uRole === 'Premium' || (uSub && !uSub.includes("Нет") && !uSub.includes("No active"))) {
-          roleBadgeHTML = `<span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 font-bold uppercase">PREMIUM</span>`;
+          roleBadgeHTML = `<span class="px-2.5 py-1 rounded-lg text-[10px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold uppercase tracking-wider inline-flex items-center gap-1">⭐ PREMIUM</span>`;
         } else {
-          roleBadgeHTML = `<span class="px-2 py-0.5 rounded text-[10px] bg-white/10 text-slate-400 font-bold uppercase">USER</span>`;
+          roleBadgeHTML = `<span class="px-2.5 py-1 rounded-lg text-[10px] bg-white/5 text-slate-400 border border-white/10 font-bold uppercase tracking-wider inline-flex items-center gap-1">${currentLang === 'ru' ? '👤 ПОЛЬЗОВАТЕЛЬ' : '👤 USER'}</span>`;
         }
+
+        const hasCustomAvatar = u.avatar && (u.avatar.startsWith('data:') || u.avatar.startsWith('http') || u.avatar.length > 5);
+        const avatarHTML = hasCustomAvatar 
+          ? `<img src="${escapeHTML(u.avatar)}" class="w-8 h-8 rounded-full object-cover border border-white/20 shrink-0 shadow-md">`
+          : `<div class="w-8 h-8 rounded-full bg-gradient-to-br from-red-600/30 to-purple-900/40 border border-red-500/30 text-red-300 flex items-center justify-center font-extrabold text-xs shrink-0 shadow-sm">${escapeHTML((uName.charAt(0) || 'U').toUpperCase())}</div>`;
 
         const tr = document.createElement('tr');
         tr.className = isUserBanned ? "bg-red-950/20 hover:bg-red-950/30 transition-colors border-b border-white/5" : "hover:bg-white/5 transition-colors border-b border-white/5";
@@ -2781,11 +3297,14 @@
         const hasActiveSub = uSub && !uSub.includes("Нет") && !uSub.includes("No active");
 
         tr.innerHTML = `
-          <td class="p-3.5">
-            <div class="font-bold text-white flex items-center gap-2">
-              <span class="text-base shrink-0">${u.avatar ? '🖼️' : '👤'}</span> 
+          <td class="p-3.5 cursor-pointer group" onclick="openUserDetailsModal('${escapeHTML(uName)}')">
+            <div class="font-bold text-white flex items-center gap-3">
+              ${avatarHTML}
               <div>
-                <div class="text-xs font-bold text-white">${escapeHTML(uName)}</div>
+                <div class="text-xs font-bold text-white group-hover:text-white transition-colors flex items-center gap-1.5">
+                  <span>${escapeHTML(uName)}</span>
+                  <span class="text-[10px] text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity">ℹ️ Инфо</span>
+                </div>
                 <div class="text-[10px] text-slate-500 font-mono-custom">${u.uid || ''}</div>
               </div>
             </div>
@@ -2798,11 +3317,8 @@
           <td class="p-3.5 font-mono-custom text-xs whitespace-nowrap ${isUserBanned ? 'text-red-400 font-bold' : 'text-slate-200'}">
             ${isUserBanned ? (currentLang === 'ru' ? '🚫 ЗАБЛОКИРОВАН' : '🚫 BANNED') : escapeHTML(uHwid)}
           </td>
-          <td class="p-3.5 text-right whitespace-nowrap">
-            <div class="flex items-center justify-end gap-1.5 whitespace-nowrap">
-              <button onclick="adminSelectUserForAction('${escapeHTML(uName)}')" class="px-2.5 py-1.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/30 text-sky-300 hover:text-white text-xs font-bold border border-sky-500/30 transition-all flex items-center gap-1 shrink-0" title="${currentLang === 'ru' ? 'Выбрать пользователя' : 'Select user'}">
-                <span>⚡</span> <span>${currentLang === 'ru' ? 'Выбрать' : 'Select'}</span>
-              </button>
+          <td class="p-3.5 text-left whitespace-nowrap">
+            <div class="flex items-center justify-start gap-1.5 whitespace-nowrap">
               <button onclick="adminDeleteUser('${escapeHTML(uName)}')" class="px-2.5 py-1.5 rounded-xl bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white text-xs font-bold border border-red-500/30 transition-all shrink-0 shadow-sm flex items-center gap-1" title="${currentLang === 'ru' ? 'Удалить аккаунт' : 'Delete account'}">
                 <span>🗑️</span> <span>${currentLang === 'ru' ? 'Удалить' : 'Delete'}</span>
               </button>
@@ -2863,19 +3379,6 @@
       }
     }
 
-    function adminSelectUserForAction(username) {
-      const inputEl = document.getElementById('admin-action-username-input');
-      if (inputEl) {
-        inputEl.value = username;
-        inputEl.focus();
-        inputEl.classList.add('ring-2', 'ring-sky-500', 'border-sky-500');
-        setTimeout(() => {
-          inputEl.classList.remove('ring-2', 'ring-sky-500', 'border-sky-500');
-        }, 1500);
-      }
-      showInlineDashboardMsg(`⚡ Выбран пользователь: <b>${username}</b>. Нажмите нужное действие выше!`, 'info', 3000);
-    }
-
     function adminToggleAccountBan(username) {
       const uKey = username.toLowerCase();
       if (!usersDB[uKey]) return;
@@ -2901,13 +3404,13 @@
             const wasAdmin = u.previousRole === 'Admin' || ['admin', 'parospepsi', 'parospepsi-hash'].includes(username.toLowerCase());
             if (wasAdmin) {
               u.role = 'Admin';
-              u.subUntil = 'Навсегда (Admin)';
+              u.subUntil = get2098SubDate();
             } else if (u.subUntil && u.subUntil !== "Нет активной подписки" && u.subUntil !== "No active subscription") {
               u.role = 'Premium';
             } else {
               u.role = 'Пользователь';
             }
-            u.hwid = "Не привязан (скачайте лаунчер и войдите)";
+            u.hwid = "Не привязан";
             showInlineDashboardMsg(`🟢 Аккаунт пользователя ${username} успешно разблокирован!`, 'success');
           }
 
@@ -2930,7 +3433,11 @@
       let numDays = parseInt(daysToAdd, 10);
       if (isNaN(numDays) || numDays <= 0) numDays = 30;
       
-      if (existingSubUntil && existingSubUntil !== "Навсегда (Admin)" && existingSubUntil !== "Навсегда" && existingSubUntil !== "Нет активной подписки" && existingSubUntil !== "No active subscription") {
+      if (numDays >= 3650) {
+        return get2098SubDate(baseDate);
+      }
+
+      if (existingSubUntil && !existingSubUntil.includes("Навсегда") && !existingSubUntil.includes("Admin") && existingSubUntil !== "Нет активной подписки" && existingSubUntil !== "No active subscription") {
         const raw = String(existingSubUntil).replace(/^(до|until)\s+/i, '').trim();
         const parts = raw.split('.');
         if (parts.length === 3) {
@@ -2938,7 +3445,7 @@
           const m = parseInt(parts[1], 10) - 1;
           const d = parseInt(parts[0], 10);
           const parsedDate = new Date(y, m, d);
-          if (!isNaN(parsedDate.getTime()) && parsedDate > baseDate) {
+          if (!isNaN(parsedDate.getTime()) && parsedDate > baseDate && y < 2070) {
             baseDate = parsedDate;
           }
         }
@@ -2951,28 +3458,127 @@
       return `${dd}.${mm}.${yyyy}`;
     }
 
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.custom-user-select-container')) {
+        document.querySelectorAll('.custom-user-dropdown').forEach(d => d.classList.add('hidden'));
+      }
+    });
+
+    function showCustomUserDropdown(inputEl) {
+      const container = inputEl.closest('.custom-user-select-container');
+      if (!container) return;
+      const dropdown = container.querySelector('.custom-user-dropdown');
+      if (!dropdown) return;
+
+      filterCustomUserDropdown(inputEl);
+      dropdown.classList.remove('hidden');
+    }
+
+    function filterCustomUserDropdown(inputEl) {
+      const container = inputEl.closest('.custom-user-select-container');
+      if (!container) return;
+      const dropdown = container.querySelector('.custom-user-dropdown');
+      if (!dropdown) return;
+
+      const query = (inputEl.value || '').toLowerCase().trim();
+      dropdown.innerHTML = '';
+
+      const matchedUsers = [];
+      for (let k in usersDB) {
+        const u = usersDB[k];
+        if (!u) continue;
+        const uName = (u.username || '').toLowerCase();
+        const uEmail = (u.email || '').toLowerCase();
+        
+        if (!query || uName.includes(query) || uEmail.includes(query)) {
+          matchedUsers.push(u);
+        }
+      }
+
+      if (matchedUsers.length === 0) {
+        dropdown.innerHTML = `<div class="p-3 text-center text-xs text-slate-500 font-medium">Пользователь не найден</div>`;
+        dropdown.classList.remove('hidden');
+        return;
+      }
+
+      matchedUsers.forEach(u => {
+        const item = document.createElement('div');
+        item.className = 'p-2 rounded-xl hover:bg-purple-600/20 hover:border hover:border-purple-500/30 transition-all cursor-pointer flex items-center justify-between gap-3 text-left border border-transparent';
+        
+        const uName = u.username || 'N/A';
+        const uEmail = u.email || '';
+        const uRole = u.role || 'Пользователь';
+        const isAdmin = uRole === 'Admin' || ['admin', 'parospepsi', 'parospepsi-hash', 'xamzatovskiy'].includes(uName.toLowerCase());
+        const isBanned = u.isBanned || uRole === 'Banned';
+
+        let badgeHTML = '';
+        if (isBanned) {
+          badgeHTML = `<span class="px-1.5 py-0.5 rounded text-[9px] bg-red-600/30 text-red-300 font-bold uppercase">BAN</span>`;
+        } else if (isAdmin) {
+          badgeHTML = `<span class="px-1.5 py-0.5 rounded text-[9px] bg-red-600/20 text-red-300 border border-red-500/40 font-bold uppercase">ADMIN</span>`;
+        } else if (uRole === 'Premium') {
+          badgeHTML = `<span class="px-1.5 py-0.5 rounded text-[9px] bg-emerald-500/20 text-emerald-300 font-bold uppercase">PREMIUM</span>`;
+        }
+
+        const avatarHTML = (u.avatar && (u.avatar.startsWith('data:') || u.avatar.startsWith('http') || u.avatar.length > 5))
+          ? `<img src="${escapeHTML(u.avatar)}" class="w-6 h-6 rounded-full object-cover border border-white/20 shrink-0">`
+          : `<div class="w-6 h-6 rounded-full bg-slate-800 border border-white/10 text-slate-300 flex items-center justify-center font-bold text-[10px] shrink-0">${escapeHTML((uName.charAt(0) || 'U').toUpperCase())}</div>`;
+
+        item.innerHTML = `
+          <div class="flex items-center gap-2.5 min-w-0">
+            ${avatarHTML}
+            <div class="min-w-0">
+              <div class="text-xs font-bold text-white truncate">${escapeHTML(uName)}</div>
+              <div class="text-[10px] text-slate-400 font-mono-custom truncate">${escapeHTML(uEmail)}</div>
+            </div>
+          </div>
+          ${badgeHTML}
+        `;
+
+        item.onmousedown = function(e) {
+          e.preventDefault();
+          inputEl.value = uName;
+          dropdown.classList.add('hidden');
+        };
+
+        dropdown.appendChild(item);
+      });
+
+      dropdown.classList.remove('hidden');
+    }
+
+    function updateAdminUsersDatalist() {}
+
+    function findUserByNameOrEmail(inputName) {
+      if (!inputName) return null;
+      const targetKey = inputName.toLowerCase().trim();
+      if (usersDB[targetKey]) return usersDB[targetKey];
+
+      for (let k in usersDB) {
+        if (usersDB[k]) {
+          if (usersDB[k].username && usersDB[k].username.toLowerCase() === targetKey) return usersDB[k];
+          if (usersDB[k].email && usersDB[k].email.toLowerCase() === targetKey) return usersDB[k];
+        }
+      }
+      return null;
+    }
+
     function openGrantSubModal(username) {
-      const targetUser = usersDB[username.toLowerCase()];
-      if (!targetUser) return;
+      updateAdminUsersDatalist();
+      const inputEl = document.getElementById('grant-username-input');
+      const errEl = document.getElementById('grant-sub-prompt-error');
 
-      const hasSub = targetUser.subUntil && targetUser.subUntil !== "Нет активной подписки" && targetUser.subUntil !== "No active subscription";
-      const activeKeyStr = (hasSub && targetUser.activeKey) 
-        ? targetUser.activeKey 
-        : (currentLang === 'ru' ? 'Нет активного ключа' : 'No active key');
-
-      document.getElementById('grant-target-username').innerText = targetUser.username;
-      document.getElementById('grant-target-user-hidden').value = targetUser.username;
+      if (errEl) errEl.classList.add('hidden');
+      if (inputEl) inputEl.value = username || '';
       document.getElementById('grant-days-select').value = "30";
       document.getElementById('grant-custom-days').value = "";
       document.getElementById('custom-days-container').classList.add('hidden');
-      
-      const keyInfoEl = document.getElementById('grant-target-key-display');
-      if (keyInfoEl) {
-        keyInfoEl.innerText = activeKeyStr;
-        keyInfoEl.className = hasSub ? "text-emerald-400 font-bold" : "text-amber-400 font-bold";
-      }
 
       document.getElementById('modal-grant-sub').classList.remove('hidden');
+    }
+
+    function adminPromptSub() {
+      openGrantSubModal('');
     }
 
     function closeGrantSubModal() {
@@ -2989,10 +3595,79 @@
       }
     }
 
+    function adminRevokeSub(username) {
+      const uKey = (username || '').toLowerCase();
+      if (!usersDB[uKey]) return;
+
+      const u = usersDB[uKey];
+      u.subUntil = (currentLang === 'ru' ? "Нет активной подписки" : "No active subscription");
+      delete u.activeKey;
+      if (u.role !== 'Admin') {
+        u.role = 'Пользователь';
+      }
+
+      if (currentUser && currentUser.username.toLowerCase() === uKey) {
+        currentUser = u;
+        localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+        updateNavState();
+      }
+
+      usersDB[uKey] = u;
+      localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+      syncUsersDBToBackend();
+
+      closeGrantSubModal();
+      showInlineDashboardMsg(`🚫 Подписка пользователя <b>${username}</b> успешно аннулирована!`, 'success', 5000);
+      renderAdminPanel();
+    }
+
+    function adminRevokeSubFromModal(passedUsername) {
+      const username = passedUsername || (document.getElementById('grant-username-input')?.value || '').trim();
+      if (!username) return;
+      const matchedUser = findUserByNameOrEmail(username);
+      if (!matchedUser) return;
+
+      showCustomConfirm(
+        '🚫 Аннулирование подписки',
+        `Вы действительно хотите <b>ЗАБРАТЬ ПОДПИСКУ</b> у пользователя <b>${escapeHTML(matchedUser.username)}</b>?`,
+        '🚫 Забрать подписку',
+        true,
+        function() {
+          adminRevokeSub(matchedUser.username);
+        }
+      );
+    }
+
     function handleGrantSubSubmit(e) {
       e.preventDefault();
-      const username = document.getElementById('grant-target-user-hidden').value;
+      const inputVal = (document.getElementById('grant-username-input')?.value || '').trim();
+      const errEl = document.getElementById('grant-sub-prompt-error');
+
+      if (!inputVal) {
+        if (errEl) {
+          errEl.innerText = '⚠️ Введите логин или Email пользователя!';
+          errEl.classList.remove('hidden');
+        }
+        return;
+      }
+
+      const matchedUser = findUserByNameOrEmail(inputVal);
+      if (!matchedUser) {
+        if (errEl) {
+          errEl.innerText = `❌ Пользователь "${inputVal}" не найден в базе данных!`;
+          errEl.classList.remove('hidden');
+        }
+        return;
+      }
+
+      const username = matchedUser.username;
       const selectVal = document.getElementById('grant-days-select').value;
+
+      if (selectVal === 'remove') {
+        adminRevokeSubFromModal(username);
+        return;
+      }
+
       let days = 30;
 
       if (selectVal === 'custom') {
@@ -3009,8 +3684,6 @@
       if (!usersDB[uKey]) return;
 
       const u = usersDB[uKey];
-      
-      // Calculate cumulative extended date (adds days to existing active sub date)
       const subStr = addDaysToSubDate(u.subUntil, days);
 
       u.subUntil = subStr;
@@ -3066,7 +3739,7 @@
 
       showCustomConfirm(
         '✨ Новый лицензионный ключ сгенерирован',
-        `Сгенерирован ключ подписки на <b>${days >= 3650 ? 'Навсегда (Admin)' : days + ' дней'}</b>:<br/><br/><div class="p-3 bg-slate-900 border border-emerald-500/40 rounded-xl text-center font-mono-custom text-emerald-400 font-bold text-sm select-all">${generatedKey}</div><br/><span class="text-xs text-slate-300">Ключ скопирован в буфер обмена! Передайте его покупателю на FunPay / Telegram.</span>`,
+        `Сгенерирован ключ подписки на <b>${days >= 3650 ? 'до ' + get2098SubDate() : days + ' дней'}</b>:<br/><br/><div class="p-3 bg-slate-900 border border-emerald-500/40 rounded-xl text-center font-mono-custom text-emerald-400 font-bold text-sm select-all">${generatedKey}</div><br/><span class="text-xs text-slate-300">Ключ скопирован в буфер обмена! Передайте его покупателю на FunPay / Telegram.</span>`,
         '📋 Понятно',
         false,
         function() { renderAdminPanel(); }
@@ -3074,6 +3747,7 @@
     }
 
     function adminPromptGrantAdmin() {
+      updateAdminUsersDatalist();
       document.getElementById('grant-admin-username-input').value = '';
       document.getElementById('grant-admin-prompt-error').classList.add('hidden');
       document.getElementById('modal-grant-admin-prompt').classList.remove('hidden');
@@ -3088,17 +3762,7 @@
       const inputName = document.getElementById('grant-admin-username-input').value.trim();
       if (!inputName) return;
 
-      const targetKey = inputName.toLowerCase();
-      let matchedUser = usersDB[targetKey];
-      if (!matchedUser) {
-        for (let k in usersDB) {
-          if (usersDB[k] && usersDB[k].email && usersDB[k].email.toLowerCase() === targetKey) {
-            matchedUser = usersDB[k];
-            break;
-          }
-        }
-      }
-
+      const matchedUser = findUserByNameOrEmail(inputName);
       if (!matchedUser) {
         const errEl = document.getElementById('grant-admin-prompt-error');
         errEl.innerText = `❌ Пользователь "${inputName}" не найден в базе данных!`;
@@ -3108,6 +3772,90 @@
 
       closeGrantAdminPromptModal();
       adminGrantAdmin(matchedUser.username);
+    }
+
+    function adminPromptRevokeAdmin() {
+      updateAdminUsersDatalist();
+      document.getElementById('revoke-admin-username-input').value = '';
+      document.getElementById('revoke-admin-prompt-error').classList.add('hidden');
+      document.getElementById('modal-revoke-admin-prompt').classList.remove('hidden');
+    }
+
+    function closeRevokeAdminPromptModal() {
+      document.getElementById('modal-revoke-admin-prompt').classList.add('hidden');
+    }
+
+    function submitRevokeAdminPrompt(e) {
+      e.preventDefault();
+      const inputName = document.getElementById('revoke-admin-username-input').value.trim();
+      if (!inputName) return;
+
+      const matchedUser = findUserByNameOrEmail(inputName);
+      if (!matchedUser) {
+        const errEl = document.getElementById('revoke-admin-prompt-error');
+        errEl.innerText = `❌ Пользователь "${inputName}" не найден в базе данных!`;
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      closeRevokeAdminPromptModal();
+      adminRevokeAdmin(matchedUser.username);
+    }
+
+    function adminPromptBan() {
+      updateAdminUsersDatalist();
+      document.getElementById('ban-username-input').value = '';
+      document.getElementById('ban-prompt-error').classList.add('hidden');
+      document.getElementById('modal-ban-prompt').classList.remove('hidden');
+    }
+
+    function closeBanPromptModal() {
+      document.getElementById('modal-ban-prompt').classList.add('hidden');
+    }
+
+    function submitBanPrompt(e) {
+      e.preventDefault();
+      const inputName = document.getElementById('ban-username-input').value.trim();
+      if (!inputName) return;
+
+      const matchedUser = findUserByNameOrEmail(inputName);
+      if (!matchedUser) {
+        const errEl = document.getElementById('ban-prompt-error');
+        errEl.innerText = `❌ Пользователь "${inputName}" не найден в базе данных!`;
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      closeBanPromptModal();
+      adminToggleAccountBan(matchedUser.username);
+    }
+
+    function adminPromptResetHWID() {
+      updateAdminUsersDatalist();
+      document.getElementById('reset-hwid-username-input').value = '';
+      document.getElementById('reset-hwid-prompt-error').classList.add('hidden');
+      document.getElementById('modal-reset-hwid-prompt').classList.remove('hidden');
+    }
+
+    function closeResetHWIDPromptModal() {
+      document.getElementById('modal-reset-hwid-prompt').classList.add('hidden');
+    }
+
+    function submitResetHWIDPrompt(e) {
+      e.preventDefault();
+      const inputName = document.getElementById('reset-hwid-username-input').value.trim();
+      if (!inputName) return;
+
+      const matchedUser = findUserByNameOrEmail(inputName);
+      if (!matchedUser) {
+        const errEl = document.getElementById('reset-hwid-prompt-error');
+        errEl.innerText = `❌ Пользователь "${inputName}" не найден в базе данных!`;
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      closeResetHWIDPromptModal();
+      adminResetHWID(matchedUser.username);
     }
 
     function adminGrantAdmin(username) {
@@ -3122,7 +3870,7 @@
         function() {
           const u = usersDB[uKey];
           u.role = 'Admin';
-          u.subUntil = 'Навсегда (Admin)';
+          u.subUntil = get2098SubDate();
 
           if (currentUser && currentUser.username.toLowerCase() === uKey) {
             currentUser = u;
@@ -3150,9 +3898,9 @@
         true,
         function() {
           const u = usersDB[uKey];
-          const hasSub = u.subUntil && u.subUntil !== 'Навсегда (Admin)' && u.subUntil !== 'Нет активной подписки' && u.subUntil !== 'No active subscription';
+          const hasSub = u.subUntil && !u.subUntil.includes('2098') && u.subUntil !== 'Нет активной подписки' && u.subUntil !== 'No active subscription';
           u.role = hasSub ? 'Premium' : 'Пользователь';
-          if (u.subUntil === 'Навсегда (Admin)') {
+          if (u.subUntil && (u.subUntil.includes('2098') || u.subUntil.includes('Admin') || u.subUntil.includes('Навсегда'))) {
             u.subUntil = 'Нет активной подписки';
           }
           delete u.previousRole;
@@ -3183,7 +3931,7 @@
         false,
         function() {
           const u = usersDB[uKey];
-          u.hwid = "Не привязан (скачайте лаунчер и войдите)";
+          u.hwid = "Не привязан";
 
           try {
             let syncStore = JSON.parse(localStorage.getItem('obxod_hwid_sync_store')) || {};
@@ -3237,6 +3985,129 @@
           renderAdminPanel();
         }
       );
+    }
+
+    function openUserDetailsModal(username) {
+      const user = findUserByNameOrEmail(username);
+      if (!user) return;
+
+      const uName = user.username || 'User';
+      const uEmail = user.email || (currentLang === 'ru' ? 'Не указан' : 'Not specified');
+      const uUid = user.uid || ('#' + Math.floor(10000 + Math.random() * 90000));
+      const uRole = user.role || 'Пользователь';
+      const isBanned = user.isBanned || uRole === 'Banned';
+      const isAdmin = uRole === 'Admin' || ['admin', 'parospepsi', 'parospepsi-hash', 'xamzatovskiy'].includes(uName.toLowerCase());
+
+      let uSub = user.subUntil || (currentLang === 'ru' ? "Нет активной подписки" : "No active subscription");
+      if (currentLang === 'en') {
+        if (uSub === "Нет активной подписки" || uSub === "Нет подписки") uSub = "No active subscription";
+        if (uSub.startsWith("До ")) uSub = uSub.replace("До ", "Until ");
+      }
+
+      const uKey = user.activeKey || '—';
+      const rawHwid = String(user.hwid || '');
+      const isUnboundHwid = !rawHwid || rawHwid.includes("Не привязан") || rawHwid.includes("Not bound") || rawHwid.includes("скачайте") || rawHwid.includes("лаунчер") || rawHwid.includes("активируйте") || rawHwid.includes("купите");
+      const uHwid = isUnboundHwid ? (currentLang === 'ru' ? "Не привязан" : "Not bound") : rawHwid;
+
+      const bannerEl = document.getElementById('user-details-banner');
+      if (bannerEl) {
+        const defaultBanner = 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop';
+        const bannerUrl = (user.banner && user.banner.length > 5) ? user.banner : defaultBanner;
+        bannerEl.style.backgroundImage = `linear-gradient(180deg, rgba(13, 17, 23, 0.45) 0%, rgba(13, 17, 23, 0.95) 100%), url('${bannerUrl}')`;
+      }
+
+      const avatarContainer = document.getElementById('user-details-avatar-container');
+      if (avatarContainer) {
+        const hasCustomAvatar = user.avatar && (user.avatar.startsWith('data:') || user.avatar.startsWith('http') || user.avatar.length > 5);
+        avatarContainer.innerHTML = hasCustomAvatar
+          ? `<img src="${escapeHTML(user.avatar)}" class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/40 shadow-lg">`
+          : `<div class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600/40 to-indigo-900/60 border-2 border-purple-500/40 text-purple-200 flex items-center justify-center font-extrabold text-2xl shadow-lg">${escapeHTML((uName.charAt(0) || 'U').toUpperCase())}</div>`;
+      }
+
+      const nameEl = document.getElementById('user-details-username');
+      if (nameEl) nameEl.innerText = uName;
+
+      const emailEl = document.getElementById('user-details-email');
+      if (emailEl) emailEl.innerText = uEmail;
+
+      const uidEl = document.getElementById('user-details-uid');
+      if (uidEl) uidEl.innerText = `UID: ${uUid}`;
+
+      const keyEl = document.getElementById('user-details-key');
+      if (keyEl) keyEl.innerText = uKey;
+
+      const subEl = document.getElementById('user-details-sub');
+      if (subEl) subEl.innerText = uSub;
+
+      const hwidEl = document.getElementById('user-details-hwid');
+      if (hwidEl) hwidEl.innerText = uHwid;
+
+      const badgeContainer = document.getElementById('user-details-role-badge');
+      if (badgeContainer) {
+        if (isBanned) {
+          badgeContainer.innerHTML = `<span class="px-2.5 py-1 rounded-lg text-[10px] bg-red-950/40 text-red-400 border border-red-600/50 font-extrabold uppercase tracking-wider inline-flex items-center gap-1">🚫 BANNED</span>`;
+        } else if (isAdmin) {
+          badgeContainer.innerHTML = `<span class="px-2.5 py-1 rounded-lg text-[10px] bg-red-500/15 text-red-400 border border-red-500/40 font-extrabold uppercase tracking-wider inline-flex items-center gap-1">👑 ADMIN</span>`;
+        } else if (uRole === 'Premium' || (uSub && !uSub.includes("Нет") && !uSub.includes("No active"))) {
+          badgeContainer.innerHTML = `<span class="px-2.5 py-1 rounded-lg text-[10px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 font-bold uppercase tracking-wider inline-flex items-center gap-1">⭐ PREMIUM</span>`;
+        } else {
+          badgeContainer.innerHTML = `<span class="px-2.5 py-1 rounded-lg text-[10px] bg-white/5 text-slate-400 border border-white/10 font-bold uppercase tracking-wider inline-flex items-center gap-1">${currentLang === 'ru' ? '👤 ПОЛЬЗОВАТЕЛЬ' : '👤 USER'}</span>`;
+        }
+      }
+
+      const btnSub = document.getElementById('btn-details-sub');
+      if (btnSub) {
+        btnSub.onclick = function() {
+          closeUserDetailsModal();
+          openGrantSubModal(uName);
+        };
+      }
+
+      const btnGrantAdmin = document.getElementById('btn-details-grant-admin');
+      if (btnGrantAdmin) {
+        btnGrantAdmin.onclick = function() {
+          closeUserDetailsModal();
+          adminGrantAdmin(uName);
+        };
+      }
+
+      const btnRevokeAdmin = document.getElementById('btn-details-revoke-admin');
+      if (btnRevokeAdmin) {
+        btnRevokeAdmin.onclick = function() {
+          closeUserDetailsModal();
+          adminRevokeAdmin(uName);
+        };
+      }
+
+      const btnBan = document.getElementById('btn-details-ban');
+      if (btnBan) {
+        btnBan.innerHTML = isBanned 
+          ? (currentLang === 'ru' ? '<span data-i18n="btn_details_unban">🟢 Разбан</span>' : '<span data-i18n="btn_details_unban">🟢 Unban</span>')
+          : (currentLang === 'ru' ? '<span data-i18n="btn_details_ban">🚫 Бан</span>' : '<span data-i18n="btn_details_ban">🚫 Ban</span>');
+        btnBan.onclick = function() {
+          closeUserDetailsModal();
+          adminToggleAccountBan(uName);
+        };
+      }
+
+      const btnHwid = document.getElementById('btn-details-hwid');
+      if (btnHwid) {
+        btnHwid.onclick = function() {
+          closeUserDetailsModal();
+          adminResetHWID(uName);
+        };
+      }
+
+      updateLanguageUI();
+
+      const modal = document.getElementById('modal-user-details');
+      if (modal) modal.classList.remove('hidden');
+    }
+
+
+    function closeUserDetailsModal() {
+      const modal = document.getElementById('modal-user-details');
+      if (modal) modal.classList.add('hidden');
     }
 
     function adminPurgeAllUsers() {
