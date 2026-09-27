@@ -1657,7 +1657,9 @@
         });
       } catch(e) {}
     }
-    setInterval(syncUsersDBToBackend, 3000);
+
+    // Continuously pull latest state from Firebase so manual Firebase edits (passwords, HWID resets) take effect immediately
+    setInterval(fetchBackendDB, 3000);
 
     function toggleLanguage() {
       currentLang = (currentLang === 'ru') ? 'en' : 'ru';
