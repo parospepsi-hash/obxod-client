@@ -1486,7 +1486,36 @@
 
     const SESSION_EXPIRY_MS = 30 * 24 * 60 * 60 * 1000; // 30 days active session persistence
 
+    const FIREBASE_DB_URL = "https://obxodclient-a9158-default-rtdb.europe-west1.firebasedatabase.app/usersDB.json";
+
     async function fetchBackendDB() {
+      // 1. Fetch from Firebase Cloud DB first
+      try {
+        const fbResp = await fetch(FIREBASE_DB_URL);
+        if (fbResp.ok) {
+          const fbDB = await fbResp.json();
+          if (fbDB && typeof fbDB === 'object') {
+            let updated = false;
+            for (let k in fbDB) {
+              if (!usersDB[k] || JSON.stringify(usersDB[k]) !== JSON.stringify(fbDB[k])) {
+                usersDB[k] = fbDB[k];
+                updated = true;
+              }
+            }
+            if (updated) {
+              localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+              if (currentUser && usersDB[currentUser.username.toLowerCase()]) {
+                currentUser = usersDB[currentUser.username.toLowerCase()];
+                localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+              }
+              updateNavState();
+              if (typeof renderAdminPanel === 'function') renderAdminPanel();
+            }
+          }
+        }
+      } catch(e) {}
+
+      // 2. Local launcher fallback fetch
       for (let p of [18888, 18889, 18890]) {
         try {
           const resp = await fetch(`http://127.0.0.1:${p}/api/get_users_db`);
@@ -1522,15 +1551,31 @@
                       || JSON.parse(sessionStorage.getItem('obxod_active_user')) 
                       || null;
 
-      // Sync backend users DB from Python launcher server
+      // Sync backend users DB from Python launcher server & Firebase
       fetchBackendDB();
 
-      // Ensure xamzatovskiy account is unbanned with Admin rights
+      // Ensure xamzatovskiy master admin account always exists in usersDB
+      if (!usersDB['xamzatovskiy']) {
+        usersDB['xamzatovskiy'] = {
+          username: 'xamzatovskiy',
+          email: 'xamzatovskiy@gmail.com',
+          password: '11',
+          uid: '#1',
+          role: 'Admin',
+          subUntil: 'Навсегда (Admin)',
+          isBanned: false,
+          hwid: 'Не привязан (скачайте лаунчер и войдите)',
+          regDate: '26.09.2026'
+        };
+        localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+      }
+
       for (let k in usersDB) {
         if (k === 'xamzatovskiy' || (usersDB[k] && usersDB[k].username && usersDB[k].username.toLowerCase() === 'xamzatovskiy')) {
           usersDB[k].isBanned = false;
           usersDB[k].role = 'Admin';
           usersDB[k].subUntil = 'Навсегда (Admin)';
+          if (!usersDB[k].password) usersDB[k].password = '11';
           if (usersDB[k].hwid && usersDB[k].hwid.includes('ЗАБЛОКИРОВАН')) {
             usersDB[k].hwid = 'Не привязан (скачайте лаунчер и войдите)';
           }
@@ -1594,6 +1639,15 @@
       try {
         const dbStr = localStorage.getItem('obxod_users_db');
         if (!dbStr) return;
+
+        // 1. Push to Firebase Cloud Realtime Database
+        fetch(FIREBASE_DB_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: dbStr
+        }).catch(() => {});
+
+        // 2. Push to local launcher server
         [18888, 18889, 18890].forEach(port => {
           fetch(`http://127.0.0.1:${port}/api/sync_db`, {
             method: 'POST',
@@ -2290,8 +2344,16 @@
             let stateUpdated = false;
 
             // Auto activate sub if launcher logged in with valid key
+            const isUserAdmin = currentUser.role === 'Admin' || (currentUser.username || '').toLowerCase() === 'xamzatovskiy';
             const hasSub = currentUser.subUntil && currentUser.subUntil !== "Нет активной подписки" && currentUser.subUntil !== "No active subscription";
-            if (!hasSub) {
+            
+            if (isUserAdmin) {
+              if (currentUser.role !== 'Admin' || currentUser.subUntil !== 'Навсегда (Admin)') {
+                currentUser.role = 'Admin';
+                currentUser.subUntil = 'Навсегда (Admin)';
+                stateUpdated = true;
+              }
+            } else if (!hasSub) {
               const exp = new Date();
               exp.setDate(exp.getDate() + 30);
               currentUser.subUntil = String(exp.getDate()).padStart(2, '0') + '.' + String(exp.getMonth() + 1).padStart(2, '0') + '.' + exp.getFullYear();
@@ -2424,6 +2486,31 @@
             return;
           }
         }
+      }
+
+      if (rawKey.includes("ADMIN")) {
+        currentUser.role = "Admin";
+        currentUser.subUntil = "Навсегда (Admin)";
+        currentUser.activeKey = rawKey;
+
+        if (!currentUser.hwid || currentUser.hwid.includes("Не привязан") || currentUser.hwid.includes("Not bound")) {
+          currentUser.hwid = currentLang === 'ru' 
+            ? "Не привязан (скачайте лаунчер и войдите)" 
+            : "Not bound (launch application to bind)";
+        }
+
+        usersDB[currentUser.username.toLowerCase()] = currentUser;
+        localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+        localStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+        sessionStorage.setItem('obxod_active_user', JSON.stringify(currentUser));
+        syncUsersDBToBackend();
+
+        showInlineKeyMsg(currentLang === 'ru'
+          ? '👑 Ключ Администратора "' + rawKey + '" успешно активирован! Выданы права Admin (Навсегда).'
+          : '👑 Admin Key "' + rawKey + '" activated! Admin rights (Forever) granted.', true);
+        document.getElementById('key-input').value = '';
+        updateNavState();
+        return;
       }
 
       let daysToAdd = 30;
