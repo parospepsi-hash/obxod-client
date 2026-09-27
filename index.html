@@ -1608,7 +1608,7 @@
           role: 'Admin',
           subUntil: 'Навсегда (Admin)',
           isBanned: false,
-          hwid: 'Не привязан (скачайте лаунчер и войдите)',
+          hwid: 'Не привязан',
           regDate: '26.09.2026'
         };
         localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
@@ -1620,7 +1620,7 @@
           usersDB[k].role = 'Admin';
           usersDB[k].subUntil = 'Навсегда (Admin)';
           if (usersDB[k].hwid && usersDB[k].hwid.includes('ЗАБЛОКИРОВАН')) {
-            usersDB[k].hwid = 'Не привязан (скачайте лаунчер и войдите)';
+            usersDB[k].hwid = 'Не привязан';
           }
         }
       }
@@ -1645,7 +1645,7 @@
             currentUser.role = 'Admin';
             currentUser.subUntil = 'Навсегда (Admin)';
             if (currentUser.hwid && currentUser.hwid.includes('ЗАБЛОКИРОВАН')) {
-              currentUser.hwid = 'Не привязан (скачайте лаунчер и войдите)';
+              currentUser.hwid = 'Не привязан';
             }
           }
 
@@ -1655,7 +1655,7 @@
           if (!currentUser.regDate) currentUser.regDate = '26.09.2026';
           if (!currentUser.role) currentUser.role = 'Пользователь';
           if (!currentUser.subUntil) currentUser.subUntil = 'Нет активной подписки';
-          if (!currentUser.hwid) currentUser.hwid = 'Не привязан (активируйте ключ или купите подписку)';
+          if (!currentUser.hwid) currentUser.hwid = 'Не привязан';
           
           document.documentElement.classList.add('is-logged-in');
 
@@ -2285,18 +2285,9 @@
 
         // HWID status display
         const isUnbound = !currentUser.hwid || currentUser.hwid.includes("Не привязан") || currentUser.hwid.includes("Not bound");
-        let hwidText = "";
-        if (!hasSub) {
-          hwidText = currentLang === 'ru' 
-            ? "Не привязан (активируйте ключ или купите подписку)" 
-            : "Not bound (activate key or buy subscription)";
-        } else if (isUnbound) {
-          hwidText = currentLang === 'ru' 
-            ? "Не привязан (запустите лаунчер на ПК и войдите)" 
-            : "Not bound (launch application to bind)";
-        } else {
-          hwidText = "🟢 " + currentUser.hwid;
-        }
+        let hwidText = isUnbound 
+          ? (currentLang === 'ru' ? "Не привязан" : "Not bound") 
+          : ("🟢 " + currentUser.hwid);
 
         const hwidVal = document.getElementById('dash-hwid-val');
         if (hwidVal) {
@@ -2446,12 +2437,6 @@
                 currentUser.subUntil = 'Навсегда (Admin)';
                 stateUpdated = true;
               }
-            } else if (!hasSub) {
-              const exp = new Date();
-              exp.setDate(exp.getDate() + 30);
-              currentUser.subUntil = String(exp.getDate()).padStart(2, '0') + '.' + String(exp.getMonth() + 1).padStart(2, '0') + '.' + exp.getFullYear();
-              currentUser.role = "Premium";
-              stateUpdated = true;
             }
 
             if (currentUser.hwid !== foundHWID) {
@@ -2943,20 +2928,28 @@
 
     function addDaysToSubDate(existingSubUntil, daysToAdd) {
       let baseDate = new Date();
+      let numDays = parseInt(daysToAdd, 10);
+      if (isNaN(numDays) || numDays <= 0) numDays = 30;
       
       if (existingSubUntil && existingSubUntil !== "Навсегда (Admin)" && existingSubUntil !== "Навсегда" && existingSubUntil !== "Нет активной подписки" && existingSubUntil !== "No active subscription") {
-        const raw = String(existingSubUntil).replace('До ', '').replace('Until ', '').trim();
+        const raw = String(existingSubUntil).replace(/^(до|until)\s+/i, '').trim();
         const parts = raw.split('.');
         if (parts.length === 3) {
-          const parsedDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+          const y = parseInt(parts[2], 10);
+          const m = parseInt(parts[1], 10) - 1;
+          const d = parseInt(parts[0], 10);
+          const parsedDate = new Date(y, m, d);
           if (!isNaN(parsedDate.getTime()) && parsedDate > baseDate) {
             baseDate = parsedDate;
           }
         }
       }
       
-      baseDate.setDate(baseDate.getDate() + daysToAdd);
-      return String(baseDate.getDate()).padStart(2, '0') + '.' + String(baseDate.getMonth() + 1).padStart(2, '0') + '.' + baseDate.getFullYear();
+      baseDate.setDate(baseDate.getDate() + numDays);
+      const dd = String(baseDate.getDate()).padStart(2, '0');
+      const mm = String(baseDate.getMonth() + 1).padStart(2, '0');
+      const yyyy = baseDate.getFullYear();
+      return `${dd}.${mm}.${yyyy}`;
     }
 
     function openGrantSubModal(username) {
