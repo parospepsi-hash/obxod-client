@@ -2935,6 +2935,7 @@
 
           usersDB[uKey] = u;
           localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+          syncUsersDBToBackend();
           renderAdminPanel();
         }
       );
@@ -2962,7 +2963,10 @@
       const targetUser = usersDB[username.toLowerCase()];
       if (!targetUser) return;
 
-      const activeKeyStr = targetUser.activeKey || 'OBXOD-USER-LICENSE';
+      const hasSub = targetUser.subUntil && targetUser.subUntil !== "Нет активной подписки" && targetUser.subUntil !== "No active subscription";
+      const activeKeyStr = (hasSub && targetUser.activeKey) 
+        ? targetUser.activeKey 
+        : (currentLang === 'ru' ? 'Нет активного ключа' : 'No active key');
 
       document.getElementById('grant-target-username').innerText = targetUser.username;
       document.getElementById('grant-target-user-hidden').value = targetUser.username;
@@ -2971,7 +2975,10 @@
       document.getElementById('custom-days-container').classList.add('hidden');
       
       const keyInfoEl = document.getElementById('grant-target-key-display');
-      if (keyInfoEl) keyInfoEl.innerText = activeKeyStr;
+      if (keyInfoEl) {
+        keyInfoEl.innerText = activeKeyStr;
+        keyInfoEl.className = hasSub ? "text-emerald-400 font-bold" : "text-amber-400 font-bold";
+      }
 
       document.getElementById('modal-grant-sub').classList.remove('hidden');
     }
@@ -3015,8 +3022,8 @@
       const subStr = addDaysToSubDate(u.subUntil, days);
 
       u.subUntil = subStr;
-      if (!u.activeKey) {
-        u.activeKey = "OBXOD-LICENSE-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+      if (!u.activeKey || u.activeKey === 'OBXOD-USER-LICENSE') {
+        u.activeKey = "OBXOD-GRANT-" + days + "D-" + Math.random().toString(36).substring(2, 6).toUpperCase();
       }
       if (u.role !== 'Admin') u.role = 'Premium';
 
@@ -3028,6 +3035,7 @@
 
       usersDB[uKey] = u;
       localStorage.setItem('obxod_users_db', JSON.stringify(usersDB));
+      syncUsersDBToBackend();
 
       closeGrantSubModal();
       showInlineDashboardMsg(`✅ Лицензия (<b>${u.activeKey}</b>) пользователя ${username} продлена на +${days} дней (новая дата окончания: <b>${subStr}</b>)!`, 'success', 5000);
